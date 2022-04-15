@@ -2,9 +2,7 @@ import * as THREE from 'three'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 
-const gaps = { // Distanza tra i buchi dei montanti divisi per tipi
-  k1_upright: 6.4
-}
+const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da popolare in base al montante
 
 const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // Da popolare con le distanze dei montanti per tipo di prodotto
 
@@ -25,8 +23,7 @@ export default class Upright extends Object3D {
 
   setPosition (x, y, z) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
-    const gap = gaps[this.type]
-    const gridY = Math.floor(y / gap) * gap
+    const gridY = Math.floor(y / currentGap) * currentGap
     super.setPosition(x, gridY, z)
 
     this._checkPosition()
@@ -49,6 +46,13 @@ export default class Upright extends Object3D {
       return
     }
 
+    // Imposto l'indice basandomi sull'ultimo montante inserito. Se l'asse x è lo stesso, allora avranno lo stesso indice
+    const latestUpright = this.product.uprights[this.product.uprights.length - 1]
+    this.index = latestUpright.getPosition().x === this.getPosition().x
+      ? latestUpright.index
+      : latestUpright.index + 1
+
+    this.realIndex = this.product.uprights.length
   }
 
   _checkPosition () {

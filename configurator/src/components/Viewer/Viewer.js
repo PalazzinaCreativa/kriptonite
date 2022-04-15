@@ -17,6 +17,7 @@ import Room from './Room'
 import Obstacle from './Obstacle'
 import Product from './Product'
 import Upright from './Upright'
+import Shelf from './Shelf'
 
 export default class Viewer {
   constructor (domEl, { room }, callback) {
@@ -189,7 +190,7 @@ export default class Viewer {
     ) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
 
     // Controllo che la posizione corrente dell'elemento sia disponibile
-    const collidables = this._getAllObjects()
+    const collidables = this._getAllObjects(this.objectToInsert.type === 'shelf' ? 'uprights' : undefined)
 
     const collision = detectCollision(object, collidables)
 
@@ -204,11 +205,13 @@ export default class Viewer {
     // this.createGuides() // TODO
   }
 
-  _getAllObjects () { // Torna un array semplice con tutti gli oggetti 3d nella stanza
+  _getAllObjects (but) { // Torna un array semplice con tutti gli oggetti 3d nella stanza
     return this.viewerElements
       .obstacles.map(obstacle => obstacle.object)
       .concat(
-        this.viewerElements.product.uprights.map(upright => upright.object)
+        but !== 'uprights'
+          ? this.viewerElements.product.uprights.map(upright => upright.object)
+          : []
       )
       .concat(
         this.viewerElements.product.shelves.map(shelf => shelf.object)
@@ -254,15 +257,34 @@ export default class Viewer {
 
     this.objectToInsert = upright
     this.scene.add(this.objectToInsert.object)
-
     this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
       if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
+      this.objectToInsert._setIndex()
       this.product.addUpright(this.objectToInsert)
       this.viewerElements.product.uprights.push(this.objectToInsert)
       this.objectToInsert = null
       if (typeof callback === 'function') callback(upright)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
       this.addUpright(options, callback)
+    }
+  }
+
+  async addShelf (options, callback) {
+    const shelf = new Shelf(options, this.product)
+    await shelf.init()
+
+    this.objectToInsert = shelf
+    this.scene.add(this.objectToInsert.object)
+
+    this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
+      if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
+      this.objectToInsert._setIndex()
+      this.product.addShelf(this.objectToInsert)
+      this.viewerElements.product.shelves.push(this.objectToInsert)
+      this.objectToInsert = null
+      if (typeof callback === 'function') callback(shelf)
+      this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
+      this.addShelf(options, callback)
     }
   }
 }

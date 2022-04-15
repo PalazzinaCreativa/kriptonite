@@ -16,6 +16,9 @@ export const useConfiguratorStore = defineStore({
     },
     addUpright (options) {
       this.viewerGetter().addUpright(options)
+    },
+    addShelf (options) {
+      this.viewerGetter().addShelf(options)
     }
   },
 });

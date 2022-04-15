@@ -17,15 +17,7 @@ export default class Object3D {
   async init () {
     this.object = await loadObject(this.config.path)
     if (!this.config.dimensions) return
-    const { width, height, depth } = this.getSize()
-
-    const scale = {
-      x: this.config.dimensions.width ? this.config.dimensions.width / width : 1,
-      y: this.config.dimensions.height ? this.config.dimensions.height / height : 1,
-      z: this.config.dimensions.depth ? this.config.dimensions.depth / depth : 1
-    }
-
-    this.object.scale.set(scale.x, scale.y, scale.z)
+    this.setSize(this.config.dimensions)
   }
 
   getSize () {
@@ -50,6 +42,18 @@ export default class Object3D {
       ? fixedY[this.type] + this.getSize().height / 2
       : y
     this.object.position.set(x, normalizeY, z)
+  }
+
+  setSize (dimensions) {
+    const { width, height, depth } = this.getSize()
+
+    const scale = {
+      x: dimensions.width ? dimensions.width / width : 1,
+      y: dimensions.height ? dimensions.height / height : 1,
+      z: dimensions.depth ? dimensions.depth / depth : 1
+    }
+
+    this.object.scale.set(scale.x, scale.y, scale.z)
   }
 
   setColor () {
