@@ -1,18 +1,18 @@
 export const obstaclesData = [
   {
     name: 'Divano',
-    id: 'sofa',
+    type: 'sofa',
     path: '/assets/objects/obstacles/sofa/sofa.gltf',
     image: '/assets/objects/obstacles/sofa/sofa.jpg',
     dimensions: {
-      width: 200,
+      width: 80,
       height: 110,
       depth: 140
     }
   },
   {
     name: 'Finestra',
-    id: 'window',
+    type: 'window',
     path: '/assets/objects/obstacles/window/window.gltf',
     image: '/assets/objects/obstacles/window/window.jpg',
     dimensions: {

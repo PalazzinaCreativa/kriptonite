@@ -1,12 +1,19 @@
 <script setup>
 import SetWallColor from '@/components/controls/SetWallColor.vue'
 import AddObstacles from '@/components/controls/AddObstacles.vue'
+import AddUpright from '@/components/controls/AddUpright.vue'
+import { useConfiguratorStore } from '../../stores/configurator';
+
+const configurator = useConfiguratorStore()
 </script>
 
 <template>
-  <div class="h-full bg-white z-20 shadow-md flex flex-col px-6 py-10">
-    <SetWallColor @changeColor="color => $emit('changeColor', color)" />
-    <AddObstacles />
+  <div>
+    <div class="h-full bg-white z-20 shadow-md flex flex-col px-6 py-10" v-if="configurator.isReady">
+      <SetWallColor @changeColor="color => $emit('changeColor', color)" />
+      <AddObstacles />
+      <AddUpright />
+    </div>
   </div>
 </template>
 

@@ -60,13 +60,13 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-::v-deep .color-picker .color-alpha,
-::v-deep .color-picker .color-show,
-::v-deep .color-picker .color-type {
+:deep(.color-picker .color-alpha),
+:deep(.color-picker .color-show),
+:deep(.color-picker .color-type ) {
   display: none;
 }
 
-::v-deep .color-picker {
+:deep(.color-picker) {
   z-index: 51;
 }
 </style>

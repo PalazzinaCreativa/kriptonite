@@ -4,23 +4,18 @@ export const useConfiguratorStore = defineStore({
   id: "configurator",
   state: () => ({
     options: {},
-    viewerGetter: () => {}
+    isReady: false,
+    viewerGetter: () => null
   }),
-  // getters: {
-  //   viewer: (state) => state.viewer,
-  //   options: (state) => state.options
-  // },
   actions: {
     setWallColor (wallColor) {
-      this.$patch({
-        options: {
-          wallColor
-        }
-      })
-      this.viewerGetter().changeWallColor(wallColor)
+      this.viewerGetter().room.changeWallColor(wallColor)
     },
-    pickUpObject (object) {
-      this.viewerGetter().pickUp(object)
+    addObstacle (options) {
+      this.viewerGetter().addObstacle(options)
+    },
+    addUpright (options) {
+      this.viewerGetter().addUpright(options)
     }
   },
 });
