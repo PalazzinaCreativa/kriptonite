@@ -6,12 +6,14 @@ const fixedY = { // Mostra gli elementi che hanno una posizione y fissa (es: Div
 }
 
 export default class Object3D {
-  constructor ({ type, path, dimensions }) {
+  constructor ({ id, type, path, dimensions, variantId }) {
     this.config = {}
 
     this.config.path = path
     this.config.dimensions = dimensions
     this.type = type
+    this.id = id
+    this.variantId = variantId
   }
 
   async init () {
@@ -33,24 +35,32 @@ export default class Object3D {
     return this.object.position
   }
 
-  setId (id) {
-    this.id = id
-  }
+  setPosition ({ x, y, z }) {
+    // Calcolo la posizione negli assi in base ai parametri ricevuti
+    const normalizeX = !x
+      ? this.getPosition().x
+      : x
 
-  setPosition (x, y, z) {
-    const normalizeY = typeof fixedY[this.type] !== 'undefined'
-      ? fixedY[this.type] + this.getSize().height / 2
-      : y
-    this.object.position.set(x, normalizeY, z)
+    const normalizeY = !y
+      ? this.getPosition().y
+      : typeof fixedY[this.type] !== 'undefined'
+        ? fixedY[this.type] + this.getSize().height / 2
+        : y
+
+    const normalizeZ = !z
+      ? this.getPosition().z
+      : z
+
+    this.object.position.set(normalizeX, normalizeY, normalizeZ)
   }
 
   setSize (dimensions) {
     const { width, height, depth } = this.getSize()
 
     const scale = {
-      x: dimensions.width ? dimensions.width / width : 1,
-      y: dimensions.height ? dimensions.height / height : 1,
-      z: dimensions.depth ? dimensions.depth / depth : 1
+      x: dimensions.width ? dimensions.width / (width / this.object.scale.x) : 1,
+      y: dimensions.height ? dimensions.height / (height / this.object.scale.y) : 1,
+      z: dimensions.depth ? dimensions.depth / (depth / this.object.scale.z) : 1
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)

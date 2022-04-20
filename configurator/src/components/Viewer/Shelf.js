@@ -17,10 +17,10 @@ export default class Shelf extends Object3D {
     this.setColor('#4a4a4a')
   }
 
-  setPosition (x, y, z) {
+  setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
     const gridY = Math.floor(y / currentGap) * currentGap
-    super.setPosition(x, gridY, z)
+    super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()
   }
@@ -35,10 +35,6 @@ export default class Shelf extends Object3D {
     })
   }
 
-  _setIndex () {
-    this.index = this.product.shelves.length
-  }
-
   _checkPosition () {
     const { uprights } = this.product
 
@@ -46,6 +42,7 @@ export default class Shelf extends Object3D {
       this._cantBePositioned = true
       this._setState()
     }
+
     // Se non ho almeno 2 montanti in diverso asse x non posso mettere scaffali
     if (!uprights.find(upright => upright.index === 1)) {
       cantPosition()
@@ -59,8 +56,8 @@ export default class Shelf extends Object3D {
       return
     }
 
-    // Prendo il montante più vicino a sinistra. Calcolo il punto x più grande tra i montanti a sinistra ( Math.max.apply(Math, leftUprights.map((u) => u.getPosition().x)) ) e mi trovo tutti quelli che sono in quella posizione
-    leftUprights = leftUprights.filter(u => u.getPosition().x === Math.max.apply(Math, leftUprights.map((u) => u.getPosition().x)))
+    // Prendo il montante più vicino a sinistra basandomi sull'indice
+    leftUprights = leftUprights.filter(u => u.index === Math.max.apply(Math, leftUprights.map((v) => v.index)))
 
     // Controllo che ci siano montanti a destra
     const rightUprights = uprights.filter(upright => upright.index === leftUprights[0].index + 1)
@@ -69,7 +66,7 @@ export default class Shelf extends Object3D {
       return
     }
 
-    // Trovo i due montanti più vicini a sinistra e destra sui quali posso posizionare lo scaffale nell'asse x
+    // Trovo i due montanti più vicini a sinistra e destra sui quali posso posizionare lo scaffale nell'asse y
     const left = leftUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
     const right = rightUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
 
@@ -78,9 +75,19 @@ export default class Shelf extends Object3D {
       return
     }
 
-    this.setSize({ width: right.getPosition().x - left.getPosition().x })
+
+    if (this.index !== left.index) {
+      // Se cambia campata modifico la larghezza (-0.02 per non farli sovrapporre)
+      // TODO: inserire modello corretto anzichè scalarlo
+      this.setSize({ width: right.getPosition().x - left.getPosition().x - 0.02 })
+    }
+
+    this.index = left.index
+
     this._cantBePositioned = false
     this._setState()
+    // +0.01 perchè gli diminuisco la larghezza di 0.02
+    super.setPosition({ x: (left.getPosition().x + this.getSize().width / 2) + 0.01 })
   }
 
   _setState() {

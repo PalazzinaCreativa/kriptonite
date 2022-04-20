@@ -4,12 +4,45 @@ export const uprightsData = [
     id: 'upright01',
     products: ['k1'],
     layout: ['wall'],
+    materials: [
+      {
+        name: 'Alluminio',
+        color: "#c8c8c8",
+        roughness: 0.1
+      },
+      {
+        name: 'Bianco lucido',
+        color: "#ffffff",
+        roughness: 0.1
+      },
+      {
+        name: 'Bianco opaco',
+        color: "#ffffff",
+        roughness: 0.8
+      },
+      {
+        name: 'Nero opaco',
+        color: "#4a4a4a",
+        roughness: 0.8,
+        default: true
+      },
+      {
+        name: 'Verde semi lucido',
+        color: "#50533c",
+        roughness: 0.5
+      },
+      {
+        name: 'Arancione opaco',
+        color: "#bf3922",
+        roughness: 0.8
+      }
+    ],
     variants: [
       {
         name: 'Montante 1',
         id: 'upright01',
         type: 'k1_upright',
-        path: '/assets/objects/product/uprights/upright_01.obj',
+        path: '/assets/objects/product/uprights/upright_01.gltf',
         dimensions: {
           width: 3.4,
           height: 57,
@@ -20,7 +53,7 @@ export const uprightsData = [
         name: 'Montante 2',
         id: 'upright02',
         type: 'k1_upright',
-        path: '/assets/objects/product/uprights/upright_02.obj',
+        path: '/assets/objects/product/uprights/upright_02.gltf',
         dimensions: {
           width: 3.4,
           height: 96,
@@ -31,7 +64,7 @@ export const uprightsData = [
         name: 'Montante 3',
         id: 'upright03',
         type: 'k1_upright',
-        path: '/assets/objects/product/uprights/upright_03.obj',
+        path: '/assets/objects/product/uprights/upright_03.gltf',
         dimensions: {
           width: 3.4,
           height: 146,
@@ -53,7 +86,7 @@ export const uprightsData = [
         name: 'Montante 5',
         id: 'upright05',
         type: 'k1_upright',
-        path: '/assets/objects/product/uprights/upright_05.obj',
+        path: '/assets/objects/product/uprights/upright_05.gltf',
         dimensions: {
           width: 3.4,
           height: 249,

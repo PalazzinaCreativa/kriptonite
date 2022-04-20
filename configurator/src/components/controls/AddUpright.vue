@@ -11,10 +11,12 @@ const uprights = computed(() => uprightsData.filter(u => u.products.includes('k1
 <template>
   <div class="my-20">
     <h2>Montanti</h2>
-    <div class="flex flex-wrap" v-if="uprightsData">
-      <div v-for="upright of uprights" :key="upright.id" class="m-2 cursor-pointer hover:opacity-60" @click="configurator.addUpright(upright.variants[3])">
-        <img v-if="upright.variants[3].image" :src="upright.variants[3].image">
-        <div>{{ upright.variants[3].name }}</div>
+    <div  v-if="uprightsData">
+      <div v-for="upright of uprights" :key="upright.id" class="flex flex-wrap">
+        <div  class="m-2 cursor-pointer hover:opacity-60" v-for="variant of upright.variants" :key="variant.id"  @click="configurator.addUpright(Object.assign(variant, { id: upright.id, variantId: variant.id }, {}))">
+          <img v-if="variant.image" :src="variant.image">
+          <div>{{ variant.name }}</div>
+        </div>
       </div>
     </div>
   </div>

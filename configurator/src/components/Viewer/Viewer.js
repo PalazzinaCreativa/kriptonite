@@ -20,30 +20,21 @@ import Upright from './Upright'
 import Shelf from './Shelf'
 
 export default class Viewer {
-  constructor (domEl, { room }, callback) {
+  constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
 
     this.config = {
-      room
+      room,
+      product
     } // Lista di dati da salvare per il cliente e per ripopolare il viewer
 
     this.selectedObject = null // Elemento selezionato
     this.objectToInsert = null // Oggetto da inserire
     this.cantBePositioned = null // selectedObject se in una posizione dove non può essere inserito
 
-    this.availableObjects = []
-
-    this.viewerElements = { // Lista di tutte le istanze del viewer
-      room: null,
-      obstacles: [],
-      product: {
-        uprights: [],
-        shelves: []
-      }
-    }
-
     this.hooks = {
-      objectSelected: null
+      objectSelected: null,
+      getData: null
     }
 
     // Normalize dimensions
@@ -55,11 +46,6 @@ export default class Viewer {
     // Se la stanza è mansardata setta come altezza l'altezz massima
     if (this.config.room.type === 'attic') {
       this.config.room.dimensions.height = Math.max(this.config.room.dimensions.leftHeight, this.config.room.dimensions.rightHeight)
-    }
-    this.config.room = {
-      type: this.config.room.type,
-      wallColor: 'ffffff',
-      dimensions: this.config.room.dimensions
     }
 
     this._init(callback)
@@ -74,7 +60,9 @@ export default class Viewer {
     await this.room.init() // Aspetto che carichi tutte le texture di pavimento e stanza
     this.scene.add(this.room.main)
 
-    this.product = new Product() // Inizializzo il prodotto
+    this.product = new Product()
+    this.scene.add(this.product.group)
+    this.obstacles = []
 
     this.renderer = setupRenderer(this.domEl)
 
@@ -93,19 +81,12 @@ export default class Viewer {
 
     this.domEl.appendChild(this.renderer.domElement)
 
-    // Listeners
-    window.addEventListener('resize',() => {
-      this.camera.aspect = this.domEl.offsetWidth / this.domEl.offsetHeight
-      this.camera.updateProjectionMatrix()
-      this.renderer.setSize(this.domEl.offsetWidth, this.domEl.offsetHeight)
-      this.animate()
-    })
-
     this.camera.aspect = this.renderer.domElement.offsetWidth / this.renderer.domElement.offsetHeight
     this.camera.updateProjectionMatrix()
     this._animate()
     this._addListeners()
 
+    await this._populate()
     if (typeof callback === 'function') callback(this)
   }
   // Loop per renderizzare la scena 3d nel canvas
@@ -113,6 +94,35 @@ export default class Viewer {
     window.requestAnimationFrame(this._animate)
     this.controls.update()
     this.composer.render() // Uso il composer al posto del renderer per renderizzare
+  }
+
+  async _populate () {
+    if (this.config.room.wallColor) this.room.changeWallColor(this.config.room.wallColor)
+    if (this.config.room.floorType) this.room.changeFloor(this.config.room.floorType)
+    const objects = []
+
+    if (this.config.room && this.config.room.obstacles) objects.push(this.config.room.obstacles.map(o => Object.assign(o, { type: 'obstacle' }, {})))
+    if (this.config.product && this.config.product.uprights) objects.push(this.config.product.uprights.map(u => Object.assign(u, { type: 'upright' }, {})))
+    if (this.config.product && this.config.product.shelves) objects.push(this.config.product.shelves.map(s => Object.assign(s, { type: 'shelf' }, {})))
+
+      objects
+        .flat()
+        .forEach(async o => {
+          const data = this.hooks.getData(o)
+
+          let object
+          if (o.type === 'obstacle') object = new Obstacle(data)
+          if (o.type === 'upright') object = new Upright(Object.assign(data, { index: o.index, realIndex: o.realIndex }, {}), this.product)
+          if (o.type === 'shelf') object = new Shelf(Object.assign(data, { index: o.index }, {}), this.product)
+
+          await object.init()
+          object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
+          object.object.position.set(o.position.x, o.position.y, o.position.z)
+
+          if (o.type === 'obstacle') this.room.addObstacle(object)
+          if (o.type === 'upright') this.product.addUpright(object)
+          if (o.type === 'shelf') this.product.addShelf(object)
+        })
   }
 
   selectObject () {
@@ -142,12 +152,18 @@ export default class Viewer {
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.objectToInsert) { // Se premo esc con l'oggetto da inserire selezionato
+        this.handlePointerUp = null
         this.scene.remove(this.objectToInsert.object)
         this.objectToInsert = null
       }
     })
 
-    window.addEventListener('resize', this.handleWindowResize)
+    window.addEventListener('resize',() => {
+      this.camera.aspect = this.domEl.offsetWidth / this.domEl.offsetHeight
+      this.camera.updateProjectionMatrix()
+      this.renderer.setSize(this.domEl.offsetWidth, this.domEl.offsetHeight)
+      this._animate()
+    })
   }
 
   _handlePointerMove (e, raycaster) {
@@ -183,14 +199,14 @@ export default class Viewer {
       })
       .reduce((acc, curr) => ({ ...acc, [curr.ace]: curr.point }), {})
 
-    this.objectToInsert.setPosition(
-      position.x,
-      position.y,
-      isNaN(depth) ? 0.1 : depth / 2
-    ) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
+    this.objectToInsert.setPosition({
+      x: position.x,
+      y: position.y,
+      z: isNaN(depth) ? 0.1 : depth / 2
+    }) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
 
     // Controllo che la posizione corrente dell'elemento sia disponibile
-    const collidables = this._getAllObjects(this.objectToInsert.type === 'shelf' ? 'uprights' : undefined)
+    const collidables = this._getAllObjects(this.objectToInsert.type === 'shelf' ? ['uprights'] : [])
 
     const collision = detectCollision(object, collidables)
 
@@ -205,17 +221,23 @@ export default class Viewer {
     // this.createGuides() // TODO
   }
 
-  _getAllObjects (but) { // Torna un array semplice con tutti gli oggetti 3d nella stanza
-    return this.viewerElements
-      .obstacles.map(obstacle => obstacle.object)
+  _getAllObjects (but = []) { // Torna un array con tutti gli oggetti 3d nella stanza tranne quelli presenti nell'array but
+    return this.obstacles.map(obstacle => obstacle.object)
       .concat(
-        but !== 'uprights'
-          ? this.viewerElements.product.uprights.map(upright => upright.object)
+        !but.includes('uprights')
+          ? this.product.uprights.map(upright => upright.object)
           : []
       )
       .concat(
-        this.viewerElements.product.shelves.map(shelf => shelf.object)
+        !but.includes('shelves')
+          ? this.product.shelves.map(shelf => shelf.object)
+          : []
       )
+      // .concat(
+      //   !but.includes('room')
+      //     ? this.room.main
+      //     : []
+      // )
       .flat()
       .filter(o => !!o)
   }
@@ -240,11 +262,14 @@ export default class Viewer {
     await obstacle.init()
 
     this.objectToInsert = obstacle
-    this.scene.add(this.objectToInsert.object)
+    // Initial Position
+    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
 
+    this.scene.add(this.objectToInsert.object)
     this.handlePointerUp = (obj) => { // Funzione da eseguire al click se sto inserendo l'ostacolo
-      this.room.addObstacle(obj, options.type)
-      this.viewerElements.obstacles.push(this.objectToInsert)
+      this.scene.remove(this.objectToInsert.object)
+      this.room.addObstacle(this.objectToInsert)
+      this.obstacles.push(this.objectToInsert)
       this.objectToInsert = null
       if (typeof callback === 'function') callback(obstacle)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
@@ -256,12 +281,15 @@ export default class Viewer {
     await upright.init()
 
     this.objectToInsert = upright
+    // Initial Position
+    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
+
     this.scene.add(this.objectToInsert.object)
     this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
       if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
       this.objectToInsert._setIndex()
+      this.scene.remove(this.objectToInsert.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
       this.product.addUpright(this.objectToInsert)
-      this.viewerElements.product.uprights.push(this.objectToInsert)
       this.objectToInsert = null
       if (typeof callback === 'function') callback(upright)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
@@ -274,17 +302,58 @@ export default class Viewer {
     await shelf.init()
 
     this.objectToInsert = shelf
+    // Initial Position
+    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
+
     this.scene.add(this.objectToInsert.object)
 
     this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
       if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
-      this.objectToInsert._setIndex()
+      this.scene.remove(this.objectToInsert.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
       this.product.addShelf(this.objectToInsert)
-      this.viewerElements.product.shelves.push(this.objectToInsert)
       this.objectToInsert = null
       if (typeof callback === 'function') callback(shelf)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
       this.addShelf(options, callback)
+
+      this.updateConfig()
     }
+  }
+
+  updateConfig () {
+    const wallColor = this.room.wallColor
+    const floorType = this.room.floorType
+
+    const obstacles = this.obstacles
+      .map(obstacle => ({
+        id: obstacle.id,
+        position: { x: obstacle.object.position.x, y: obstacle.object.position.y, z: obstacle.object.position.z },
+        scale: { x: obstacle.object.scale.x, y: obstacle.object.scale.y, z: obstacle.object.scale.z },
+      }))
+
+    const uprights = this.product.uprights
+      .map(upright => ({
+        id: upright.id,
+        variantId: upright.variantId,
+        position: { x: upright.object.position.x, y: upright.object.position.y, z: upright.object.position.z },
+        scale: { x: upright.object.scale.x, y: upright.object.scale.y, z: upright.object.scale.z },
+      }))
+
+    const shelves = this.product.shelves
+      .map(shelf => ({
+        id: shelf.id,
+        variantId: shelf.variantId,
+        position: { x: shelf.object.position.x, y: shelf.object.position.y, z: shelf.object.position.z },
+        scale: { x: shelf.object.scale.x, y: shelf.object.scale.y, z: shelf.object.scale.z },
+        index: shelf.index,
+        realIndex: shelf.realIndex
+      }))
+
+    this.config.room.wallColor = wallColor
+    this.config.room.floorType = floorType
+
+    this.config.room.obstacles = obstacles
+    this.config.product.uprights = uprights
+    this.config.product.shelves = shelves
   }
 }

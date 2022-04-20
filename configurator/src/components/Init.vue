@@ -12,13 +12,14 @@ const current = computed(() => initialSetupData[initialSetup.step]) // Dati per 
 const currentInputs = computed(() => { // Lista di input da mostrare in base allo step corrente
   return current.value.type === 'options'
     ? []
-    : current.value.inputs.filter(input => input.showIf.includes(initialSetup.type))
+    : current.value.inputs.filter(input => input.showIf.includes(initialSetup.room.type))
 })
 
 const handleNextStep = (key) => {
   initialSetup.$patch({
+    room: {
     [current.value.key]: key
-  }) // Assegna le scelte della configurazione nelo store
+  }}) // Assegna le scelte della configurazione nelo store
  if (current === 0 && key !== 'Wall') {
    initialSetup.$patch({
      step: 2

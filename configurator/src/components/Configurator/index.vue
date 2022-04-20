@@ -4,22 +4,23 @@ import { useInitialSetupStore } from '@/stores/initialSetup'
 import Controls from './Controls.vue'
 import Viewer from '../Viewer/Viewer'
 import { useConfiguratorStore } from '../../stores/configurator';
+import { obstaclesData } from '@/dataset/obstaclesData'
+import { uprightsData } from '@/dataset/uprightsData'
+import { shelvesData } from '@/dataset/shelvesData'
+import { storeToRefs } from 'pinia'
 
 const initialSetup = useInitialSetupStore()
 const configurator = useConfiguratorStore()
 
 const canvasWrapper = ref(null)
 
+const { room, product } = storeToRefs(initialSetup)
 onMounted(() => {
   const viewer = new Viewer(
     canvasWrapper.value, // Elemento del dom principale
     { // Configurazione iniziale
-      room: {
-        layout: initialSetup.layout,
-        type: initialSetup.type,
-        dimensions: initialSetup.dimensions
-      },
-      product: null // Informazioni prodotto se già disponibili dall'url
+      room: room.value,
+      product: product.value // Informazioni prodotto se già disponibili dall'url
     },
     () => { // Callback
       configurator.$patch({
@@ -29,16 +30,29 @@ onMounted(() => {
     }
   )
 
+  viewer.setHook('getData', ({ type, id, variantId }) => {
+    const data = {
+      obstacle: obstaclesData,
+      upright: uprightsData,
+      shelf: shelvesData
+    }
 
-  // viewer.setHook('selectedObject', (a) => {
-  //   console.log('valore ashadskhasdkh', a)
-  // })
+    const el = data[type].find(p => p.id === id)
+    if (!variantId) return el
+    return el.variants.find(v => v.id === variantId)
+  })
+
+  viewer.setHook('selectElement', (element) => {
+    selectedElement = element
+  })
 })
 </script>
 
 <template>
   <div class="flex h-screen w-full">
     <div class="flex-1 h-full" ref="canvasWrapper"></div>
-    <Controls class="w-80" />
+    <Controls class="w-80">
+      <ElementConfiguration :element="selectedElement" v-if="selectedElement" />
+    </Controls>
   </div>
 </template>

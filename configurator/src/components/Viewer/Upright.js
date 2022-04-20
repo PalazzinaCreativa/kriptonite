@@ -12,19 +12,20 @@ export default class Upright extends Object3D {
 
     this.product = product
     this._cantBePositioned = false
+    if (typeof options.index !== 'undefined') this.index = options.index
+    if (typeof options.realIndex !== 'undefined') this.realIndex = options.realIndex
   }
 
 
   async init () {
     await super.init()
     this.setColor('#4a4a4a')
-
   }
 
-  setPosition (x, y, z) {
-    // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
+  setPosition ({ x, y, z }) {
+    // Calcolare y in base alla distanza tra i buchi per allineare tutti i montanti
     const gridY = Math.floor(y / currentGap) * currentGap
-    super.setPosition(x, gridY, z)
+    super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()
   }
@@ -46,8 +47,8 @@ export default class Upright extends Object3D {
       return
     }
 
-    // Imposto l'indice basandomi sull'ultimo montante inserito. Se l'asse x è lo stesso, allora avranno lo stesso indice
-    const latestUpright = this.product.uprights[this.product.uprights.length - 1]
+    // Imposto l'indice basandomi sul monmtante più a destra. Se l'asse x è lo stesso, allora avranno lo stesso indice
+    const latestUpright = this.product.uprights.reduce((prev, current) => (prev.index > current.index) ? prev : current)
     this.index = latestUpright.getPosition().x === this.getPosition().x
       ? latestUpright.index
       : latestUpright.index + 1

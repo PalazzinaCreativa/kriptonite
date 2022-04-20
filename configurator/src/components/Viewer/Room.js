@@ -35,11 +35,8 @@ export default class Room {
     await addTexture(this.floor.material, texture) // texture dovrà essere un oggetto tipo { name: 'parquet', repeat: 4, ext: 'jpg', maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'] }
   }
 
-  addObstacle (obj, type) { // Options -> position { x, y, z }, dimensions: { x, y, z }, type: 'sofa', 'window', ecc.
-    const id = `${type}_${String(this.obstacles.filter(obstacle => obstacle.type === type).length).padStart(3, '0')}`
-
-    this.obstacles.push(
-      obj
-    )
+  addObstacle (obstacle) {
+    this.main.add(obstacle.object)
+    this.obstacles.push(obstacle)
   }
 }
