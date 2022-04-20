@@ -55,7 +55,7 @@ onMounted(() => {
   <div class="flex h-screen w-full">
     <div class="flex-1 h-full" ref="canvasWrapper"></div>
     <Controls class="w-80">
-      <ElementConfiguration :element="selectedElement" v-if="selectedElement" />
+      <ElementConfiguration :element="selectedElement" v-if="selectedElement" @close="selectedElement = null" />
     </Controls>
   </div>
 </template>

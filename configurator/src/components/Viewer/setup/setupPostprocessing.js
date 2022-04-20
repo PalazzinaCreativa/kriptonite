@@ -15,11 +15,11 @@ export const setupPostprocessing = (scene, camera, renderer) => {
   const outlinePass = new OutlinePass(new THREE.Vector2( width, height ), scene, camera)
   outlinePass.visibleEdgeColor.set(0xe01010)
   outlinePass.hiddenEdgeColor.set(0xf0b6b6)
-  outlinePass.edgeStrength = Number(0.4)
+  outlinePass.edgeStrength = Number(2)
   outlinePass.edgeGrow = Number(1)
-  outlinePass.edgeThickness = Number(1)
+  outlinePass.edgeThickness = Number(0.2)
   outlinePass.renderToScreen = true
-  outlinePass.overlayMaterial.blending = THREE.NormalBlending,
+  outlinePass.overlayMaterial.blending = THREE.NormalBlending
   // outlinePass.overlayMaterial.blending = THREE.CustomBlending,
   // outlinePass.overlayMaterial.blendingEquation = THREE.AddEquation
   // outlinePass.overlayMaterial.blendSrc = THREE.SrcAlphaFactor

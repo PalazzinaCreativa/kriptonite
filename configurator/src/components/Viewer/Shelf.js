@@ -7,6 +7,7 @@ export default class Shelf extends Object3D {
   constructor (options, product) {
     super(options)
 
+    this.type = 'shelf'
     this.product = product
     this._cantBePositioned = false
   }

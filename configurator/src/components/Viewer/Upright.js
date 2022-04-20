@@ -12,6 +12,7 @@ export default class Upright extends Object3D {
 
     this.product = product
     this._cantBePositioned = false
+    this.type = 'upright'
     if (typeof options.index !== 'undefined') this.index = options.index
     if (typeof options.realIndex !== 'undefined') this.realIndex = options.realIndex
   }
@@ -97,17 +98,20 @@ export default class Upright extends Object3D {
 
         // Mesh della guida
         const wireframe = new THREE.Mesh(
-          new THREE.BoxGeometry(this.getSize().width, roomHeight, this.getSize().depth),
-          new THREE.MeshStandardMaterial({ color: 0xc4c4c4, transparent: true, opacity: 0.8, roughness: 0 })
+          new THREE.BoxGeometry(this.getSize().width + 2, roomHeight, this.getSize().depth + 2),
+          new THREE.MeshStandardMaterial({ color: 0x707070, transparent: true, opacity: 0.2, roughness: 0 })
         )
 
         wireframe.position.z = 1
         wireframe.position.y = roomHeight / 2
-        wireframe.position.x = latestUpright.object.position.x + x
+        wireframe.position.x = latestUpright.object.position.x + x - 1
 
         wireframes.add(wireframe)
       })
-
   }
 
+  destroy () {
+    if (this.getSiblings().find(s => s.index > this.index)) return
+    super.destroy()
+  }
 }

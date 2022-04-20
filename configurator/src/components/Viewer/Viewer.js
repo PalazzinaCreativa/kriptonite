@@ -135,8 +135,8 @@ export default class Viewer {
 
   _addListeners () {
     let isDragging = false
-
     const raycaster = new THREE.Raycaster() // Classe Three.js per tracciare il movimento del mouse nella scena
+    let savedPos
 
     window.addEventListener('pointermove', (e) => {
       isDragging = true
@@ -144,9 +144,32 @@ export default class Viewer {
     })
     window.addEventListener('pointerdown', (e) => {
       isDragging = false
+      // Se c'è un elemento selezionato inizio il drag (se non è un montante)
+      if (this.selectedElement && this.selectedElement.type !== 'upright') {
+        this.objectToInsert = this.selectedElement
+        this.controls.enabled = false
+        if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
+      }
     })
     window.addEventListener('pointerup', (e) => {
-      if (isDragging || typeof this.handlePointerUp !== 'function') return
+      // Se sto spostando un elemento in una zona non idonea
+      if (this.selectedElement && this._positioningBlocked) {
+        this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos. z)
+        this.selectedElement = null
+        this.objectToInsert = null
+        savedPos = null
+        return
+      }
+
+      // Se sto spostando un elemento
+      if (this.selectedElement && !this._positioningBlocked) {
+        this.objectToInsert = null
+        this.controls.enabled = true
+        savedPos = null
+        return
+      }
+
+      if (isDragging || typeof this.handlePointerUp !== 'function' || this._positioningBlocked) return
       this.handlePointerUp(e)
     })
 
@@ -182,11 +205,13 @@ export default class Viewer {
       if (!intersects || !intersects.length) {
         this._removeOutlines()
         this.handlePointerUp = null
+        this.selectedElement = null
         document.body.style.cursor = 'auto'
         return
       }
       const element = this._getInstanceFromMesh(intersects[0].object)
       this._generateOutline(element.object, 'hover')
+      this.selectedElement = element
       document.body.style.cursor = 'pointer'
       this.handlePointerUp = () => {
         this._removeOutlines()
@@ -226,7 +251,7 @@ export default class Viewer {
     }) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
 
     // Controllo che la posizione corrente dell'elemento sia disponibile
-    const collidables = this._getAllObjects(this.objectToInsert.type === 'shelf' ? ['uprights'] : [])
+    const collidables = this._getAllObjects(this.objectToInsert.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
 
     const collision = detectCollision(object, collidables)
 
@@ -242,7 +267,7 @@ export default class Viewer {
   }
 
   _getAllObjects (but = []) { // Torna un array con tutti gli oggetti 3d nella stanza tranne quelli presenti nell'array but
-    return this.obstacles.map(obstacle => obstacle.object)
+    return this.room.obstacles.map(obstacle => obstacle.object)
       .concat(
         !but.includes('uprights')
           ? this.product.uprights.map(upright => upright.object)
@@ -266,7 +291,7 @@ export default class Viewer {
   _generateOutline (objectsToOutline, outlineType) { // NB: Non aggiungo outline, vado a sostituire quelle correnti. È impossibile utilizzare outline diversi allo stesso momento. Per farlo servirà istanziare un nuovo outline pass
     const outlineColors = {
       error: 0xfa4c4c,
-      hover: 0xabcbff,
+      hover: 0xededed,
       select: 0x12bced
     }
     this.outlinePass.visibleEdgeColor.set(outlineColors[outlineType])

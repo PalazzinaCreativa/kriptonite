@@ -21,6 +21,7 @@ export default class Object3D {
     this.object = await loadObject(this.config.path)
     if (!this.config.dimensions) return
     this.setSize(this.config.dimensions)
+    this._uid = `${this.type}_${String(this.getSiblings().length).padStart(3, '0')}`
   }
 
   getSize () {
@@ -34,6 +35,12 @@ export default class Object3D {
 
   getPosition () {
     return this.object.position
+  }
+
+  getSiblings () {
+    if (this.type === 'upright') return this.product.uprights
+    if (this.type === 'shelf') return this.product.shelves
+    if (this.type === 'obstacle') return this.room.obstacles
   }
 
   setPosition ({ x, y, z }) {
@@ -67,26 +74,23 @@ export default class Object3D {
     this.object.scale.set(scale.x, scale.y, scale.z)
   }
 
-  setColor () {
-    // TODO
-  }
-
-  setMaterial ({ color, roughness }) {
+  setMaterial ({ color, roughness, id }) {
     this.object.traverse(child => {
       if (child.material) {
         child.material.color = new THREE.Color(stringToThreeColor(color))
         child.material.roughness = roughness
       }
     })
+
+    this.material = id
   }
 
   setSiblingsMaterial (material) {
-    const siblings = this.type === 'upright'
-      ? this.product.uprights
-      : this.type === 'shelf'
-        ? this.product.shelves
-        : this.room.obstacles
+    this.getSiblings().forEach(s => s.setMaterial(material))
+  }
 
-    siblings.forEach(s => s.setMaterial(material))
+  destroy () {
+    this.object.parent.remove(this.object)
+    this.getSiblings().splice(this.getSiblings().indexOf(this), 1)
   }
 }
