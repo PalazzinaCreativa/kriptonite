@@ -27,7 +27,7 @@ export default class Upright extends Object3D {
     const gridY = Math.floor(y / currentGap) * currentGap
     super.setPosition({ x, y: gridY, z })
 
-    this._checkPosition()
+    this._checkPosition({ x, y, z })
   }
 
   setColor (color) {
@@ -56,13 +56,19 @@ export default class Upright extends Object3D {
     this.realIndex = this.product.uprights.length
   }
 
-  _checkPosition () {
+  _checkPosition ({ x }) {
     if (!this.product.uprights.length) return // Se è il primo posso sicuramente posizionarlo
-    // Controllo la posizione x dell'ultimo monetante inserito
-    const latestUprightX = Math.floor(this.product.uprights[this.product.uprights.length - 1].getPosition().x)
-    const thisX = Math.floor(this.getPosition().x)
 
-    this._cantBePositioned = !currentProductUprightsDistance.some(distance => thisX === latestUprightX + distance)
+    const wireframes = this.product.group.children.find(c => c.name === 'uprights_wireframe').children
+
+    this._cantBePositioned = !wireframes.some((w, i) => {
+      // Controllo che sia vicino a un wireframe
+      const isIn = x > w.position.x - 12 && x < w.position.x + 12
+      // In caso positivo lo metto nella stessa posizione x ed esco dal ciclo
+      if (isIn) this.object.position.x = w.position.x
+      return isIn
+    })
+
     this._setState()
   }
 
@@ -71,4 +77,37 @@ export default class Upright extends Object3D {
       if (child.material) child.material.opacity = this._cantBePositioned ? 0.2 : 1
     })
   }
+
+  // Genera le guide sulle quali potrà essere posizionato il montante
+  _generateSiblingWireframe (roomWidth, roomHeight) {
+    if (!this.product.uprights.length) return
+
+    const latestUpright = this.product.uprights.reduce((prev, current) => (prev.index > current.index) ? prev : current)
+
+    const wireframes = new THREE.Group()
+    wireframes.name = 'uprights_wireframe'
+    this.product.group.add(wireframes)
+    // Creo guide per ogni possibile distanza
+    // TODO: Numero di guide in base al tipo di montante
+    const xPositions = [40, 60, 75.5, 90]
+    xPositions
+      .forEach(x => {
+        // Controllo che il wireframe ci stia all'interno della stanza
+        if (latestUpright.object.position.x + x > roomWidth) return
+
+        // Mesh della guida
+        const wireframe = new THREE.Mesh(
+          new THREE.BoxGeometry(this.getSize().width, roomHeight, this.getSize().depth),
+          new THREE.MeshStandardMaterial({ color: 0xc4c4c4, transparent: true, opacity: 0.8, roughness: 0 })
+        )
+
+        wireframe.position.z = 1
+        wireframe.position.y = roomHeight / 2
+        wireframe.position.x = latestUpright.object.position.x + x
+
+        wireframes.add(wireframe)
+      })
+
+  }
+
 }

@@ -16,5 +16,8 @@ export default class Product {
   addUpright (upright) {
     this.group.add(upright.object)
     this.uprights.push(upright)
+
+    // Rimuovo le guide
+    this.group.remove(this.group.children.find(c => c.name === 'uprights_wireframe'))
   }
 }

@@ -301,6 +301,8 @@ export default class Viewer {
     const upright = new Upright(options, this.product)
     await upright.init()
 
+    upright._generateSiblingWireframe(this.config.room.dimensions.height)
+
     this.objectToInsert = upright
     // Initial Position
     this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
