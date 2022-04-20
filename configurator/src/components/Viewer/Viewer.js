@@ -146,14 +146,17 @@ export default class Viewer {
       isDragging = false
       // Se c'è un elemento selezionato inizio il drag (se non è un montante)
       if (this.selectedElement && this.selectedElement.type !== 'upright') {
-        this.objectToInsert = this.selectedElement
-        this.controls.enabled = false
-        if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
+        setTimeout(() => {
+          if (!isDragging) return
+          this.objectToInsert = this.selectedElement
+          this.controls.enabled = false
+          if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
+        }, 100)
       }
     })
     window.addEventListener('pointerup', (e) => {
       // Se sto spostando un elemento in una zona non idonea
-      if (this.selectedElement && this._positioningBlocked) {
+      if (this.selectedElement && this.objectToInsert && this._positioningBlocked) {
         this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos. z)
         this.selectedElement = null
         this.objectToInsert = null
@@ -162,14 +165,15 @@ export default class Viewer {
       }
 
       // Se sto spostando un elemento
-      if (this.selectedElement && !this._positioningBlocked) {
+      if (this.selectedElement && this.objectToInsert && !this._positioningBlocked) {
         this.objectToInsert = null
         this.controls.enabled = true
         savedPos = null
         return
       }
 
-      if (isDragging || typeof this.handlePointerUp !== 'function' || this._positioningBlocked) return
+      if (isDragging || typeof this.handlePointerUp !== 'function' || (this.objectToInsert && this._positioningBlocked)) return
+
       this.handlePointerUp(e)
     })
 
@@ -216,6 +220,7 @@ export default class Viewer {
       this.handlePointerUp = () => {
         this._removeOutlines()
         this._generateOutline(element.object, 'select')
+        console.log(element.index)
         this.hooks.selectElement(element)
         document.body.style.cursor = 'auto'
       }

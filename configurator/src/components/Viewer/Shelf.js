@@ -84,7 +84,7 @@ export default class Shelf extends Object3D {
     }
 
     this.index = left.index
-
+    console.log(this.index)
     this._cantBePositioned = false
     this._setState()
     // +0.01 perchè gli diminuisco la larghezza di 0.02

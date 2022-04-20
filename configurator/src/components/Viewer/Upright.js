@@ -110,8 +110,24 @@ export default class Upright extends Object3D {
       })
   }
 
-  destroy () {
-    if (this.getSiblings().find(s => s.index > this.index)) return
+  async destroy () {
+    // Se non è l'ultimo montante cancello tutti i montanti più a destra e tutti gli scaffali
+    if (this.getSiblings().find(s => s.index > this.index) && !this.product._isDestroying) {
+      const confirm = window.confirm('ocio che cancelli tutto')
+      if (!confirm) return
+      this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
+      const index = this.index - 1
+      for (const upright of this.product.uprights.filter(u => u.index > index)) {
+        await upright.destroy()
+      }
+
+      for (const shelf of this.product.shelves.filter(s => s.index > index - 1)) {
+        await shelf.destroy()
+      }
+
+      this.product._isDestroying = false
+      return
+    }
     super.destroy()
   }
 }
