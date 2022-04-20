@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
+import { stringToThreeColor } from './utils/stringToThreeColor'
 
 const fixedY = { // Mostra gli elementi che hanno una posizione y fissa (es: Divano sta sempre a terra)
   sofa: 0
@@ -70,7 +71,22 @@ export default class Object3D {
     // TODO
   }
 
-  setMaterial () {
-    // TODO
+  setMaterial ({ color, roughness }) {
+    this.object.traverse(child => {
+      if (child.material) {
+        child.material.color = new THREE.Color(stringToThreeColor(color))
+        child.material.roughness = roughness
+      }
+    })
+  }
+
+  setSiblingsMaterial (material) {
+    const siblings = this.type === 'upright'
+      ? this.product.uprights
+      : this.type === 'shelf'
+        ? this.product.shelves
+        : this.room.obstacles
+
+    siblings.forEach(s => s.setMaterial(material))
   }
 }

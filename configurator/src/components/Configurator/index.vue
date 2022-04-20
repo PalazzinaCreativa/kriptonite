@@ -2,8 +2,9 @@
 import { onMounted, reactive, ref } from 'vue'
 import { useInitialSetupStore } from '@/stores/initialSetup'
 import Controls from './Controls.vue'
+import ElementConfiguration from './ElementConfiguration.vue'
 import Viewer from '../Viewer/Viewer'
-import { useConfiguratorStore } from '../../stores/configurator';
+import { useConfiguratorStore } from '@/stores/configurator';
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { uprightsData } from '@/dataset/uprightsData'
 import { shelvesData } from '@/dataset/shelvesData'
@@ -13,6 +14,8 @@ const initialSetup = useInitialSetupStore()
 const configurator = useConfiguratorStore()
 
 const canvasWrapper = ref(null)
+
+const selectedElement = ref(null)
 
 const { room, product } = storeToRefs(initialSetup)
 onMounted(() => {
@@ -43,7 +46,7 @@ onMounted(() => {
   })
 
   viewer.setHook('selectElement', (element) => {
-    selectedElement = element
+    selectedElement.value = element
   })
 })
 </script>

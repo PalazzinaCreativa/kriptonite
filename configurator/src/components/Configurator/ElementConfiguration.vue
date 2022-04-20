@@ -2,14 +2,9 @@
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
 import { uprightsData } from '@/dataset/uprightsData'
-import { reactive } from 'vue';
+import { onMounted, ref } from 'vue';
 
-defineProps({
-  element: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps(['element'])
 
 const data = {
   obstacle: obstaclesData,
@@ -17,14 +12,18 @@ const data = {
   shelf: shelvesData
 }
 
-const materials = reactive(data[element.type].materials)
+const materials = ref(data[props.element.type][0].materials)
+
+const handleClick = (material) => {
+  props.element.setMaterial(material)
+}
 </script>
 
 <template>
   <div class="absolute w-full z-20 bg-white h-full p-5">
     Materiali
-    <div class="flex my-4">
-      <div v-for="material of materials" :key="material.id" class="mx-2">
+    <div class="flex flex-wrap my-4">
+      <div v-for="material of materials" :key="material.id" class="mx-2" @click="handleClick(material)">
         <div class="w-12 h-12" :style="{ backgroundColor: material.color }"></div>
         <div class="mt-2">{{ material.name }}</div>
       </div>

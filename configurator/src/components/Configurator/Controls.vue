@@ -11,7 +11,7 @@ const configurator = useConfiguratorStore()
 <template>
   <div class="relative">
     <slot />
-    <div class="h-full bg-white z-20 shadow-md flex flex-col px-6 py-10 relative" v-if="configurator.isReady">
+    <div class="h-full bg-white z-20 shadow-md flex flex-col px-6 py-10 relative z-10" v-if="configurator.isReady">
       <SetWallColor @changeColor="color => $emit('changeColor', color)" />
       <AddObstacles />
       <AddUpright />

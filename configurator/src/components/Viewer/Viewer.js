@@ -111,7 +111,7 @@ export default class Viewer {
           const data = this.hooks.getData(o)
 
           let object
-          if (o.type === 'obstacle') object = new Obstacle(data)
+          if (o.type === 'obstacle') object = new Obstacle(data, this.room)
           if (o.type === 'upright') object = new Upright(Object.assign(data, { index: o.index, realIndex: o.realIndex }, {}), this.product)
           if (o.type === 'shelf') object = new Shelf(Object.assign(data, { index: o.index }, {}), this.product)
 
@@ -167,7 +167,6 @@ export default class Viewer {
   }
 
   _handlePointerMove (e, raycaster) {
-    if (!this.objectToInsert) return
     const pointer = new THREE.Vector2()
 
     pointer.set( // Aggiorno il pointer con le coordinate della posizione attuale del mouse
@@ -176,6 +175,27 @@ export default class Viewer {
     )
 
     raycaster.setFromCamera(pointer, this.camera) // Aggiorna il raycaster con le coordinate del mouse per verificare le intersezioni
+
+    // Se non c'è nessun elemento da inserire, al pointermove cerco elementi da selezionare per modificarli
+    if (!this.objectToInsert) {
+      const intersects = raycaster.intersectObjects(this._getAllObjects())
+      if (!intersects || !intersects.length) {
+        this._removeOutlines()
+        this.handlePointerUp = null
+        document.body.style.cursor = 'auto'
+        return
+      }
+      const element = this._getInstanceFromMesh(intersects[0].object)
+      this._generateOutline(element.object, 'hover')
+      document.body.style.cursor = 'pointer'
+      this.handlePointerUp = () => {
+        this._removeOutlines()
+        this._generateOutline(element.object, 'select')
+        this.hooks.selectElement(element)
+        document.body.style.cursor = 'auto'
+      }
+      return
+    }
 
     const intersects = raycaster.intersectObjects([this.room.main]) // Controllo i punti di intersezione con la stanza
     const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
@@ -246,7 +266,7 @@ export default class Viewer {
   _generateOutline (objectsToOutline, outlineType) { // NB: Non aggiungo outline, vado a sostituire quelle correnti. È impossibile utilizzare outline diversi allo stesso momento. Per farlo servirà istanziare un nuovo outline pass
     const outlineColors = {
       error: 0xfa4c4c,
-      hover: 0xd4d4d4,
+      hover: 0xabcbff,
       select: 0x12bced
     }
     this.outlinePass.visibleEdgeColor.set(outlineColors[outlineType])
@@ -257,8 +277,9 @@ export default class Viewer {
     this.outlinePass.selectedObjects = []
   }
 
+  // TODO: Unire addObstacle, addUpright, addShelf in un'unica funzione
   async addObstacle (options, callback) {
-    const obstacle = new Obstacle(options)
+    const obstacle = new Obstacle(options, this.room)
     await obstacle.init()
 
     this.objectToInsert = obstacle
@@ -355,5 +376,19 @@ export default class Viewer {
     this.config.room.obstacles = obstacles
     this.config.product.uprights = uprights
     this.config.product.shelves = shelves
+  }
+
+  // Metodo che mi ritorna un'istanza del configuratore a partire da una mesh (utile per esempio nel raycaster che torna solo mesh)
+  _getInstanceFromMesh (mesh) {
+    return [...this.room.obstacles, ...this.product.uprights, ...this.product.shelves]
+      .find(instance => {
+        let hasMesh = false
+        instance.object.traverse(child => {
+          if (child === mesh) {
+            hasMesh = true
+          }
+        })
+        return hasMesh
+      })
   }
 }

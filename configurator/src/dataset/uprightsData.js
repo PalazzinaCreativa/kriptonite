@@ -41,7 +41,7 @@ export const uprightsData = [
       {
         name: 'Montante 1',
         id: 'upright01',
-        type: 'k1_upright',
+        type: 'upright',
         path: '/assets/objects/product/uprights/upright_01.gltf',
         dimensions: {
           width: 3.4,
@@ -52,7 +52,7 @@ export const uprightsData = [
       {
         name: 'Montante 2',
         id: 'upright02',
-        type: 'k1_upright',
+        type: 'upright',
         path: '/assets/objects/product/uprights/upright_02.gltf',
         dimensions: {
           width: 3.4,
@@ -63,7 +63,7 @@ export const uprightsData = [
       {
         name: 'Montante 3',
         id: 'upright03',
-        type: 'k1_upright',
+        type: 'upright',
         path: '/assets/objects/product/uprights/upright_03.gltf',
         dimensions: {
           width: 3.4,
@@ -74,7 +74,7 @@ export const uprightsData = [
       {
         name: 'Montante 4',
         id: 'upright04',
-        type: 'k1_upright',
+        type: 'upright',
         path: '/assets/objects/product/uprights/upright_04.gltf',
         dimensions: {
           width: 3.4,
@@ -85,7 +85,7 @@ export const uprightsData = [
       {
         name: 'Montante 5',
         id: 'upright05',
-        type: 'k1_upright',
+        type: 'upright',
         path: '/assets/objects/product/uprights/upright_05.gltf',
         dimensions: {
           width: 3.4,
