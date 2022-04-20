@@ -26,7 +26,7 @@ export default class Upright extends Object3D {
   setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per allineare tutti i montanti
     const gridY = Math.floor(y / currentGap) * currentGap
-    super.setPosition({ x, y: gridY, z })
+    super.setPosition({ x, y: this.product.uprightsPosition === 'ground' ? 0 : gridY, z })
 
     this._checkPosition({ x, y, z })
   }
@@ -113,8 +113,7 @@ export default class Upright extends Object3D {
   async destroy () {
     // Se non è l'ultimo montante cancello tutti i montanti più a destra e tutti gli scaffali
     if (this.getSiblings().find(s => s.index > this.index) && !this.product._isDestroying) {
-      const confirm = window.confirm('ocio che cancelli tutto')
-      if (!confirm) return
+      if (!window.confirm('ocio che cancelli tutto')) return
       this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
       const index = this.index - 1
       for (const upright of this.product.uprights.filter(u => u.index > index)) {

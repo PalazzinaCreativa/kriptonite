@@ -13,18 +13,16 @@ import { storeToRefs } from 'pinia'
 const initialSetup = useInitialSetupStore()
 const configurator = useConfiguratorStore()
 
+const props = defineProps(['config'])
+
 const canvasWrapper = ref(null)
 
 const selectedElement = ref(null)
 
-const { room, product } = storeToRefs(initialSetup)
 onMounted(() => {
   const viewer = new Viewer(
     canvasWrapper.value, // Elemento del dom principale
-    { // Configurazione iniziale
-      room: room.value,
-      product: product.value // Informazioni prodotto se già disponibili dall'url
-    },
+    props.config,
     () => { // Callback
       configurator.$patch({
         viewerGetter: () => viewer,

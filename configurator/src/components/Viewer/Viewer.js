@@ -60,7 +60,7 @@ export default class Viewer {
     await this.room.init() // Aspetto che carichi tutte le texture di pavimento e stanza
     this.scene.add(this.room.main)
 
-    this.product = new Product()
+    this.product = new Product({ inRoomPosition: this.config.product.layout, uprightsPosition: this.config.product.uprightsPosition })
     this.scene.add(this.product.group)
     this.obstacles = []
 
@@ -151,7 +151,7 @@ export default class Viewer {
           this.objectToInsert = this.selectedElement
           this.controls.enabled = false
           if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
-        }, 100)
+        }, 200)
       }
     })
     window.addEventListener('pointerup', (e) => {

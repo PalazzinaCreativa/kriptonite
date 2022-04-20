@@ -2,14 +2,14 @@
 import { useInitialSetupStore } from './stores/initialSetup'
 import Init from '@/components/Init.vue'
 import Configurator from '@/components/Configurator/index.vue'
+import { ref } from 'vue'
 
-const initialSetup = useInitialSetupStore()
-
+const config = ref(null)
+const showConfigurator = ref(false)
 
 const defaultConfig = {
   step: 4,
     room: {
-      layout: "wall",
       composition: "brick",
       type: "classic",
       dimensions: {
@@ -47,6 +47,8 @@ const defaultConfig = {
     },
     product: {
       type: "k1",
+      inRoomPosition: "standalone",
+      uprightsPosition: 'ground',
       shelves: [],
       uprights: [
         {
@@ -182,7 +184,13 @@ const defaultConfig = {
 }
 
 const handleGoToConfigurator = () => {
-  initialSetup.$patch(defaultConfig)
+  config.value = defaultConfig
+}
+
+const start = (payload) => {
+  config.value = payload
+  showConfigurator.value = true
+  console.log(config.value)
 }
 </script>
 
@@ -191,8 +199,8 @@ const handleGoToConfigurator = () => {
     <div class="fixed right-12 bottom-12 underline text-black cursor-pointer" @click="handleGoToConfigurator">
       Go to configurator
     </div>
-    <Init v-if="initialSetup.step < 4" />
-    <Configurator v-else />
+    <Init @start="start" v-if="!showConfigurator" />
+    <Configurator :config="config" v-else />
   </div>
 </template>
 

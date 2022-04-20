@@ -1,8 +1,9 @@
 export const initialSetupData = [
   {
     question: 'Dove vuoi inserire il prodotto?',
-    key: 'layout',
+    key: 'inRooomPosition',
     type: 'options',
+    super: 'product',
     options: [
       {
         label: 'A parete',
@@ -18,6 +19,7 @@ export const initialSetupData = [
     question: 'Che tipo di parete è',
     key: 'composition',
     type: 'options',
+    super: 'room',
     options: [
       {
         label: 'Cartongesso',
@@ -36,6 +38,7 @@ export const initialSetupData = [
   {
     question: "Com'è la stanza",
     key: 'type',
+    super: 'room',
     type: 'options',
     options: [
       {
@@ -55,6 +58,7 @@ export const initialSetupData = [
   {
     question: 'Quali sono le dimensioni?',
     key: 'dimensions',
+    super: 'room',
     type: 'inputs',
     inputs: [
       {
@@ -86,6 +90,22 @@ export const initialSetupData = [
         model: 'rightHeight',
         placeholder: "0.00",
         showIf: ['attic']
+      }
+    ]
+  },
+  {
+    question: 'Dove vuoi posizionare i montanti?',
+    key: 'uprightsPosition',
+    type: 'options',
+    super: 'product',
+    options: [
+      {
+        label: 'A terra',
+        key: 'ground'
+      },
+      {
+        label: 'A parete',
+        key: 'wall'
       }
     ]
   }
