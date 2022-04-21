@@ -91,7 +91,7 @@ export default class Upright extends Object3D {
     this.product.group.add(wireframes)
     // Creo guide per ogni possibile distanza
     // TODO: Numero di guide in base al tipo di montante
-    const xPositions = [40, 60, 75.5, 90]
+    const xPositions = [0, 40, 60, 75.5, 90]
     xPositions
       .forEach(x => {
         // Controllo che il wireframe ci stia all'interno della stanza

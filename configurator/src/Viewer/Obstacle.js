@@ -9,6 +9,6 @@ export default class Obstacle extends Object3D {
   }
 
   setPosition({ x, y, z }) {
-    super.setPosition({ x, y: restingOnTheGround.includes(this.id) ? 0 : y, z })
+    super.setPosition({ x, y: restingOnTheGround.includes(this.id) ? this.getSize().height / 2 : y, z })
   }
 }

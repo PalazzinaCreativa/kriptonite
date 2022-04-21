@@ -11,14 +11,8 @@ export const useConfiguratorStore = defineStore({
     setWallColor (wallColor) {
       this.viewerGetter().room.changeWallColor(wallColor)
     },
-    addObstacle (options) {
-      this.viewerGetter().addObstacle(options)
-    },
-    addUpright (options) {
-      this.viewerGetter().addUpright(options)
-    },
-    addShelf (options) {
-      this.viewerGetter().addShelf(options)
+    addElement (options, callback) {
+      this.viewerGetter().addElement(options, callback)
     }
   },
 });

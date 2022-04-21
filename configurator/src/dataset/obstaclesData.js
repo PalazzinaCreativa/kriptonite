@@ -1,7 +1,7 @@
 export const obstaclesData = [
   {
     name: 'Divano',
-    type: 'sofa',
+    type: 'obstacle',
     id: 'sofa',
     path: '/assets/objects/obstacles/sofa/sofa.gltf',
     image: '/assets/objects/obstacles/sofa/sofa.jpg',
@@ -13,7 +13,7 @@ export const obstaclesData = [
   },
   {
     name: 'Finestra',
-    type: 'window',
+    type: 'obstacle',
     id: 'window',
     path: '/assets/objects/obstacles/window/window.gltf',
     image: '/assets/objects/obstacles/window/window.jpg',

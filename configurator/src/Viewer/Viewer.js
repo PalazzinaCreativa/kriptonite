@@ -307,69 +307,36 @@ export default class Viewer {
     this.outlinePass.selectedObjects = []
   }
 
-  // TODO: Unire addObstacle, addUpright, addShelf in un'unica funzione
-  async addObstacle (options, callback) {
-    const obstacle = new Obstacle(options, this.room)
-    await obstacle.init()
+  async addElement (options, callback) {
+    let element
+    if (options.type === 'obstacle') element = new Obstacle(options, this.room)
+    if (options.type === 'upright') element = new Upright(options, this.product)
+    if (options.type === 'shelf') element = new Shelf(options, this.product)
+    await element.init()
 
-    this.objectToInsert = obstacle
-    // Initial Position
-    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
+    if (options.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
 
-    this.scene.add(this.objectToInsert.object)
-    this.handlePointerUp = (obj) => { // Funzione da eseguire al click se sto inserendo l'ostacolo
-      this.scene.remove(this.objectToInsert.object)
-      this.room.addObstacle(this.objectToInsert)
-      this.obstacles.push(this.objectToInsert)
-      this.objectToInsert = null
-      if (typeof callback === 'function') callback(obstacle)
-      this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
-    }
-  }
-
-  async addUpright (options, callback) {
-    const upright = new Upright(options, this.product)
-    await upright.init()
-
-    upright._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
-
-    this.objectToInsert = upright
+    this.objectToInsert = element
     // Initial Position
     this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
 
     this.scene.add(this.objectToInsert.object)
     this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
       if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
-      this.objectToInsert._setIndex()
+      if (typeof this.objectToInsert._setIndex === 'function') this.objectToInsert._setIndex()
       this.scene.remove(this.objectToInsert.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
       this.product.addUpright(this.objectToInsert)
+
+      if (options.type === 'obstacle') this.room.addObstacle(this.objectToInsert)
+      if (options.type === 'upright') this.product.addUpright(this.objectToInsert)
+      if (options.type === 'shelf') this.product.addShelf(this.objectToInsert)
+
       this.objectToInsert = null
-      if (typeof callback === 'function') callback(upright)
+      if (typeof callback === 'function') callback(element)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
-      this.addUpright(options, callback)
-    }
-  }
-
-  async addShelf (options, callback) {
-    const shelf = new Shelf(options, this.product)
-    await shelf.init()
-
-    this.objectToInsert = shelf
-    // Initial Position
-    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
-
-    this.scene.add(this.objectToInsert.object)
-
-    this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
-      if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
-      this.scene.remove(this.objectToInsert.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
-      this.product.addShelf(this.objectToInsert)
-      this.objectToInsert = null
-      if (typeof callback === 'function') callback(shelf)
-      this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
-      this.addShelf(options, callback)
 
       this.updateConfig()
+      this.addElement(options, callback)
     }
   }
 

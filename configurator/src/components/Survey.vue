@@ -77,23 +77,23 @@ const handleNextStep = (superKey, key, value) => {
       <template #options>
         <div class="flex w-full my-4 text-m">
           <div class="w-[9.25rem] bg-white px-6 py-4 font-semi-bold">Larghezza</div>
-          <input class="flex-1 bg-white/40 px-6" type="text" v-model="config.room.dimensions.width">
+          <input class="flex-1 bg-white/40 px-6" type="number" v-model="config.room.dimensions.width">
         </div>
         <div class="flex w-full my-4 text-m" v-if="config.room.type !== 'attic'">
           <div class="w-[9.25rem] bg-white px-6 py-4 font-semi-bold">Altezza</div>
-          <input class="flex-1 bg-white/40 px-6" type="text" v-model="config.room.dimensions.height">
+          <input class="flex-1 bg-white/40 px-6" type="number" v-model="config.room.dimensions.height">
         </div>
         <div class="flex w-full my-4 text-m" v-if="config.room.type === 'niche'">
           <div class="w-[9.25rem] bg-white px-6 py-4 font-semi-bold">Profondità</div>
-          <input class="flex-1 bg-white/40 px-6" type="text" v-model="config.room.dimensions.depth">
+          <input class="flex-1 bg-white/40 px-6" type="number" v-model="config.room.dimensions.depth">
         </div>
         <div class="flex w-full my-4 text-m" v-if="config.room.type === 'attic'">
           <div class="w-[9.25rem] bg-white px-6 py-4 font-semi-bold">Altezza sinistra</div>
-          <input class="flex-1 bg-white/40 px-6" type="text" v-model="config.room.dimensions.leftHeight">
+          <input class="flex-1 bg-white/40 px-6" type="number" v-model="config.room.dimensions.leftHeight">
         </div>
         <div class="flex w-full my-4 text-m" v-if="config.room.type === 'attic'">
           <div class="w-[9.25rem] bg-white px-6 py-4 font-semi-bold">Altezza destra</div>
-          <input class="flex-1 bg-white/40 px-6" type="text" v-model="config.room.dimensions.rightHeight">
+          <input class="flex-1 bg-white/40 px-6" type="number" v-model="config.room.dimensions.rightHeight">
         </div>
 
         <div class="w-full py-4 bg-white text-center uppercase text-m" @click="handleNextStep">
