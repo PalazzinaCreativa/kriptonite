@@ -21,6 +21,11 @@ module.exports = {
       l: ['1.875rem', '1.28'],
       xl: ['2.5rem', '1.28']
     },
+    fontWeight: {
+      light: 300,
+      regular: 400,
+      'semi-bold': 600
+    },
     transitionDuration: {
       400: '400ms',
       600: '600ms',

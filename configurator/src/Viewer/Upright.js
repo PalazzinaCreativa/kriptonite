@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 
@@ -102,7 +103,7 @@ export default class Upright extends Object3D {
           new THREE.MeshStandardMaterial({ color: 0x707070, transparent: true, opacity: 0.2, roughness: 0 })
         )
 
-        wireframe.position.z = 1
+        wireframe.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
         wireframe.position.y = roomHeight / 2
         wireframe.position.x = latestUpright.object.position.x + x - 1
 

@@ -1,12 +1,12 @@
 import * as THREE from 'three'
-import { FLOOR_DEPTH } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
 export default class Product {
   constructor ({ inRoomPosition, uprightsPosition }) {
     this.shelves = []
     this.uprights = []
 
     this.group = new THREE.Group()
-    this.group.position.z = inRoomPosition === 'standalone' ? FLOOR_DEPTH / 3 : 0.1
+    this.inRoomPosition = inRoomPosition
     this.uprightsPosition = uprightsPosition
   }
 

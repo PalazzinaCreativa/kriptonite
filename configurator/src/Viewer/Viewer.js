@@ -10,7 +10,7 @@ import { setupPostprocessing } from './setup/setupPostprocessing'
 import { detectCollision } from './utils/detectCollision'
 
 // Data
-import { GUTTER } from '@/dataset/defaultConfiguratorValues'
+import { GUTTER, STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
 
 // Classes
 import Room from './Room'
@@ -18,7 +18,6 @@ import Obstacle from './Obstacle'
 import Product from './Product'
 import Upright from './Upright'
 import Shelf from './Shelf'
-
 export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
@@ -60,7 +59,7 @@ export default class Viewer {
     await this.room.init() // Aspetto che carichi tutte le texture di pavimento e stanza
     this.scene.add(this.room.main)
 
-    this.product = new Product({ inRoomPosition: this.config.product.layout, uprightsPosition: this.config.product.uprightsPosition })
+    this.product = new Product({ inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
     this.scene.add(this.product.group)
     this.obstacles = []
 
@@ -253,7 +252,7 @@ export default class Viewer {
     this.objectToInsert.setPosition({
       x: position.x,
       y: position.y,
-      z: isNaN(depth) ? 0.1 : depth / 2
+      z: this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : isNaN(depth) ? 0.1 : depth / 2 // Se il prodotto è in mezzo alla stanza uso un valore predefinito, sennò lo calcolo per stare attaccato alla parete
     }) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
 
     // Controllo che la posizione corrente dell'elemento sia disponibile

@@ -205,6 +205,11 @@ const start = (payload) => {
 
 <style>
 body {
+  font-family: 'din-2014', sans-serif;
   @apply text-black;
+}
+
+strong {
+  @apply font-semi-bold;
 }
 </style>
