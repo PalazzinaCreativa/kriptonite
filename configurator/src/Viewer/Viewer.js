@@ -182,6 +182,7 @@ export default class Viewer {
         this.handlePointerUp = null
         this.scene.remove(this.objectToInsert.object)
         this.objectToInsert = null
+        this.product.removeWireframes()
       }
     })
 

@@ -2,20 +2,13 @@
 import { ColorPicker } from 'vue-color-kit'
 import 'vue-color-kit/dist/vue-color-kit.css'
 import { onMounted, ref, nextTick, onBeforeUnmount } from 'vue'
-import { useConfiguratorStore } from '../../stores/configurator'
+import { useConfiguratorStore } from '@/stores/configurator'
 
 const configurator = useConfiguratorStore()
 const wallColor = ref('#ffffff')
 const showPicker = ref(false)
 const pickerWrapper = ref(null)
 const toggle = ref(null)
-// const debounce = (fn, delay = 500) => {
-//   let timer
-//   return (...args) => {
-//     clearTimeout(timer)
-//     timer = setTimeout(() => { fn.apply(this, args) }, delay)
-//   }
-// }
 
 const handleChangeColor = ({ hex }) => {
   wallColor.value = hex

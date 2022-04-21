@@ -1,16 +1,13 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import { useInitialSetupStore } from '@/stores/initialSetup'
-import Controls from './Controls.vue'
-import ElementConfiguration from './ElementConfiguration.vue'
-import Viewer from '../Viewer/Viewer'
+import Controls from '@/components/controls/Controls.vue'
+import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
+import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator';
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { uprightsData } from '@/dataset/uprightsData'
 import { shelvesData } from '@/dataset/shelvesData'
-import { storeToRefs } from 'pinia'
 
-const initialSetup = useInitialSetupStore()
 const configurator = useConfiguratorStore()
 
 const props = defineProps(['config'])

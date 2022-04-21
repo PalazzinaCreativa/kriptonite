@@ -2,7 +2,7 @@
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
 import { uprightsData } from '@/dataset/uprightsData'
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps(['element'])
 const emit = defineEmits(['close'])

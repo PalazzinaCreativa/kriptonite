@@ -20,7 +20,11 @@ export default class Product {
     this.group.add(upright.object)
     this.uprights.push(upright)
 
-    // Rimuovo le guide
+    this.removeWireframes()
+  }
+
+  // Rimuovo le guide
+  removeWireframes () {
     this.group.remove(this.group.children.find(c => c.name === 'uprights_wireframe'))
   }
 }

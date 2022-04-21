@@ -24,9 +24,9 @@ export default class Upright extends Object3D {
   }
 
   setPosition ({ x, y, z }) {
-    // Calcolare y in base alla distanza tra i buchi per allineare tutti i montanti
-    const gridY = Math.floor(y / currentGap) * currentGap
-    super.setPosition({ x, y: this.product.uprightsPosition === 'ground' ? 0 : gridY, z })
+    const gridY = Math.floor(y / currentGap) * currentGap // Calcolo y in base alla distanza tra i buchi per allineare tutti i montanti
+    const groundY = this.getSize().height / 2
+    super.setPosition({ x, y: this.product.uprightsPosition === 'ground' ? groundY : gridY, z })
 
     this._checkPosition({ x, y, z })
   }
