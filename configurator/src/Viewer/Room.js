@@ -39,4 +39,9 @@ export default class Room {
     this.main.add(obstacle.object)
     this.obstacles.push(obstacle)
   }
+
+  reset () {
+    this.obstacles.forEach(o => this.main.remove(o))
+    this.obstacles = []
+  }
 }

@@ -4,10 +4,10 @@ import { stringToThreeColor } from "./utils/stringToThreeColor"
 
 const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da popolare in base al montante
 export default class Shelf extends Object3D {
-  constructor (options, product) {
-    super(options)
+  constructor (config, product) {
+    super(config)
 
-    this.type = 'shelf'
+    this.config.type = 'shelf'
     this.product = product
     this._cantBePositioned = false
   }
@@ -15,7 +15,7 @@ export default class Shelf extends Object3D {
 
   async init () {
     await super.init()
-    this.setColor('#4a4a4a')
+    super.setMaterial(this.config.material || { color: '#4a4a4a' }) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   setPosition ({ x, y, z }) {
@@ -24,16 +24,6 @@ export default class Shelf extends Object3D {
     super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()
-  }
-
-  setColor (color) {
-    const normalizeColor = stringToThreeColor(color)
-    this.object.traverse(child => {
-      if (child.material) {
-        child.material.color = new THREE.Color(normalizeColor)
-        child.material.transparent = true // Setto a true perchè mi serve l'opacità per gestire gli stati
-      }
-    })
   }
 
   _checkPosition () {
@@ -84,7 +74,6 @@ export default class Shelf extends Object3D {
     }
 
     this.index = left.index
-    console.log(this.index)
     this._cantBePositioned = false
     this._setState()
     // +0.01 perchè gli diminuisco la larghezza di 0.02

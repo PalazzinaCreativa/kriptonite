@@ -13,8 +13,7 @@ const data = {
   shelf: shelvesData
 }
 
-const materials = ref(data[props.element.type][0].materials)
-
+const materials = ref(data[props.element.config.type][0].materials)
 const addToAll = () => {
   const material = materials.value.find(m => m.id === props.element.material)
   props.element.setSiblingsMaterial(material)
@@ -32,7 +31,7 @@ const destroy = () => {
     Materiali
     <div class="flex flex-wrap my-4">
       <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="props.element.setMaterial(material)">
-        <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.material === material.id }" :style="{ backgroundColor: material.color }"></div>
+        <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
         <div class="mt-2">{{ material.name }}</div>
       </div>
     </div>

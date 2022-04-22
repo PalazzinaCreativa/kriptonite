@@ -8,20 +8,20 @@ const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da
 const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // Da popolare con le distanze dei montanti per tipo di prodotto
 
 export default class Upright extends Object3D {
-  constructor (options, product) {
-    super(options)
+  constructor (config, product) {
+    super(config)
 
     this.product = product
     this._cantBePositioned = false
-    this.type = 'upright'
-    if (typeof options.index !== 'undefined') this.index = options.index
-    if (typeof options.realIndex !== 'undefined') this.realIndex = options.realIndex
+    this.config.type = 'upright'
+    if (typeof config.index !== 'undefined') this.index = config.index
+    if (typeof config.realIndex !== 'undefined') this.realIndex = config.realIndex
   }
 
 
   async init () {
     await super.init()
-    this.setColor('#4a4a4a')
+    super.setMaterial(this.config.material || { color: '#4a4a4a' }) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   setPosition ({ x, y, z }) {
@@ -30,16 +30,6 @@ export default class Upright extends Object3D {
     super.setPosition({ x, y: this.product.uprightsPosition === 'ground' ? groundY : gridY, z })
 
     this._checkPosition({ x, y, z })
-  }
-
-  setColor (color) {
-    const normalizeColor = stringToThreeColor(color)
-    this.object.traverse(child => {
-      if (child.material) {
-        child.material.color = new THREE.Color(normalizeColor)
-        child.material.transparent = true // Setto a true perchè mi serve l'opacità per gestire gli stati
-      }
-    })
   }
 
   _setIndex () {

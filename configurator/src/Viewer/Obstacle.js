@@ -5,7 +5,7 @@ export default class Obstacle extends Object3D {
   constructor (options, room) {
     super(options)
     this.room = room
-    this.type = 'obstacle'
+    this.config.type = 'obstacle'
   }
 
   setPosition({ x, y, z }) {

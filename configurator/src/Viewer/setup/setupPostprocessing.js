@@ -12,25 +12,46 @@ export const setupPostprocessing = (scene, camera, renderer) => {
 
   composer.addPass(renderPass)
 
-  const outlinePass = new OutlinePass(new THREE.Vector2( width, height ), scene, camera)
-  outlinePass.visibleEdgeColor.set(0xe01010)
-  outlinePass.hiddenEdgeColor.set(0xf0b6b6)
-  outlinePass.edgeStrength = Number(2)
-  outlinePass.edgeGrow = Number(1)
-  outlinePass.edgeThickness = Number(0.2)
-  outlinePass.renderToScreen = true
-  outlinePass.overlayMaterial.blending = THREE.NormalBlending
-  // outlinePass.overlayMaterial.blending = THREE.CustomBlending,
-  // outlinePass.overlayMaterial.blendingEquation = THREE.AddEquation
-  // outlinePass.overlayMaterial.blendSrc = THREE.SrcAlphaFactor
-  // outlinePass.overlayMaterial.blendDst = THREE.OneMinusSrcColorFactor
-  composer.addPass(outlinePass)
+  const errorOutlinePass = new OutlinePass(new THREE.Vector2( width, height ), scene, camera)
+  const hoverOutlinePass = new OutlinePass(new THREE.Vector2( width, height ), scene, camera)
+  const selectOutlinePass = new OutlinePass(new THREE.Vector2( width, height ), scene, camera)
+
+  errorOutlinePass.visibleEdgeColor.set(0xfa4c4c)
+  errorOutlinePass.hiddenEdgeColor.set(0xf0b6b6)
+  errorOutlinePass.edgeStrength = Number(2)
+  errorOutlinePass.edgeGrow = Number(1)
+  errorOutlinePass.edgeThickness = Number(0.2)
+  errorOutlinePass.renderToScreen = true
+  errorOutlinePass.overlayMaterial.blending = THREE.NormalBlending
+  composer.addPass(errorOutlinePass)
+
+  hoverOutlinePass.visibleEdgeColor.set(0xededed)
+  hoverOutlinePass.hiddenEdgeColor.set(0xf0b6b6)
+  hoverOutlinePass.edgeStrength = Number(2)
+  hoverOutlinePass.edgeGrow = Number(1)
+  hoverOutlinePass.edgeThickness = Number(0.2)
+  hoverOutlinePass.renderToScreen = true
+  hoverOutlinePass.overlayMaterial.blending = THREE.NormalBlending
+  composer.addPass(hoverOutlinePass)
+
+  selectOutlinePass.visibleEdgeColor.set(0xffcc67)
+  selectOutlinePass.hiddenEdgeColor.set(0xf0b6b6)
+  selectOutlinePass.edgeStrength = Number(2)
+  selectOutlinePass.edgeGrow = Number(1)
+  selectOutlinePass.edgeThickness = Number(0.2)
+  selectOutlinePass.renderToScreen = true
+  selectOutlinePass.overlayMaterial.blending = THREE.NormalBlending
+  composer.addPass(selectOutlinePass)
 
   camera.aspect = width / height
   camera.updateProjectionMatrix()
 
   return {
     composer,
-    outlinePass
+    outlinePass: {
+      error: errorOutlinePass,
+      hover: hoverOutlinePass,
+      select: selectOutlinePass
+    }
   }
 }

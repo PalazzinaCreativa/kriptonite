@@ -2,6 +2,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import Controls from '@/components/controls/Controls.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
+import Actions from '@/components/Actions.vue';
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator';
 import { obstaclesData } from '@/dataset/obstaclesData'
@@ -28,6 +29,7 @@ onMounted(() => {
     }
   )
 
+// Passo i dati al viewer per popolare il configuratore
   viewer.setHook('getData', ({ type, id, variantId }) => {
     const data = {
       obstacle: obstaclesData,
@@ -43,12 +45,17 @@ onMounted(() => {
   viewer.setHook('selectElement', (element) => {
     selectedElement.value = element
   })
+
+  viewer.setHook('checkUndoRedo', ({ canUndo, canRedo }) => {
+    configurator.$patch({ canUndo, canRedo })
+  })
 })
 </script>
 
 <template>
   <div class="flex h-screen w-full">
     <div class="flex-1 h-full" ref="canvasWrapper"></div>
+    <Actions />
     <Controls class="w-80">
       <ElementConfiguration :element="selectedElement" v-if="selectedElement" @close="selectedElement = null" />
     </Controls>

@@ -5,6 +5,8 @@ export const useConfiguratorStore = defineStore({
   state: () => ({
     options: {},
     isReady: false,
+    canUndo: false,
+    canRedo: false,
     viewerGetter: () => null
   }),
   actions: {
@@ -13,6 +15,15 @@ export const useConfiguratorStore = defineStore({
     },
     addElement (options, callback) {
       this.viewerGetter().addElement(options, callback)
+    },
+    undo () {
+      this.viewerGetter().undo()
+    },
+    redo () {
+      this.viewerGetter().redo()
+    },
+    updateConfig () {
+      this.viewerGetter().updateConfig()
     }
   },
 });

@@ -27,4 +27,12 @@ export default class Product {
   removeWireframes () {
     this.group.remove(this.group.children.find(c => c.name === 'uprights_wireframe'))
   }
+
+  reset () {
+    this.uprights.forEach(u => this.group.remove(u.object))
+    this.shelves.forEach(s => this.group.remove(s.object))
+
+    this.uprights = []
+    this.shelves = []
+  }
 }

@@ -36,6 +36,9 @@ export default class Viewer {
       getData: null
     }
 
+    this._history = []
+    this._historyPosition = 0
+
     // Normalize dimensions
     Object.entries(this.config.room.dimensions)
       .forEach(([key, value]) => {
@@ -85,7 +88,7 @@ export default class Viewer {
     this._animate()
     this._addListeners()
 
-    await this._populate()
+    await this._feed()
     if (typeof callback === 'function') callback(this)
   }
   // Loop per renderizzare la scena 3d nel canvas
@@ -95,33 +98,35 @@ export default class Viewer {
     this.composer.render() // Uso il composer al posto del renderer per renderizzare
   }
 
-  async _populate () {
-    if (this.config.room.wallColor) this.room.changeWallColor(this.config.room.wallColor)
-    if (this.config.room.floorType) this.room.changeFloor(this.config.room.floorType)
+  async _feed (c) {
+    const config = c || this.config
+    if (config.room.wallColor) this.room.changeWallColor(config.room.wallColor)
+    if (config.room.floorType) this.room.changeFloor(config.room.floorType)
     const objects = []
 
-    if (this.config.room && this.config.room.obstacles) objects.push(this.config.room.obstacles.map(o => Object.assign(o, { type: 'obstacle' }, {})))
-    if (this.config.product && this.config.product.uprights) objects.push(this.config.product.uprights.map(u => Object.assign(u, { type: 'upright' }, {})))
-    if (this.config.product && this.config.product.shelves) objects.push(this.config.product.shelves.map(s => Object.assign(s, { type: 'shelf' }, {})))
+    if (config.room && config.room.obstacles) objects.push(config.room.obstacles.map(o => Object.assign(o, { type: 'obstacle' }, {})))
+    if (config.product && config.product.uprights) objects.push(config.product.uprights.map(u => Object.assign(u, { type: 'upright' }, {})))
+    if (config.product && config.product.shelves) objects.push(config.product.shelves.map(s => Object.assign(s, { type: 'shelf' }, {})))
 
-      objects
-        .flat()
-        .forEach(async o => {
-          const data = this.hooks.getData(o)
+    objects
+      .flat()
+      .forEach(async o => {
+        const data = this.hooks.getData(o)
+        let object
+        if (o.type === 'obstacle') object = new Obstacle(data, this.room)
+        if (o.type === 'upright') object = new Upright(Object.assign(data, { index: o.index, realIndex: o.realIndex }, {}), this.product)
+        if (o.type === 'shelf') object = new Shelf(Object.assign(data, { index: o.index }, {}), this.product)
 
-          let object
-          if (o.type === 'obstacle') object = new Obstacle(data, this.room)
-          if (o.type === 'upright') object = new Upright(Object.assign(data, { index: o.index, realIndex: o.realIndex }, {}), this.product)
-          if (o.type === 'shelf') object = new Shelf(Object.assign(data, { index: o.index }, {}), this.product)
+        await object.init()
+        object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
+        object.object.position.set(o.position.x, o.position.y, o.position.z)
 
-          await object.init()
-          object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
-          object.object.position.set(o.position.x, o.position.y, o.position.z)
+        if (o.material) object.setMaterial(o.material)
 
-          if (o.type === 'obstacle') this.room.addObstacle(object)
-          if (o.type === 'upright') this.product.addUpright(object)
-          if (o.type === 'shelf') this.product.addShelf(object)
-        })
+        if (o.type === 'obstacle') this.room.addObstacle(object)
+        if (o.type === 'upright') this.product.addUpright(object)
+        if (o.type === 'shelf') this.product.addShelf(object)
+      })
   }
 
   selectObject () {
@@ -137,11 +142,11 @@ export default class Viewer {
     const raycaster = new THREE.Raycaster() // Classe Three.js per tracciare il movimento del mouse nella scena
     let savedPos
 
-    window.addEventListener('pointermove', (e) => {
+    this.domEl.addEventListener('pointermove', (e) => {
       isDragging = true
       this._handlePointerMove(e, raycaster)
     })
-    window.addEventListener('pointerdown', (e) => {
+    this.domEl.addEventListener('pointerdown', (e) => {
       isDragging = false
       // Se c'è un elemento selezionato inizio il drag (se non è un montante)
       if (this.selectedElement && this.selectedElement.type !== 'upright') {
@@ -153,7 +158,7 @@ export default class Viewer {
         }, 200)
       }
     })
-    window.addEventListener('pointerup', (e) => {
+    this.domEl.addEventListener('pointerup', (e) => {
       // Se sto spostando un elemento in una zona non idonea
       if (this.selectedElement && this.objectToInsert && this._positioningBlocked) {
         this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos. z)
@@ -207,20 +212,19 @@ export default class Viewer {
     if (!this.objectToInsert) {
       const intersects = raycaster.intersectObjects(this._getAllObjects())
       if (!intersects || !intersects.length) {
-        this._removeOutlines()
+        this.outlinePass.hover.selectedObjects = []
         this.handlePointerUp = null
         this.selectedElement = null
         document.body.style.cursor = 'auto'
         return
       }
       const element = this._getInstanceFromMesh(intersects[0].object)
-      this._generateOutline(element.object, 'hover')
+      this.outlinePass.hover.selectedObjects = [element.object]
       this.selectedElement = element
       document.body.style.cursor = 'pointer'
       this.handlePointerUp = () => {
-        this._removeOutlines()
-        this._generateOutline(element.object, 'select')
-        console.log(element.index)
+        this.outlinePass.hover.selectedObjects = []
+        this.outlinePass.select.selectedObjects = [element.object]
         this.hooks.selectElement(element)
         document.body.style.cursor = 'auto'
       }
@@ -261,12 +265,12 @@ export default class Viewer {
     const collision = detectCollision(object, collidables)
 
     if (collision) { // Se è presente più di un elemento (oltre alla stanza) non posso posizinoare l'elemento selezionato
-      this._generateOutline(object, 'error')
+      this.outlinePass.error.selectedObjects = [object]
       this._positioningBlocked = true // Variabile che controlla se posso posizionare o meno gli elementi
       return
     }
     this._positioningBlocked = false // Variabile che controlla se posso posizionare o meno gli elementi
-    this._removeOutlines()
+    this.outlinePass.error.selectedObjects = []
 
     // this.createGuides() // TODO
   }
@@ -283,60 +287,49 @@ export default class Viewer {
           ? this.product.shelves.map(shelf => shelf.object)
           : []
       )
-      // .concat(
-      //   !but.includes('room')
-      //     ? this.room.main
-      //     : []
-      // )
       .flat()
       .filter(o => !!o)
   }
 
-
-  _generateOutline (objectsToOutline, outlineType) { // NB: Non aggiungo outline, vado a sostituire quelle correnti. È impossibile utilizzare outline diversi allo stesso momento. Per farlo servirà istanziare un nuovo outline pass
-    const outlineColors = {
-      error: 0xfa4c4c,
-      hover: 0xededed,
-      select: 0x12bced
+  async addElement (config, callback) {
+    // resetto eventuali imppostazioni di un precedente inserimento
+    if (this.objectToInsert) {
+      this.scene.remove(this.objectToInsert.object)
+      this.objectToInsert = null
+      this.product.removeWireframes()
+      this.handlePointerUp = null
     }
-    this.outlinePass.visibleEdgeColor.set(outlineColors[outlineType])
-    this.outlinePass.selectedObjects = [objectsToOutline]
-  }
-
-  _removeOutlines () {
-    this.outlinePass.selectedObjects = []
-  }
-
-  async addElement (options, callback) {
+    // Inizializzo un nuovo elemento
     let element
-    if (options.type === 'obstacle') element = new Obstacle(options, this.room)
-    if (options.type === 'upright') element = new Upright(options, this.product)
-    if (options.type === 'shelf') element = new Shelf(options, this.product)
+    if (config.type === 'obstacle') element = new Obstacle(config, this.room)
+    if (config.type === 'upright') element = new Upright(config, this.product)
+    if (config.type === 'shelf') element = new Shelf(config, this.product)
     await element.init()
 
-    if (options.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
+    if (config.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
 
     this.objectToInsert = element
-    // Initial Position
-    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -10)
+    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -50) // Posizione inziiale
+
+    this.hooks.selectElement(this.objectToInsert)
 
     this.scene.add(this.objectToInsert.object)
     this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
       if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
       if (typeof this.objectToInsert._setIndex === 'function') this.objectToInsert._setIndex()
       this.scene.remove(this.objectToInsert.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
-      this.product.addUpright(this.objectToInsert)
 
-      if (options.type === 'obstacle') this.room.addObstacle(this.objectToInsert)
-      if (options.type === 'upright') this.product.addUpright(this.objectToInsert)
-      if (options.type === 'shelf') this.product.addShelf(this.objectToInsert)
+      if (config.type === 'obstacle') this.room.addObstacle(this.objectToInsert)
+      if (config.type === 'upright') this.product.addUpright(this.objectToInsert)
+      if (config.type === 'shelf') this.product.addShelf(this.objectToInsert)
 
-      this.objectToInsert = null
       if (typeof callback === 'function') callback(element)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
 
       this.updateConfig()
-      this.addElement(options, callback)
+      const newConfig = this.objectToInsert.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
+      this.objectToInsert = null
+      this.addElement(newConfig, callback)
     }
   }
 
@@ -346,6 +339,7 @@ export default class Viewer {
 
     const obstacles = this.obstacles
       .map(obstacle => ({
+        type: 'obstacle',
         id: obstacle.id,
         position: { x: obstacle.object.position.x, y: obstacle.object.position.y, z: obstacle.object.position.z },
         scale: { x: obstacle.object.scale.x, y: obstacle.object.scale.y, z: obstacle.object.scale.z },
@@ -353,7 +347,9 @@ export default class Viewer {
 
     const uprights = this.product.uprights
       .map(upright => ({
+        type: 'upright',
         id: upright.id,
+        material: upright.config.material,
         variantId: upright.variantId,
         position: { x: upright.object.position.x, y: upright.object.position.y, z: upright.object.position.z },
         scale: { x: upright.object.scale.x, y: upright.object.scale.y, z: upright.object.scale.z },
@@ -361,7 +357,9 @@ export default class Viewer {
 
     const shelves = this.product.shelves
       .map(shelf => ({
+        type: 'shelf',
         id: shelf.id,
+        material: shelf.config.material,
         variantId: shelf.variantId,
         position: { x: shelf.object.position.x, y: shelf.object.position.y, z: shelf.object.position.z },
         scale: { x: shelf.object.scale.x, y: shelf.object.scale.y, z: shelf.object.scale.z },
@@ -375,6 +373,24 @@ export default class Viewer {
     this.config.room.obstacles = obstacles
     this.config.product.uprights = uprights
     this.config.product.shelves = shelves
+
+
+    // Imposto lo storico
+    // Se non sono all'inizio dello storico e faccio modifiche, rimuovo tutta lo storico tranne che per la situazione attuale e quella nuova
+    if (this._historyPosition !== 0) {
+      this._history = [JSON.parse(JSON.stringify(this.config)), this._history[this._historyPosition]]
+      this._historyPosition = 0
+      return
+    }
+    // Lo storico mantiene al massimo 50 configurazioni
+    if (this._history.length > 50) this._history.pop()
+    this._history.unshift(JSON.parse(JSON.stringify(this.config)))
+
+    // Passo allo store Pinia le info su undo e redo
+    this.hooks.checkUndoRedo({
+      canUndo: this._historyPosition < this._history.length,
+      canRedo: this._historyPosition > 0
+    })
   }
 
   // Metodo che mi ritorna un'istanza del configuratore a partire da una mesh (utile per esempio nel raycaster che torna solo mesh)
@@ -389,5 +405,31 @@ export default class Viewer {
         })
         return hasMesh
       })
+  }
+
+  undo () {
+    this.product.reset()
+    this.room.reset()
+
+    this._feed(this._history[this._historyPosition + 1]) // 0 è lo stato corrente, 1 è quello precedente
+    this._historyPosition++
+    // Passo allo store Pinia le info su undo e redo
+    this.hooks.checkUndoRedo({
+      canUndo: this._historyPosition < this._history.length,
+      canRedo: this._historyPosition > 0
+    })
+  }
+
+  redo () {
+    this.product.reset()
+    this.room.reset()
+
+    this._feed(this._history[this._historyPosition - 1])
+    this._historyPosition--
+    // Passo allo store Pinia le info su undo e redo
+    this.hooks.checkUndoRedo({
+      canUndo: this._historyPosition < this._history.length,
+      canRedo: this._historyPosition > 0
+    })
   }
 }

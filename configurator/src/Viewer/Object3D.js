@@ -7,21 +7,18 @@ const fixedY = { // Mostra gli elementi che hanno una posizione y fissa (es: Div
 }
 
 export default class Object3D {
-  constructor ({ id, type, path, dimensions, variantId }) {
-    this.config = {}
+  constructor (config) {
+    this.config = config
 
-    this.config.path = path
-    this.config.dimensions = dimensions
-    this.type = type
-    this.id = id
-    this.variantId = variantId
+    this.id = config.id
+    this.variantId = config.variantId
   }
 
   async init () {
     this.object = await loadObject(this.config.path)
     if (!this.config.dimensions) return
     this.setSize(this.config.dimensions)
-    this._uid = `${this.type}_${String(this.getSiblings().length).padStart(3, '0')}`
+    this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}`
   }
 
   getSize () {
@@ -38,9 +35,9 @@ export default class Object3D {
   }
 
   getSiblings () {
-    if (this.type === 'upright') return this.product.uprights
-    if (this.type === 'shelf') return this.product.shelves
-    if (this.type === 'obstacle') return this.room.obstacles
+    if (this.config.type === 'upright') return this.product.uprights
+    if (this.config.type === 'shelf') return this.product.shelves
+    if (this.config.type === 'obstacle') return this.room.obstacles
   }
 
   setPosition ({ x, y, z }) {
@@ -51,8 +48,8 @@ export default class Object3D {
 
     const normalizeY = !y
       ? this.getPosition().y
-      : typeof fixedY[this.type] !== 'undefined'
-        ? fixedY[this.type] + this.getSize().height / 2
+      : typeof fixedY[this.config.type] !== 'undefined'
+        ? fixedY[this.config.type] + this.getSize().height / 2
         : y
 
     const normalizeZ = !z
@@ -82,7 +79,7 @@ export default class Object3D {
       }
     })
 
-    this.material = id
+    this.config.material = { color, roughness, id }
   }
 
   setSiblingsMaterial (material) {
