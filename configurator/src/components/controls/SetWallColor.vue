@@ -10,9 +10,15 @@ const showPicker = ref(false)
 const pickerWrapper = ref(null)
 const toggle = ref(null)
 
+let wallColorTimeout
+
 const handleChangeColor = ({ hex }) => {
   wallColor.value = hex
   configurator.setWallColor(hex)
+  clearTimeout(wallColorTimeout)
+  wallColorTimeout = setTimeout(() => {
+    configurator.updateConfig()
+  }, 500)
 }
 
 const hidePickerOnClickOutside = (e)=> {

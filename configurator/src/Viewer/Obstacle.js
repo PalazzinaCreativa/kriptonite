@@ -1,6 +1,6 @@
 import Object3D from "./Object3D"
 
-const restingOnTheGround = ['sofa']
+const restingOnTheGround = ['sofa', 'table', 'door']
 export default class Obstacle extends Object3D {
   constructor (options, room) {
     super(options)

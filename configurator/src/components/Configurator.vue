@@ -2,9 +2,9 @@
 import { onMounted, reactive, ref } from 'vue'
 import Controls from '@/components/controls/Controls.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
-import Actions from '@/components/Actions.vue';
+import Actions from '@/components/Actions.vue'
 import Viewer from '@/Viewer/Viewer'
-import { useConfiguratorStore } from '@/stores/configurator';
+import { useConfiguratorStore } from '@/stores/configurator'
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { uprightsData } from '@/dataset/uprightsData'
 import { shelvesData } from '@/dataset/shelvesData'
@@ -39,11 +39,15 @@ onMounted(() => {
 
     const el = data[type].find(p => p.id === id)
     if (!variantId) return el
-    return el.variants.find(v => v.id === variantId)
+    return { ...el.variants.find(v => v.id === variantId), id, variantId }
   })
 
   viewer.setHook('selectElement', (element) => {
     selectedElement.value = element
+  })
+
+  viewer.setHook('removeSelectedElement', () => {
+    selectedElement.value = null
   })
 
   viewer.setHook('checkUndoRedo', ({ canUndo, canRedo }) => {

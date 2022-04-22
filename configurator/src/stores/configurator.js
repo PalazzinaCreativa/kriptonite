@@ -14,7 +14,7 @@ export const useConfiguratorStore = defineStore({
       this.viewerGetter().room.changeWallColor(wallColor)
     },
     addElement (options, callback) {
-      this.viewerGetter().addElement(options, callback)
+      this.viewerGetter().addElement({ ...options }, callback)
     },
     undo () {
       this.viewerGetter().undo()
@@ -24,6 +24,10 @@ export const useConfiguratorStore = defineStore({
     },
     updateConfig () {
       this.viewerGetter().updateConfig()
+    },
+    removeSelection () {
+      this.viewerGetter().selectedElement = null
+      this.viewerGetter().outlinePass.select.selectedObjects = []
     }
   },
 });

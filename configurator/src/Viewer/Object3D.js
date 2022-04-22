@@ -9,7 +9,6 @@ const fixedY = { // Mostra gli elementi che hanno una posizione y fissa (es: Div
 export default class Object3D {
   constructor (config) {
     this.config = config
-
     this.id = config.id
     this.variantId = config.variantId
   }
@@ -17,7 +16,7 @@ export default class Object3D {
   async init () {
     this.object = await loadObject(this.config.path)
     if (!this.config.dimensions) return
-    this.setSize(this.config.dimensions)
+    this.setSize(this.config.dimensions, false)
     this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}`
   }
 
@@ -83,7 +82,7 @@ export default class Object3D {
   }
 
   setSiblingsMaterial (material) {
-    this.getSiblings().forEach(s => s.setMaterial(material))
+    this.getSiblings().forEach(s => s.setMaterial(material, false))
   }
 
   destroy () {

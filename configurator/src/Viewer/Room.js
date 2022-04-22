@@ -5,7 +5,7 @@ import Obstacle from './Obstacle'
 import { stringToThreeColor } from './utils/stringToThreeColor'
 
 export default class Room {
-  constructor ({ type, dimensions }) {
+  constructor (viewer, { type, dimensions }) {
     this.config = {
       type,
       dimensions,
@@ -13,6 +13,7 @@ export default class Room {
       floor: 'parquet'
     }
     this.obstacles = []
+    this.viewer = viewer
   }
 
   async init () {
@@ -23,6 +24,8 @@ export default class Room {
 
     this.main.add(this.room)
     this.main.add(this.floor)
+
+    this.viewer.scene.add(this.main)
   }
 
   changeWallColor (color) {

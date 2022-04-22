@@ -28,7 +28,7 @@ export default class Viewer {
     } // Lista di dati da salvare per il cliente e per ripopolare il viewer
 
     this.selectedObject = null // Elemento selezionato
-    this.objectToInsert = null // Oggetto da inserire
+    this.objectToPlace = null // Oggetto da inserire
     this.cantBePositioned = null // selectedObject se in una posizione dove non può essere inserito
 
     this.hooks = {
@@ -58,12 +58,10 @@ export default class Viewer {
     this.scene = setupScene()
     this.camera = setupCamera(dimensions, this.domEl)
 
-    this.room = new Room({ type, dimensions })
+    this.room = new Room(this, { type, dimensions })
     await this.room.init() // Aspetto che carichi tutte le texture di pavimento e stanza
-    this.scene.add(this.room.main)
 
-    this.product = new Product({ inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
-    this.scene.add(this.product.group)
+    this.product = new Product(this, { inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
     this.obstacles = []
 
     this.renderer = setupRenderer(this.domEl)
@@ -89,6 +87,7 @@ export default class Viewer {
     this._addListeners()
 
     await this._feed()
+    this.updateConfig()
     if (typeof callback === 'function') callback(this)
   }
   // Loop per renderizzare la scena 3d nel canvas
@@ -111,11 +110,11 @@ export default class Viewer {
     objects
       .flat()
       .forEach(async o => {
-        const data = this.hooks.getData(o)
+        const data = this.doHook('getData', o)
         let object
         if (o.type === 'obstacle') object = new Obstacle(data, this.room)
-        if (o.type === 'upright') object = new Upright(Object.assign(data, { index: o.index, realIndex: o.realIndex }, {}), this.product)
-        if (o.type === 'shelf') object = new Shelf(Object.assign(data, { index: o.index }, {}), this.product)
+        if (o.type === 'upright') object = new Upright({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
+        if (o.type === 'shelf') object = new Shelf({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
 
         await object.init()
         object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
@@ -123,14 +122,10 @@ export default class Viewer {
 
         if (o.material) object.setMaterial(o.material)
 
-        if (o.type === 'obstacle') this.room.addObstacle(object)
-        if (o.type === 'upright') this.product.addUpright(object)
-        if (o.type === 'shelf') this.product.addShelf(object)
+        if (o.type === 'obstacle') this.room.addObstacle(object, false)
+        if (o.type === 'upright') this.product.addUpright(object, false)
+        if (o.type === 'shelf') this.product.addShelf(object, false)
       })
-  }
-
-  selectObject () {
-    this.hooks.selectedObject('selected')
   }
 
   setHook (hook, callback) {
@@ -151,8 +146,8 @@ export default class Viewer {
       // Se c'è un elemento selezionato inizio il drag (se non è un montante)
       if (this.selectedElement && this.selectedElement.type !== 'upright') {
         setTimeout(() => {
-          if (!isDragging) return
-          this.objectToInsert = this.selectedElement
+          if (!isDragging || !this.selectedElement) return
+          this.objectToPlace = this.selectedElement
           this.controls.enabled = false
           if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
         }, 200)
@@ -160,32 +155,33 @@ export default class Viewer {
     })
     this.domEl.addEventListener('pointerup', (e) => {
       // Se sto spostando un elemento in una zona non idonea
-      if (this.selectedElement && this.objectToInsert && this._positioningBlocked) {
+      if (this.selectedElement && this.objectToPlace && this._positioningBlocked && savedPos) {
         this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos. z)
         this.selectedElement = null
-        this.objectToInsert = null
+        this.objectToPlace = null
         savedPos = null
         return
       }
 
       // Se sto spostando un elemento
-      if (this.selectedElement && this.objectToInsert && !this._positioningBlocked) {
-        this.objectToInsert = null
+      if (this.selectedElement && this.objectToPlace && !this._positioningBlocked) {
+        this.objectToPlace = null
         this.controls.enabled = true
         savedPos = null
         return
       }
 
-      if (isDragging || typeof this.handlePointerUp !== 'function' || (this.objectToInsert && this._positioningBlocked)) return
+      if (isDragging || typeof this.handlePointerUp !== 'function' || (this.objectToPlace && this._positioningBlocked)) return
 
       this.handlePointerUp(e)
     })
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.objectToInsert) { // Se premo esc con l'oggetto da inserire selezionato
+      if (e.key === 'Escape' && this.objectToPlace) { // Se premo esc con l'oggetto da inserire selezionato
         this.handlePointerUp = null
-        this.scene.remove(this.objectToInsert.object)
-        this.objectToInsert = null
+        this.scene.remove(this.objectToPlace.object)
+        this.objectToPlace = null
+        this.doHook('removeSelectedElement')
         this.product.removeWireframes()
       }
     })
@@ -209,7 +205,7 @@ export default class Viewer {
     raycaster.setFromCamera(pointer, this.camera) // Aggiorna il raycaster con le coordinate del mouse per verificare le intersezioni
 
     // Se non c'è nessun elemento da inserire, al pointermove cerco elementi da selezionare per modificarli
-    if (!this.objectToInsert) {
+    if (!this.objectToPlace) {
       const intersects = raycaster.intersectObjects(this._getAllObjects())
       if (!intersects || !intersects.length) {
         this.outlinePass.hover.selectedObjects = []
@@ -225,7 +221,7 @@ export default class Viewer {
       this.handlePointerUp = () => {
         this.outlinePass.hover.selectedObjects = []
         this.outlinePass.select.selectedObjects = [element.object]
-        this.hooks.selectElement(element)
+        this.doHook('selectElement', element)
         document.body.style.cursor = 'auto'
       }
       return
@@ -235,8 +231,8 @@ export default class Viewer {
     const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
     if (!roomIntersection) return
 
-    const { width, height, depth } = this.objectToInsert.getSize()
-    const object = this.objectToInsert.object
+    const { width, height, depth } = this.objectToPlace.getSize()
+    const object = this.objectToPlace.object
 
     const position = ['x', 'y'] // Calcolo il punto in cui posso posizionare l'elemento sugli assi x e y tenendo conto del padding della stanza
       .map(ace => {
@@ -253,14 +249,14 @@ export default class Viewer {
       })
       .reduce((acc, curr) => ({ ...acc, [curr.ace]: curr.point }), {})
 
-    this.objectToInsert.setPosition({
+    this.objectToPlace.setPosition({
       x: position.x,
       y: position.y,
       z: this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : isNaN(depth) ? 0.1 : depth / 2 // Se il prodotto è in mezzo alla stanza uso un valore predefinito, sennò lo calcolo per stare attaccato alla parete
     }) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
 
     // Controllo che la posizione corrente dell'elemento sia disponibile
-    const collidables = this._getAllObjects(this.objectToInsert.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
+    const collidables = this._getAllObjects(this.objectToPlace.config.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
 
     const collision = detectCollision(object, collidables)
 
@@ -293,9 +289,9 @@ export default class Viewer {
 
   async addElement (config, callback) {
     // resetto eventuali imppostazioni di un precedente inserimento
-    if (this.objectToInsert) {
-      this.scene.remove(this.objectToInsert.object)
-      this.objectToInsert = null
+    if (this.objectToPlace) {
+      this.scene.remove(this.objectToPlace.object)
+      this.objectToPlace = null
       this.product.removeWireframes()
       this.handlePointerUp = null
     }
@@ -308,34 +304,33 @@ export default class Viewer {
 
     if (config.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
 
-    this.objectToInsert = element
-    this.objectToInsert.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -50) // Posizione inziiale
+    this.objectToPlace = element
+    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -50) // Posizione inziiale
 
-    this.hooks.selectElement(this.objectToInsert)
+    this.doHook('selectElement', this.objectToPlace)
 
-    this.scene.add(this.objectToInsert.object)
+    this.scene.add(this.objectToPlace.object)
     this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
-      if (this._positioningBlocked || this.objectToInsert._cantBePositioned) return
-      if (typeof this.objectToInsert._setIndex === 'function') this.objectToInsert._setIndex()
-      this.scene.remove(this.objectToInsert.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
+      if (this._positioningBlocked || this.objectToPlace._cantBePositioned) return
+      if (typeof this.objectToPlace._setIndex === 'function') this.objectToPlace._setIndex()
+      this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
 
-      if (config.type === 'obstacle') this.room.addObstacle(this.objectToInsert)
-      if (config.type === 'upright') this.product.addUpright(this.objectToInsert)
-      if (config.type === 'shelf') this.product.addShelf(this.objectToInsert)
+      if (config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
+      if (config.type === 'upright') this.product.addUpright(this.objectToPlace)
+      if (config.type === 'shelf') this.product.addShelf(this.objectToPlace)
 
       if (typeof callback === 'function') callback(element)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
-
+      const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
+      this.objectToPlace = null
       this.updateConfig()
-      const newConfig = this.objectToInsert.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
-      this.objectToInsert = null
       this.addElement(newConfig, callback)
     }
   }
 
   updateConfig () {
-    const wallColor = this.room.wallColor
-    const floorType = this.room.floorType
+    const wallColor = this.room.config.wallColor
+    const floorType = this.room.config.floorType
 
     const obstacles = this.obstacles
       .map(obstacle => ({
@@ -374,12 +369,15 @@ export default class Viewer {
     this.config.product.uprights = uprights
     this.config.product.shelves = shelves
 
-
     // Imposto lo storico
     // Se non sono all'inizio dello storico e faccio modifiche, rimuovo tutta lo storico tranne che per la situazione attuale e quella nuova
     if (this._historyPosition !== 0) {
       this._history = [JSON.parse(JSON.stringify(this.config)), this._history[this._historyPosition]]
       this._historyPosition = 0
+      this.doHook('checkUndoRedo', {
+        canUndo: this._history.length && this._historyPosition < this._history.length - 1,
+        canRedo: this._historyPosition > 0
+      })
       return
     }
     // Lo storico mantiene al massimo 50 configurazioni
@@ -387,8 +385,8 @@ export default class Viewer {
     this._history.unshift(JSON.parse(JSON.stringify(this.config)))
 
     // Passo allo store Pinia le info su undo e redo
-    this.hooks.checkUndoRedo({
-      canUndo: this._historyPosition < this._history.length,
+    this.doHook('checkUndoRedo', {
+      canUndo: this._history.length && this._historyPosition < this._history.length - 1,
       canRedo: this._historyPosition > 0
     })
   }
@@ -414,8 +412,8 @@ export default class Viewer {
     this._feed(this._history[this._historyPosition + 1]) // 0 è lo stato corrente, 1 è quello precedente
     this._historyPosition++
     // Passo allo store Pinia le info su undo e redo
-    this.hooks.checkUndoRedo({
-      canUndo: this._historyPosition < this._history.length,
+    this.doHook('checkUndoRedo', {
+      canUndo: this._history.length && this._historyPosition < this._history.length - 1,
       canRedo: this._historyPosition > 0
     })
   }
@@ -427,9 +425,14 @@ export default class Viewer {
     this._feed(this._history[this._historyPosition - 1])
     this._historyPosition--
     // Passo allo store Pinia le info su undo e redo
-    this.hooks.checkUndoRedo({
-      canUndo: this._historyPosition < this._history.length,
+    this.doHook('checkUndoRedo', {
+      canUndo: this._history.length && this._historyPosition < this._history.length - 1,
       canRedo: this._historyPosition > 0
     })
+  }
+
+  doHook (hook, params) {
+    if (typeof this.hooks[hook] !== 'function') return
+    return this.hooks[hook](params)
   }
 }

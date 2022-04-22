@@ -21,7 +21,7 @@ export default class Upright extends Object3D {
 
   async init () {
     await super.init()
-    super.setMaterial(this.config.material || { color: '#4a4a4a' }) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
+    super.setMaterial(this.config.material || { color: '#4a4a4a' }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   setPosition ({ x, y, z }) {
@@ -51,8 +51,8 @@ export default class Upright extends Object3D {
   _checkPosition ({ x }) {
     if (!this.product.uprights.length) return // Se è il primo posso sicuramente posizionarlo
 
-    const wireframes = this.product.group.children.find(c => c.name === 'uprights_wireframe').children
-
+    const wireframes = this.product.group.children.find(c => c.name === 'uprights_wireframe')?.children
+    if (!wireframes) return
     this._cantBePositioned = !wireframes.some((w, i) => {
       // Controllo che sia vicino a un wireframe
       const isIn = x > w.position.x - 12 && x < w.position.x + 12
