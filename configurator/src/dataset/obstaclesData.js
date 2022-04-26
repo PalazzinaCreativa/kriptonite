@@ -3,11 +3,11 @@ export const obstaclesData = [
     name: 'Divano',
     type: 'obstacle',
     id: 'sofa',
-    path: '/assets/objects/obstacles/sofa/sofa2.gltf',
-    image: '/assets/objects/obstacles/sofa/sofa.jpg',
+    path: '/assets/objects/obstacles/sofa/sofa.gltf',
+    // image: '/assets/objects/obstacles/sofa/sofa.jpg',
     dimensions: {
-      width: 280,
-      height: 110,
+      width: 250,
+      height: 90,
       depth: 80
     }
   },
@@ -16,10 +16,10 @@ export const obstaclesData = [
     type: 'obstacle',
     id: 'window',
     path: '/assets/objects/obstacles/window/window.gltf',
-    image: '/assets/objects/obstacles/window/window.jpg',
+    // image: '/assets/objects/obstacles/window/window.jpg',
     dimensions: {
-      width: 50,
-      height: 110,
+      width: 100,
+      height: 140,
       depth: 5
     }
   },
@@ -28,20 +28,46 @@ export const obstaclesData = [
     type: 'obstacle',
     id: 'table',
     path: '/assets/objects/obstacles/table/table.gltf',
+    // image: '/assets/objects/obstacles/table/table.jpg',
     dimensions: {
-      width: 200,
+      width: 180,
       height: 70,
-      depth: 120
+      depth: 100
     }
   },
   {
-    name: 'Porta',
+    name: 'Calorifero',
     type: 'obstacle',
-    id: 'door',
-    path: '/assets/objects/obstacles/door/door.gltf',
+    id: 'heater',
+    path: '/assets/objects/obstacles/heater/heater.gltf',
+    // image: '/assets/objects/obstacles/sofa/sofa.jpg',
     dimensions: {
-      width: 120,
-      height: 220,
+      width: 60,
+      height: 60,
+      depth: 20
+    }
+  },
+  {
+    name: 'Condizionatore',
+    type: 'obstacle',
+    id: 'air-conditioning',
+    path: '/assets/objects/obstacles/air-conditioning/air-conditioning.gltf',
+    // image: '/assets/objects/obstacles/air-conditioning/air-conditioning.jpg',
+    dimensions: {
+      width: 100,
+      height: 50,
+      depth: 50
+    }
+  },
+  {
+    name: 'TV',
+    type: 'obstacle',
+    id: 'tv',
+    path: '/assets/objects/obstacles/tv/tv.gltf',
+    // image: '/assets/objects/obstacles/tv/tv.jpg',
+    dimensions: {
+      width: 60,
+      height: 40,
       depth: 5
     }
   }

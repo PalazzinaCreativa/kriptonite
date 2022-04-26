@@ -3,13 +3,18 @@ import { FLOOR_DEPTH } from '@/dataset/defaultConfiguratorValues';
 
 export const setupOrbitControls = (camera, renderer, dimensions) => {
   const controls = new OrbitControls( camera, renderer.domElement)
-  controls.minDistance = 10
+  // Limite zoom
+  controls.minDistance = 50
   controls.maxDistance = FLOOR_DEPTH
 
-  controls.minPolarAngle = 0
-  controls.maxPolarAngle =  Math.PI * 0.5
+  // Limite di rotazione verticale
+  // controls.minPolarAngle = 0
+  // controls.maxPolarAngle = Math.PI / 2
+
+  // Limite di rotazione orizzontale
+  // controls.minAzimuthAngle = -Math.PI / 2
+  // controls.maxAzimuthAngle = Math.PI / 2
 
   controls.target.set(dimensions.width / 2, dimensions.height / 2, 0)
-  controls.maxPolarAngle = Math.PI / 2
   return controls
 }

@@ -6,7 +6,8 @@ module.exports = {
       yellow: '#FFCC67',
       white: '#FFFFFF',
       black: '#2B3036',
-      gray: '#E0E0E0'
+      gray: '#E0E0E0',
+      current: 'currentColor'
     },
     transitionTimingFunction: {
       'ease-in-out': 'cubic-bezier(0.4, 0.0, 0.2, 1)',

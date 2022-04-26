@@ -16,18 +16,22 @@ export const useConfiguratorStore = defineStore({
     addElement (options, callback) {
       this.viewerGetter().addElement({ ...options }, callback)
     },
-    undo () {
-      this.viewerGetter().undo()
-    },
-    redo () {
-      this.viewerGetter().redo()
-    },
     updateConfig () {
       this.viewerGetter().updateConfig()
     },
     removeSelection () {
       this.viewerGetter().selectedElement = null
       this.viewerGetter().outlinePass.select.selectedObjects = []
-    }
+    },
+    // Actions
+    undo () {
+      this.viewerGetter().undo()
+    },
+    redo () {
+      this.viewerGetter().redo()
+    },
+    togglePan () {
+      this.viewerGetter().togglePan()
+    },
   },
 });

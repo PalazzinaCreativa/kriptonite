@@ -78,6 +78,7 @@ export default class Viewer {
     this.outlinePass = postProcessing.outlinePass
 
     this.controls = setupOrbitControls(this.camera, this.renderer, dimensions)
+    this._isPanning = false // Variabile per controllare il comportamento del click del mouse: pan / rotate
 
     this.domEl.appendChild(this.renderer.domElement)
 
@@ -144,7 +145,7 @@ export default class Viewer {
     this.domEl.addEventListener('pointerdown', (e) => {
       isDragging = false
       // Se c'è un elemento selezionato inizio il drag (se non è un montante)
-      if (this.selectedElement && this.selectedElement.type !== 'upright') {
+      if (this.selectedElement && this.selectedElement.config.type !== 'upright') {
         setTimeout(() => {
           if (!isDragging || !this.selectedElement) return
           this.objectToPlace = this.selectedElement
@@ -155,7 +156,7 @@ export default class Viewer {
     })
     this.domEl.addEventListener('pointerup', (e) => {
       // Se sto spostando un elemento in una zona non idonea
-      if (this.selectedElement && this.objectToPlace && this._positioningBlocked && savedPos) {
+      if (this.objectToPlace && (this._positioningBlocked || this.objectToPlace._cantBePositioned)) {
         this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos. z)
         this.selectedElement = null
         this.objectToPlace = null
@@ -215,6 +216,7 @@ export default class Viewer {
         return
       }
       const element = this._getInstanceFromMesh(intersects[0].object)
+      if (!element) return
       this.outlinePass.hover.selectedObjects = [element.object]
       this.selectedElement = element
       document.body.style.cursor = 'pointer'
@@ -258,7 +260,7 @@ export default class Viewer {
     // Controllo che la posizione corrente dell'elemento sia disponibile
     const collidables = this._getAllObjects(this.objectToPlace.config.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
 
-    const collision = detectCollision(object, collidables)
+    const collision = detectCollision(object, collidables, this.scene)
 
     if (collision) { // Se è presente più di un elemento (oltre alla stanza) non posso posizinoare l'elemento selezionato
       this.outlinePass.error.selectedObjects = [object]
@@ -271,7 +273,8 @@ export default class Viewer {
     // this.createGuides() // TODO
   }
 
-  _getAllObjects (but = []) { // Torna un array con tutti gli oggetti 3d nella stanza tranne quelli presenti nell'array but
+  _getAllObjects (but = []) {
+    // Torna un array con tutti gli oggetti 3d nella stanza tranne quelli presenti nell'array but
     return this.room.obstacles.map(obstacle => obstacle.object)
       .concat(
         !but.includes('uprights')
@@ -434,5 +437,10 @@ export default class Viewer {
   doHook (hook, params) {
     if (typeof this.hooks[hook] !== 'function') return
     return this.hooks[hook](params)
+  }
+
+  togglePan () {
+    this._isPanning = !this._isPanning
+    this.controls.mouseButtons.LEFT = this._isPanning ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE
   }
 }

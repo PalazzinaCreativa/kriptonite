@@ -23,21 +23,22 @@ export const setupRoom = async ({ type, dimensions, color }) => {
   wallMaterial.toneMapped = false
   wallMaterial.envMapIntensity = 0 // Non riflette un eventuale hdri
 
-  const roomGeometry = geometries[type](dimensions) // Crea una geometria diversa in base alla tipologia di stanza
-  const room = new THREE.Mesh(roomGeometry, wallMaterial)
-
-  setup[type](room, dimensions) // Posiziona la mesh creata nella stanza in base alla tipologia
-
-  room.name = 'room'
-  return room
+  return createMesh(type, dimensions, wallMaterial)
 }
 
-// Creazione geometrie per tipo di stanza
-const geometries = {
-  classic: ({ width, height}) => {
-    return new THREE.BoxGeometry(width, height, FLOOR_DEPTH)
-  },
-  attic: ({ width, height, leftHeight, rightHeight}) => {
+const createMesh = (type, {width, height, leftHeight, rightHeight, depth }, material) => {
+  let room, config
+
+  if (type === 'classic') {
+    room = new THREE.Mesh(
+      new THREE.BoxGeometry(width, height, FLOOR_DEPTH),
+      material
+    )
+
+    room.position.set(width / 2, height / 2, FLOOR_DEPTH / 2)
+  }
+
+  if (type === 'attic') {
     // Geometria di partenza
     const main = new THREE.Mesh(
       new THREE.BoxGeometry(width, height, FLOOR_DEPTH)
@@ -67,9 +68,17 @@ const geometries = {
     main.updateMatrix()
     subtractMesh.updateMatrix()
 
-    return CSG.subtract(main, subtractMesh).geometry // Metodo di Three CSG per la sottrazione di Mesh. Doc -> https://github.com/Jiro-Digital/three-csg-ts
-  },
-  niche: ({ width, height, depth }) => { // Per creare questa stanza viene eseguita l'unione di due forme
+    room = new THREE.Mesh(
+      CSG.subtract(main, subtractMesh).geometry,
+      material
+    )
+
+    room.position.set(width / 2, height / 2, FLOOR_DEPTH / 2)
+
+    config = { atticAngle }
+  }
+
+  if (type === 'niche') {
     // Cubo principale. Le dimensioni sono calcolate aggiungendo un padding alle dimensioni della nicchia
     const main = new THREE.Mesh(
       new THREE.BoxGeometry(width + NICHE_PADDING * 2, height + NICHE_PADDING, FLOOR_DEPTH - depth)
@@ -85,19 +94,20 @@ const geometries = {
 
     main.updateMatrix()
     niche.updateMatrix()
-    return CSG.union(main, niche).geometry // Metodo di Three CSG per l'unione di Mesh. Doc -> https://github.com/Jiro-Digital/three-csg-ts
-  }
-}
 
-const setup = {
-  classic: (mesh, { width, height }) => {
-    mesh.position.set(width / 2, height / 2, FLOOR_DEPTH / 2)
-  },
-  attic: (mesh, { width, height }) => {
-    mesh.position.set(width / 2, height / 2, FLOOR_DEPTH / 2)
-  },
-  niche: (mesh, { width, height, depth }) => {
-    // mesh.rotation.y = Math.PI / 2
-    mesh.position.set(((width + NICHE_PADDING * 2) / 2) - NICHE_PADDING, (height + NICHE_PADDING) / 2, FLOOR_DEPTH / 2 + depth / 2) // Calcolo posizionamento per avere la nicchia nel punto 0, 0, 0
-  },
+    room = new THREE.Mesh(
+      CSG.union(main, niche).geometry,
+      material
+    )
+
+    room.position.set(((width + NICHE_PADDING * 2) / 2) - NICHE_PADDING, (height + NICHE_PADDING) / 2, FLOOR_DEPTH / 2 + depth / 2)
+
+  }
+
+  room.name = 'room'
+
+  return {
+    room,
+    config
+  }
 }

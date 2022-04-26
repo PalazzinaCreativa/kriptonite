@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-export const detectCollision = (collider, collidables) => {
+export const detectCollision = (collider, collidables, scene) => {
   const colliderBox = new THREE.Box3().setFromObject(collider)
 
   return collidables

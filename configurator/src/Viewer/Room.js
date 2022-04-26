@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { setupRoom } from './setup/setupRoom'
 import { setupFloor } from './setup/setupFloor'
+import { setupBaseboard } from './setup/setupBaseboard'
 import Obstacle from './Obstacle'
 import { stringToThreeColor } from './utils/stringToThreeColor'
 
@@ -19,18 +20,26 @@ export default class Room {
   async init () {
     this.main = new THREE.Group()
 
-    this.room = await setupRoom({ type: this.config.type, dimensions: this.config.dimensions, color: stringToThreeColor(this.config.wallColor) })
-    this.floor = await setupFloor({ width: this.config.dimensions.width, roomType: this.config.type, type: this.config.floor })
+    const { room, config } = await setupRoom({ type: this.config.type, dimensions: this.config.dimensions, color: stringToThreeColor(this.config.wallColor) })
+    if (config) { // Se la stanza ha impostazioni particolari. Es: Angolo della mansarda
+      Object.entries(config)
+        .forEach(([key, value]) => {
+          this.viewer.config.room[key] = value
+        })
+    }
+    const floor = await setupFloor({ width: this.config.dimensions.width, roomType: this.config.type, type: this.config.floor })
+    const baseboard = await setupBaseboard(this.config.dimensions)
 
-    this.main.add(this.room)
-    this.main.add(this.floor)
+    this.main.add(room)
+    this.main.add(floor)
+    this.main.add(baseboard)
 
     this.viewer.scene.add(this.main)
   }
 
   changeWallColor (color) {
     const normalizeColor = stringToThreeColor(color)
-    this.room.material.color.setHex(normalizeColor)
+    this.main.children.find(c => c.name === 'room').material.color.setHex(normalizeColor)
     this.config.wallColor = normalizeColor
   }
 

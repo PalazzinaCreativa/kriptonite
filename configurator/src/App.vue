@@ -10,10 +10,13 @@ const defaultConfig = {
   step: 4,
     room: {
       composition: "brick",
-      type: "classic",
+      type: "attic",
       dimensions: {
         height: 2.8,
-        width: 6.2
+        width: 6.2,
+        depth: 1,
+        leftHeight: 1.2,
+        rightHeight: 2.8
       },
       obstacles: [
         // {
@@ -46,8 +49,8 @@ const defaultConfig = {
     },
     product: {
       type: "k1",
-      inRoomPosition: "standalone",
-      uprightsPosition: 'ground',
+      inRoomPosition: "wall",
+      uprightsPosition: 'wall',
       shelves: [],
       uprights: [
         // {

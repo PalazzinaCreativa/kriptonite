@@ -17,6 +17,12 @@ const data = {
 
 const materials = ref(data[props.element.config.type][0].materials)
 
+const obstacleDimensions = ref({
+  width: props.element.getSize().width,
+  height: props.element.getSize().height,
+  depth: props.element.getSize().depth
+})
+
 const setMaterial = (material) => {
   props.element.setMaterial(material)
   configurator.updateConfig()
@@ -42,11 +48,31 @@ const destroy = () => {
 <template>
   <div class="absolute w-full z-20 bg-white h-full p-5">
     <div class="mb-16" @click="close">Chiudi</div>
-    Materiali
-    <div class="flex flex-wrap my-4">
-      <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
-        <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
-        <div class="mt-2">{{ material.name }}</div>
+    <div v-if="props.element.config.type === 'obstacle'">
+      Dimensioni
+      <form class="flex flex-wrap my-4" @submit.prevent="props.element.setSize(obstacleDimensions)">
+        <div class="m-4">
+          Larghezza
+          <input type="number" class="border border-gray" v-model="obstacleDimensions.width">cm
+        </div>
+        <div class="m-4">
+          Altezza
+          <input type="number" class="border border-gray" v-model="obstacleDimensions.height">cm
+        </div>
+        <div class="m-4">
+          Profondità
+          <input type="number" class="border border-gray" v-model="obstacleDimensions.depth">cm
+        </div>
+        <button type="submit" class="shadow-lg hover:shadow-xl">Imposta</button>
+      </form>
+    </div>
+    <div v-if="materials">
+      Materiali
+      <div class="flex flex-wrap my-4">
+        <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
+          <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
+          <div class="mt-2">{{ material.name }}</div>
+        </div>
       </div>
     </div>
 

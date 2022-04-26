@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 
@@ -48,25 +48,41 @@ export default class Upright extends Object3D {
     this.realIndex = this.product.uprights.length
   }
 
-  _checkPosition ({ x }) {
-    if (!this.product.uprights.length) return // Se è il primo posso sicuramente posizionarlo
-
+  _checkPosition ({ x, y }) {
+    let cantBePositioned = false
     const wireframes = this.product.group.children.find(c => c.name === 'uprights_wireframe')?.children
-    if (!wireframes) return
-    this._cantBePositioned = !wireframes.some((w, i) => {
-      // Controllo che sia vicino a un wireframe
-      const isIn = x > w.position.x - 12 && x < w.position.x + 12
-      // In caso positivo lo metto nella stessa posizione x ed esco dal ciclo
-      if (isIn) this.object.position.x = w.position.x
-      return isIn
-    })
+    if (wireframes) {
+      cantBePositioned = !wireframes.some((w, i) => {
+        // Controllo che sia vicino a un wireframe
+        const isIn = x > w.position.x - 12 && x < w.position.x + 12
+        // In caso positivo lo metto nella stessa posizione x ed esco dal ciclo
+        if (isIn) this.object.position.x = w.position.x
+        return isIn
+      })
+    }
 
+    if (this.product.viewer.config.room.type === 'attic' && !cantBePositioned) {
+      // Controllo la posizione e altezza del montante rispetto all'altezza della parete. Per farlo uso la formula per calcolare la dimensione di un cateto dati un cateto e un angolo del triangolo rettangolo.
+      const sideWidth = this.product.viewer.config.room.leftHeight > this.product.viewer.config.room.rightHeight // Larghezza del cateto inferiore
+        ? this.product.viewer.config.room.width - x
+        : x
+
+      const unkownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
+      const availableYSpace = unkownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) // Altezza della mansarda al punto x richiesto
+
+      cantBePositioned = (y + this.getSize().height / 2) > (availableYSpace - GUTTER)
+    }
+
+    this._cantBePositioned = cantBePositioned
     this._setState()
   }
 
   _setState() {
     this.object.traverse(child => {
-      if (child.material) child.material.opacity = this._cantBePositioned ? 0.2 : 1
+      if (child.material) {
+        child.material.transparent = true
+        child.material.opacity = this._cantBePositioned ? 0.2 : 1
+      }
     })
   }
 
