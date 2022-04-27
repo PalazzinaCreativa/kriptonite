@@ -19,6 +19,7 @@ import Shelf from './Shelf'
 import { onUpdated } from 'vue'
 import { loadObject } from './utils/loadObject'
 import { placeObject } from './utils/placeObject'
+import { isTouchDevice } from './utils/isTouchDevice'
 export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
@@ -313,6 +314,7 @@ export default class Viewer {
 
   async addElement (config) {
     this._isAddingNewElement = true
+    if (isTouchDevice()) this.controls.enabled = false // Se è un dispositivo touch disabilito i movimenti di camera al touch
     // resetto eventuali imppostazioni di un precedente inserimento
     if (this.objectToPlace) {
       this.scene.remove(this.objectToPlace.object)
