@@ -33,9 +33,7 @@ export const useConfiguratorStore = defineStore({
       this.viewerGetter().updateConfig()
     },
     removeSelection () {
-      this.viewerGetter().selectedElement = null
-      this.viewerGetter().outlinePass.select.selectedObjects = []
-      this.viewerGetter().zoomOnTarget()
+      this.viewerGetter()._unselectAll(true)
     },
     // Actions
     undo () {

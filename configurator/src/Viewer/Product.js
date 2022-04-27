@@ -36,36 +36,4 @@ export default class Product {
     this.uprights = []
     this.shelves = []
   }
-
-  getSize () {
-    const boundingBox = new THREE.Box3().setFromObject(this.object)
-    return {
-      width: boundingBox.max.x - boundingBox.min.x,
-      height: boundingBox.max.y - boundingBox.min.y,
-      depth: boundingBox.max.z - boundingBox.min.z
-    }
-  }
-
-  getPosition () {
-    return this.object.position
-  }
-
-  setPosition ({ x, y, z }) {
-    const normalizeX = !x
-      ? this.getPosition().x
-      : x
-
-    const normalizeY = !y
-      ? this.getPosition().y
-      : this.uprightsPosition === 'ground'
-        ? this.getSize().height / 2
-        : y
-
-    const normalizeZ = !z
-      ? this.getPosition().z
-      : z
-
-    console.table({ normalizeX, normalizeY, normalizeZ})
-    this.object.position.set(normalizeX, normalizeY, normalizeZ)
-  }
 }

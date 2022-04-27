@@ -8,11 +8,7 @@ import { setupOrbitControls } from './setup/setupOrbitControls'
 import { setupPostprocessing } from './setup/setupPostprocessing'
 
 // Utils
-import { detectCollision } from './utils/detectCollision'
 import { gsap } from 'gsap'
-
-// Data
-import { GUTTER, STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
 
 // Classes
 import Room from './Room'
@@ -22,6 +18,7 @@ import Upright from './Upright'
 import Shelf from './Shelf'
 import { onUpdated } from 'vue'
 import { loadObject } from './utils/loadObject'
+import { placeObject } from './utils/placeObject'
 export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
@@ -148,59 +145,122 @@ export default class Viewer {
 
   _addListeners () {
     let isDragging = false
+    let hoveredElement, checkpointPosition
+
     const raycaster = new THREE.Raycaster() // Classe Three.js per tracciare il movimento del mouse nella scena
-    let savedPos
+    const pointer = new THREE.Vector2()
 
     this.domEl.addEventListener('pointermove', (e) => {
       isDragging = true
-      this._handlePointerMove(e, raycaster)
+
+      pointer.set( // Aggiorno il pointer con le coordinate della posizione attuale del mouse
+        (e.clientX / this.renderer.domElement.offsetWidth) * 2 - 1,
+        -(e.clientY / this.renderer.domElement.offsetHeight) * 2 + 1
+      )
+      raycaster.setFromCamera(pointer, this.camera) // Aggiorna il raycaster con le coordinate del mouse per verificare le intersezioni
+
+      // Se c'è un oggetto da posizionare
+      if (this.objectToPlace) {
+        const intersects = raycaster.intersectObjects([this.room.main]) // Controllo i punti di intersezione con la stanza
+        const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
+        if (!roomIntersection) return
+
+        const objectPlaced = placeObject({
+          point: roomIntersection.point,
+          element: this.objectToPlace,
+          collidables: this._getAllObjects(this.objectToPlace?.config?.type === 'shelf' ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
+          room: this.config.room
+        }) // Torna false se trova collisioni con altri oggetti
+
+        if (objectPlaced) {
+          this.outlinePass.error.selectedObjects = [this.objectToPlace.object]
+          this._positioningBlocked = true // Variabile che controlla se posso posizionare o meno gli elementi
+          return
+        }
+        this._positioningBlocked = false // Variabile che controlla se posso posizionare o meno gli elementi
+        this.outlinePass.error.selectedObjects = []
+        return
+      }
+
+      if (this._isAddingNewElement) return
+      // Se non ho alcun oggetto da posizionare
+      const intersects = raycaster.intersectObjects(this._getAllObjects()) // Controllo i punti di intersezione con la stanza
+
+      // Se non sono in hover su nessun elemento
+      if (!intersects.length) {
+        this.outlinePass.hover.selectedObjects = []
+        document.body.style.cursor = 'auto'
+        hoveredElement = null
+        return
+      }
+      // Hover sull'oggetto
+      hoveredElement = this._getInstanceFromMesh(intersects[0].object)
+      if (!hoveredElement) return
+      this.outlinePass.hover.selectedObjects = [hoveredElement.object]
+      document.body.style.cursor = 'pointer'
     })
+
     this.domEl.addEventListener('pointerdown', (e) => {
       isDragging = true
-      // Se c'è un elemento selezionato inizio il drag (se non è un montante)
-      if (this.selectedElement && !(this.selectedElement?.config?.type === 'upright')) {
+      // Se c'è un elemento selezionato e sono in hover su di lui inizio il drag (se non è un montante)
+      if (hoveredElement && hoveredElement.config.type !== 'upright') {
         setTimeout(() => {
           if (!isDragging) return
-          this.objectToPlace = this.selectedElement
+          this.objectToPlace = hoveredElement
+          if (!checkpointPosition) checkpointPosition = { x: this.objectToPlace.getPosition().x, y: this.objectToPlace.getPosition().y, z: this.objectToPlace.getPosition().z } // Backup della posizione dell'elemento. Se lo posiziono in una posizione non idonea, torna in questo punto
           this.controls.enabled = false
-          if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
-        }, 100)
+        }, 50)
+        return
       }
     })
-    this.domEl.addEventListener('pointerup', (e) => {
+    this.domEl.addEventListener('pointerup', (e) => { // Click
       isDragging = false
-      // Se sto spostando un elemento in una zona non idonea
-      if (this.selectedElement && this.objectToPlace && (this._positioningBlocked || this.objectToPlace._cantBePositioned)) {
-        this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos.z)
-        this.selectedElement = null
+      this.controls.enabled = true
+
+      // Se sto posizionando un elemento
+      if (this.objectToPlace) {
+        // Se l'oggetto è in una posizione non idonea
+        if (this._positioningBlocked || this.objectToPlace._cantBePositioned) {
+          if (checkpointPosition) this.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z)
+          this.objectToPlace = null
+          this.selectedElement = null
+          checkpointPosition = null
+          return
+        }
+        if (typeof this.objectToPlace._setIndex === 'function') this.objectToPlace._setIndex()
+        this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà reinserito nella riga seguente
+
+        if (this.objectToPlace.config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
+        if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
+        if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
+
+        const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
+
         this.objectToPlace = null
-        savedPos = null
+        checkpointPosition = null
+        this.updateConfig()
+        if (newConfig.type !== 'obstacle' && this._isAddingNewElement) this.addElement(newConfig)
+        return
+      }
+      // Se non sono in hover su nessun elemento, elimino eventuali selezioni
+      if (!hoveredElement) {
+        this.selectedElement = null
+        this.outlinePass.select.selectedObjects = []
+        this.doHook('removeSelectedElement')
         return
       }
 
-      // Se sto spostando un elemento
-      if (this.selectedElement && this.objectToPlace && !this._positioningBlocked) {
-        this.objectToPlace = null
-        this.controls.enabled = true
-        savedPos = null
-        return
-      }
-
-      if (this.selectedElement && !this.outlinePass.hover.selectedObjects.length && !isDragging) {
-        this.selectedElement = null
-      }
-      if (isDragging || typeof this.handlePointerUp !== 'function' || (this.objectToPlace && this._positioningBlocked)) return
-
-      this.handlePointerUp(e)
+      // Se ho un elemento in hover seleziono quell'elemento
+      this._selectElement(hoveredElement)
     })
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.objectToPlace) { // Se premo esc con l'oggetto da inserire selezionato
-        this.handlePointerUp = null
         this.scene.remove(this.objectToPlace.object)
         this.objectToPlace = null
         this.doHook('removeSelectedElement')
         this.product.removeWireframes()
+        this._isAddingNewElement = false
       }
     })
 
@@ -212,86 +272,23 @@ export default class Viewer {
     })
   }
 
-  _handlePointerMove (e, raycaster) {
-    const pointer = new THREE.Vector2()
+  _selectElement (element) {
+    this.outlinePass.hover.selectedObjects = []
+    this.outlinePass.select.selectedObjects = [element.object]
+    this.selectedElement = element
+    this.zoomOnTarget({ ...element.getPosition(), z: 150 })
+    this.doHook('selectElement', element)
+    document.body.style.cursor = 'auto'
+  }
 
-    pointer.set( // Aggiorno il pointer con le coordinate della posizione attuale del mouse
-      (e.clientX / this.renderer.domElement.offsetWidth) * 2 - 1,
-      -(e.clientY / this.renderer.domElement.offsetHeight) * 2 + 1
-    )
-
-    raycaster.setFromCamera(pointer, this.camera) // Aggiorna il raycaster con le coordinate del mouse per verificare le intersezioni
-
-    // Se non c'è nessun elemento da inserire, al pointermove cerco elementi da selezionare per modificarli
-    if (!this.objectToPlace) {
-      const intersects = raycaster.intersectObjects(this._getAllObjects())
-      // Se non trovo nessun elemento esco dalla funzione
-      if (!intersects.length) {
-        this.outlinePass.hover.selectedObjects = []
-        this.handlePointerUp = null
-        document.body.style.cursor = 'auto'
-        return
-      }
-
-      const element = this._getInstanceFromMesh(intersects[0].object)
-      if (element.product && this._isProductSelected) return // Se l'hover è su un elemento del prodotto (montante o scaffale) e il prodotto intero è selezionato esco dalla funzione
-      if (!element) return
-      this.outlinePass.hover.selectedObjects = [element.object]
-      this.selectedElement = element
-      document.body.style.cursor = 'pointer'
-      this.handlePointerUp = () => {
-        this.outlinePass.hover.selectedObjects = []
-        this.outlinePass.select.selectedObjects = [element.object]
-        this.selectedElement = element
-        this.zoomOnTarget({ ...element.getPosition(), z: 150 })
-        this.doHook('selectElement', element)
-        document.body.style.cursor = 'auto'
-      }
-      return
-    }
-
-    const intersects = raycaster.intersectObjects([this.room.main]) // Controllo i punti di intersezione con la stanza
-    const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
-    if (!roomIntersection) return
-
-    const { width, height, depth } = this.objectToPlace.getSize()
-    const { object } = this.objectToPlace
-
-    const position = ['x', 'y'] // Calcolo il punto in cui posso posizionare l'elemento sugli assi x e y tenendo conto del padding della stanza
-      .map(ace => {
-        const objectSize = ace === 'x' ? width : height
-        const roomSize = ace === 'x' ? this.config.room.dimensions.width : this.config.room.dimensions.height
-        return {
-          point: roomIntersection.point[ace] - objectSize / 2 < GUTTER
-            ? GUTTER + objectSize / 2
-            : roomIntersection.point[ace] + objectSize / 2 > roomSize - GUTTER
-              ? roomSize - GUTTER - objectSize / 2
-              : roomIntersection.point[ace],
-          ace
-        }
-      })
-      .reduce((acc, curr) => ({ ...acc, [curr.ace]: curr.point }), {})
-
-    this.objectToPlace.setPosition({
-      x: this.objectToPlace.id !== 'product' ? position.x : 100,
-      y: this.objectToPlace.id !== 'product' ? position.y : 100,
-      z: this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : isNaN(depth) ? 0.1 : depth / 2 // Se il prodotto è in mezzo alla stanza uso un valore predefinito, sennò lo calcolo per stare attaccato alla parete
-    }) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
-
-    // Controllo che la posizione corrente dell'elemento sia disponibile
-    const collidables = this._getAllObjects(this.objectToPlace.id === 'product' ? ['shelves', 'uprights'] : this.objectToPlace?.config?.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
-
-    const collision = detectCollision(object, collidables, this.scene)
-
-    if (collision) { // Se è presente più di un elemento (oltre alla stanza) non posso posizinoare l'elemento selezionato
-      this.outlinePass.error.selectedObjects = [object]
-      this._positioningBlocked = true // Variabile che controlla se posso posizionare o meno gli elementi
-      return
-    }
-    this._positioningBlocked = false // Variabile che controlla se posso posizionare o meno gli elementi
-    this.outlinePass.error.selectedObjects = []
-
-    // this.createGuides() // TODO
+  _unselectAll (repositionCamera) {
+    this.outlinePass.select.selectedObjects = []
+    this.selectedElement = null
+    this._isAddingNewElement = false
+    this.scene.remove(this.objectToPlace.object)
+    this.objectToPlace = null
+    this.product.removeWireframes()
+    if (repositionCamera) this.zoomOnTarget()
   }
 
   _getAllObjects (but = []) {
@@ -311,13 +308,13 @@ export default class Viewer {
       .filter(o => !!o)
   }
 
-  async addElement (config, callback) {
+  async addElement (config) {
+    this._isAddingNewElement = true
     // resetto eventuali imppostazioni di un precedente inserimento
     if (this.objectToPlace) {
       this.scene.remove(this.objectToPlace.object)
       this.objectToPlace = null
       this.product.removeWireframes()
-      this.handlePointerUp = null
     }
     // Inizializzo un nuovo elemento
     let element
@@ -334,23 +331,6 @@ export default class Viewer {
     this.doHook('selectElement', this.objectToPlace)
 
     this.scene.add(this.objectToPlace.object)
-    this.handlePointerUp = () => { // Funzione da eseguire al click se sto inserendo l'ostacolo
-      if (this._positioningBlocked || this.objectToPlace._cantBePositioned) return
-      if (typeof this.objectToPlace._setIndex === 'function') this.objectToPlace._setIndex()
-      this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà inserito nella riga seguente
-
-      if (config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
-      if (config.type === 'upright') this.product.addUpright(this.objectToPlace)
-      if (config.type === 'shelf') this.product.addShelf(this.objectToPlace)
-
-      if (typeof callback === 'function') callback(element)
-      this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
-      const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
-
-      this.objectToPlace = null
-      this.updateConfig()
-      this.addElement(newConfig, callback)
-    }
   }
 
   updateConfig () {
