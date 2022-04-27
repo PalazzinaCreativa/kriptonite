@@ -9,6 +9,19 @@ export const useConfiguratorStore = defineStore({
     canRedo: false,
     viewerGetter: () => null
   }),
+  getters: {
+    productList: (state) => {
+      if (!state.viewerGetter()) return []
+      const { uprights, shelves } = state.viewerGetter().config.product
+      return [...uprights, ...shelves]
+        .map(_ => ({
+          name: _.id,
+          scale: _.scale,
+          id: _.id
+        }))
+        .reduce((acc, curr) => ({ ...acc, [curr.id]: { ...curr, quantity: acc && acc[curr.id] ? acc[curr.id].quantity + 1 : 1 }}), {})
+    }
+  },
   actions: {
     setWallColor (wallColor) {
       this.viewerGetter().room.changeWallColor(wallColor)
@@ -22,6 +35,7 @@ export const useConfiguratorStore = defineStore({
     removeSelection () {
       this.viewerGetter().selectedElement = null
       this.viewerGetter().outlinePass.select.selectedObjects = []
+      this.viewerGetter().zoomOnTarget()
     },
     // Actions
     undo () {
@@ -33,5 +47,14 @@ export const useConfiguratorStore = defineStore({
     togglePan () {
       this.viewerGetter().togglePan()
     },
+    toggleHuman () {
+      this.viewerGetter().toggleHuman()
+    },
+    toggleProductSelection () {
+      this.viewerGetter().toggleProductSelection()
+    },
+    centerCam () {
+      this.viewerGetter().zoomOnTarget()
+    }
   },
 });

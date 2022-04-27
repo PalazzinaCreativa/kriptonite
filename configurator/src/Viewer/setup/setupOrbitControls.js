@@ -8,12 +8,12 @@ export const setupOrbitControls = (camera, renderer, dimensions) => {
   controls.maxDistance = FLOOR_DEPTH
 
   // Limite di rotazione verticale
-  // controls.minPolarAngle = 0
-  // controls.maxPolarAngle = Math.PI / 2
+  controls.minPolarAngle = 0
+  controls.maxPolarAngle = Math.PI / 2
 
   // Limite di rotazione orizzontale
-  // controls.minAzimuthAngle = -Math.PI / 2
-  // controls.maxAzimuthAngle = Math.PI / 2
+  controls.minAzimuthAngle = -Math.PI / 2
+  controls.maxAzimuthAngle = Math.PI / 2
 
   controls.target.set(dimensions.width / 2, dimensions.height / 2, 0)
   return controls

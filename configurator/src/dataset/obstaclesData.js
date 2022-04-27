@@ -18,8 +18,20 @@ export const obstaclesData = [
     path: '/assets/objects/obstacles/window/window.gltf',
     // image: '/assets/objects/obstacles/window/window.jpg',
     dimensions: {
-      width: 100,
+      width: 60,
       height: 140,
+      depth: 5
+    }
+  },
+  {
+    name: 'Porta',
+    type: 'obstacle',
+    id: 'door',
+    path: '/assets/objects/obstacles/door/door.gltf',
+    // image: '/assets/objects/obstacles/window/window.jpg',
+    dimensions: {
+      width: 100,
+      height: 210,
       depth: 5
     }
   },

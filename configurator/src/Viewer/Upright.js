@@ -50,7 +50,7 @@ export default class Upright extends Object3D {
 
   _checkPosition ({ x, y }) {
     let cantBePositioned = false
-    const wireframes = this.product.group.children.find(c => c.name === 'uprights_wireframe')?.children
+    const wireframes = this.product.object.children.find(c => c.name === 'uprights_wireframe')?.children
     if (wireframes) {
       cantBePositioned = !wireframes.some((w, i) => {
         // Controllo che sia vicino a un wireframe
@@ -94,7 +94,7 @@ export default class Upright extends Object3D {
 
     const wireframes = new THREE.Group()
     wireframes.name = 'uprights_wireframe'
-    this.product.group.add(wireframes)
+    this.product.object.add(wireframes)
     // Creo guide per ogni possibile distanza
     // TODO: Numero di guide in base al tipo di montante
     const xPositions = [0, 40, 60, 75.5, 90]

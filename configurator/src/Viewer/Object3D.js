@@ -1,11 +1,7 @@
 import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
 import { stringToThreeColor } from './utils/stringToThreeColor'
-
-const fixedY = { // Mostra gli elementi che hanno una posizione y fissa (es: Divano sta sempre a terra)
-  sofa: 0
-}
-
+import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
     this.config = config
@@ -18,6 +14,7 @@ export default class Object3D {
     if (!this.config.dimensions) return
     this.setSize(this.config.dimensions, false)
     this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}`
+    this.setPosition(this.getPosition())
   }
 
   getSize () {
@@ -47,8 +44,8 @@ export default class Object3D {
 
     const normalizeY = !y
       ? this.getPosition().y
-      : typeof fixedY[this.config.type] !== 'undefined'
-        ? fixedY[this.config.type] + this.getSize().height / 2
+      : RESTING_ON_THE_GROUND.includes(this.id)
+        ? this.getSize().height / 2
         : y
 
     const normalizeZ = !z
@@ -68,6 +65,7 @@ export default class Object3D {
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
+    if (RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
   }
 
   setMaterial ({ color, roughness, id }) {

@@ -6,8 +6,10 @@ import { setupRenderer } from './setup/setupRenderer'
 import { setupLights } from './setup/setupLights'
 import { setupOrbitControls } from './setup/setupOrbitControls'
 import { setupPostprocessing } from './setup/setupPostprocessing'
+
 // Utils
 import { detectCollision } from './utils/detectCollision'
+import { gsap } from 'gsap'
 
 // Data
 import { GUTTER, STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
@@ -18,6 +20,8 @@ import Obstacle from './Obstacle'
 import Product from './Product'
 import Upright from './Upright'
 import Shelf from './Shelf'
+import { onUpdated } from 'vue'
+import { loadObject } from './utils/loadObject'
 export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
@@ -87,6 +91,15 @@ export default class Viewer {
     this._animate()
     this._addListeners()
 
+    this.human = await loadObject('/assets/objects/human/human.gltf')
+    this.scene.add(this.human)
+
+    this.human.position.set(50, 0, 60)
+    this.human.visible = false
+    this.human.traverse(child => {
+      if (child.material?.name === 'text_material') child.material.color = new THREE.Color(0x9b9b9b)
+    })
+
     await this._feed()
     this.updateConfig()
     if (typeof callback === 'function') callback(this)
@@ -143,21 +156,22 @@ export default class Viewer {
       this._handlePointerMove(e, raycaster)
     })
     this.domEl.addEventListener('pointerdown', (e) => {
-      isDragging = false
+      isDragging = true
       // Se c'è un elemento selezionato inizio il drag (se non è un montante)
-      if (this.selectedElement && this.selectedElement.config.type !== 'upright') {
+      if (this.selectedElement && !(this.selectedElement?.config?.type === 'upright')) {
         setTimeout(() => {
-          if (!isDragging || !this.selectedElement) return
+          if (!isDragging) return
           this.objectToPlace = this.selectedElement
           this.controls.enabled = false
           if (!savedPos) savedPos = { x: this.selectedElement.getPosition().x, y: this.selectedElement.getPosition().y, z: this.selectedElement.getPosition().z }
-        }, 200)
+        }, 100)
       }
     })
     this.domEl.addEventListener('pointerup', (e) => {
+      isDragging = false
       // Se sto spostando un elemento in una zona non idonea
-      if (this.objectToPlace && (this._positioningBlocked || this.objectToPlace._cantBePositioned)) {
-        this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos. z)
+      if (this.selectedElement && this.objectToPlace && (this._positioningBlocked || this.objectToPlace._cantBePositioned)) {
+        this.selectedElement.object.position.set(savedPos.x, savedPos.y, savedPos.z)
         this.selectedElement = null
         this.objectToPlace = null
         savedPos = null
@@ -172,6 +186,9 @@ export default class Viewer {
         return
       }
 
+      if (this.selectedElement && !this.outlinePass.hover.selectedObjects.length && !isDragging) {
+        this.selectedElement = null
+      }
       if (isDragging || typeof this.handlePointerUp !== 'function' || (this.objectToPlace && this._positioningBlocked)) return
 
       this.handlePointerUp(e)
@@ -208,14 +225,16 @@ export default class Viewer {
     // Se non c'è nessun elemento da inserire, al pointermove cerco elementi da selezionare per modificarli
     if (!this.objectToPlace) {
       const intersects = raycaster.intersectObjects(this._getAllObjects())
-      if (!intersects || !intersects.length) {
+      // Se non trovo nessun elemento esco dalla funzione
+      if (!intersects.length) {
         this.outlinePass.hover.selectedObjects = []
         this.handlePointerUp = null
-        this.selectedElement = null
         document.body.style.cursor = 'auto'
         return
       }
+
       const element = this._getInstanceFromMesh(intersects[0].object)
+      if (element.product && this._isProductSelected) return // Se l'hover è su un elemento del prodotto (montante o scaffale) e il prodotto intero è selezionato esco dalla funzione
       if (!element) return
       this.outlinePass.hover.selectedObjects = [element.object]
       this.selectedElement = element
@@ -223,6 +242,8 @@ export default class Viewer {
       this.handlePointerUp = () => {
         this.outlinePass.hover.selectedObjects = []
         this.outlinePass.select.selectedObjects = [element.object]
+        this.selectedElement = element
+        this.zoomOnTarget({ ...element.getPosition(), z: 150 })
         this.doHook('selectElement', element)
         document.body.style.cursor = 'auto'
       }
@@ -234,7 +255,7 @@ export default class Viewer {
     if (!roomIntersection) return
 
     const { width, height, depth } = this.objectToPlace.getSize()
-    const object = this.objectToPlace.object
+    const { object } = this.objectToPlace
 
     const position = ['x', 'y'] // Calcolo il punto in cui posso posizionare l'elemento sugli assi x e y tenendo conto del padding della stanza
       .map(ace => {
@@ -252,13 +273,13 @@ export default class Viewer {
       .reduce((acc, curr) => ({ ...acc, [curr.ace]: curr.point }), {})
 
     this.objectToPlace.setPosition({
-      x: position.x,
-      y: position.y,
+      x: this.objectToPlace.id !== 'product' ? position.x : 100,
+      y: this.objectToPlace.id !== 'product' ? position.y : 100,
       z: this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : isNaN(depth) ? 0.1 : depth / 2 // Se il prodotto è in mezzo alla stanza uso un valore predefinito, sennò lo calcolo per stare attaccato alla parete
     }) // Assegno al mio oggetto selezionato la posizione del mouse corrente per poterlo muovere all'interno dello spazio
 
     // Controllo che la posizione corrente dell'elemento sia disponibile
-    const collidables = this._getAllObjects(this.objectToPlace.config.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
+    const collidables = this._getAllObjects(this.objectToPlace.id === 'product' ? ['shelves', 'uprights'] : this.objectToPlace?.config?.type === 'shelf' ? ['uprights'] : []).filter(c => c !== object)
 
     const collision = detectCollision(object, collidables, this.scene)
 
@@ -325,6 +346,7 @@ export default class Viewer {
       if (typeof callback === 'function') callback(element)
       this.handlePointerUp = undefined // Resetto la funzione da eseguire al click
       const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
+
       this.objectToPlace = null
       this.updateConfig()
       this.addElement(newConfig, callback)
@@ -442,5 +464,37 @@ export default class Viewer {
   togglePan () {
     this._isPanning = !this._isPanning
     this.controls.mouseButtons.LEFT = this._isPanning ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE
+  }
+
+  toggleProductSelection () {
+    this.selectedElement = !this._isProductSelected
+      ? this.product
+      : null
+
+    this.outlinePass.select.selectedObjects = !this._isProductSelected
+      ? [this.product.object]
+      : []
+
+    this._isProductSelected = !this._isProductSelected
+  }
+
+  zoomOnTarget (newPosition = { x: this.config.room.dimensions.width / 2, y: this.config.room.dimensions.height / 2, z: 800 }, duration = 1.2) {
+    gsap.to(
+      this.camera.position,
+      {
+        ...newPosition,
+        ease: 'power4.out',
+        duration,
+        onUpdate: () => {
+          this.controls.target.x = newPosition.x
+          this.controls.target.y = newPosition.y
+          this.controls.update()
+        }
+      }
+    )
+  }
+
+  toggleHuman () {
+    this.human.visible = !this.human.visible
   }
 }

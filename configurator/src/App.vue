@@ -10,7 +10,7 @@ const defaultConfig = {
   step: 4,
     room: {
       composition: "brick",
-      type: "attic",
+      type: "classic",
       dimensions: {
         height: 2.8,
         width: 6.2,
