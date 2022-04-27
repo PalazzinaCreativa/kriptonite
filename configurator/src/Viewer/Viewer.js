@@ -221,7 +221,8 @@ export default class Viewer {
       if (this.objectToPlace) {
         // Se l'oggetto è in una posizione non idonea
         if (this._positioningBlocked || this.objectToPlace._cantBePositioned) {
-          if (checkpointPosition) this.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z)
+          if (this._isAddingNewElement) return // Se sto aggiungendo un nuovo elemento non faccio nulla
+          if (checkpointPosition) this.objectToPlace.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z) // Se ho una posizione di backup torno in quel punto
           this.objectToPlace = null
           this.selectedElement = null
           checkpointPosition = null
@@ -285,9 +286,11 @@ export default class Viewer {
     this.outlinePass.select.selectedObjects = []
     this.selectedElement = null
     this._isAddingNewElement = false
-    this.scene.remove(this.objectToPlace.object)
-    this.objectToPlace = null
     this.product.removeWireframes()
+    if (this.objectToPlace) {
+      this.scene.remove(this.objectToPlace.object)
+      this.objectToPlace = null
+    }
     if (repositionCamera) this.zoomOnTarget()
   }
 
@@ -459,15 +462,16 @@ export default class Viewer {
   }
 
   zoomOnTarget (newPosition = { x: this.config.room.dimensions.width / 2, y: this.config.room.dimensions.height / 2, z: 800 }, duration = 1.2) {
+    const controlsZ = this.controls.target.z
+
     gsap.to(
-      this.camera.position,
+      [this.camera.position, this.controls.target],
       {
         ...newPosition,
         ease: 'power4.out',
         duration,
         onUpdate: () => {
-          this.controls.target.x = newPosition.x
-          this.controls.target.y = newPosition.y
+          this.controls.target.z = controlsZ
           this.controls.update()
         }
       }

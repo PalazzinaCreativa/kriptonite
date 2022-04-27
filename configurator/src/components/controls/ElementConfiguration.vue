@@ -29,7 +29,7 @@ const setMaterial = (material) => {
 }
 
 const addToAll = () => {
-  const material = materials.value.find(m => m.id === props.element.material)
+  const material = materials.value.find(m => m.id === props.element.config.material.id)
   props.element.setSiblingsMaterial(material)
   configurator.updateConfig()
 }
