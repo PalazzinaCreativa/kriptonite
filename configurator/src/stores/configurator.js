@@ -48,6 +48,9 @@ export const useConfiguratorStore = defineStore({
     toggleHuman () {
       this.viewerGetter().toggleHuman()
     },
+    toggleMeasures () {
+      this.viewerGetter().product.toggleMeasures()
+    },
     toggleProductSelection () {
       this.viewerGetter().toggleProductSelection()
     },

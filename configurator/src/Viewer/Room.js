@@ -19,6 +19,7 @@ export default class Room {
 
   async init () {
     this.main = new THREE.Group()
+    this.main.name = 'Room'
 
     const { room, config } = await setupRoom({ type: this.config.type, dimensions: this.config.dimensions, color: stringToThreeColor(this.config.wallColor) })
     if (config) { // Se la stanza ha impostazioni particolari. Es: Angolo della mansarda

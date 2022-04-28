@@ -11,10 +11,11 @@ export default class Object3D {
 
   async init () {
     this.object = await loadObject(this.config.path)
+    this.object.name = this.config.id || this.config.type
     if (!this.config.dimensions) return
     this.setSize(this.config.dimensions, false)
-    this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}`
     this.setPosition(this.getPosition())
+    this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}` // TODO
   }
 
   getSize () {

@@ -5,7 +5,7 @@ import { stringToThreeColor } from "./utils/stringToThreeColor"
 
 const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da popolare in base al montante
 
-const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // Da popolare con le distanze dei montanti per tipo di prodotto
+const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // TODO: Da popolare con le distanze dei montanti per tipo di prodotto
 
 export default class Upright extends Object3D {
   constructor (config, product) {
@@ -96,9 +96,8 @@ export default class Upright extends Object3D {
     wireframes.name = 'uprights_wireframe'
     this.product.object.add(wireframes)
     // Creo guide per ogni possibile distanza
-    // TODO: Numero di guide in base al tipo di montante
-    const xPositions = [0, 40, 60, 75.5, 90]
-    xPositions
+
+    currentProductUprightsDistance
       .forEach(x => {
         // Controllo che il wireframe ci stia all'interno della stanza
         if (latestUpright.object.position.x + x > roomWidth) return
@@ -111,7 +110,7 @@ export default class Upright extends Object3D {
 
         wireframe.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
         wireframe.position.y = roomHeight / 2
-        wireframe.position.x = latestUpright.object.position.x + x - 1
+        wireframe.position.x = latestUpright.object.position.x + x
 
         wireframes.add(wireframe)
       })

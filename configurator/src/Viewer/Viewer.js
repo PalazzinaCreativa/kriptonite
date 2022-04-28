@@ -16,7 +16,6 @@ import Obstacle from './Obstacle'
 import Product from './Product'
 import Upright from './Upright'
 import Shelf from './Shelf'
-import { onUpdated } from 'vue'
 import { loadObject } from './utils/loadObject'
 import { placeObject } from './utils/placeObject'
 import { isTouchDevice } from './utils/isTouchDevice'
@@ -101,6 +100,12 @@ export default class Viewer {
     await this._feed()
     this.updateConfig()
     if (typeof callback === 'function') callback(this)
+
+    // Three devtools https://github.com/threejs/three-devtools
+    if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
+      __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent('observe', { detail: this.scene }));
+      __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent('observe', { detail: this.renderer }));
+    }
   }
   // Loop per renderizzare la scena 3d nel canvas
   _animate = () => {
@@ -119,25 +124,25 @@ export default class Viewer {
     if (config.product && config.product.uprights) objects.push(config.product.uprights.map(u => Object.assign(u, { type: 'upright' }, {})))
     if (config.product && config.product.shelves) objects.push(config.product.shelves.map(s => Object.assign(s, { type: 'shelf' }, {})))
 
-    objects
-      .flat()
-      .forEach(async o => {
-        const data = this.doHook('getData', o)
-        let object
-        if (o.type === 'obstacle') object = new Obstacle(data, this.room)
-        if (o.type === 'upright') object = new Upright({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
-        if (o.type === 'shelf') object = new Shelf({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
+    for (const o of objects.flat()) { // For per mantenere il ciclo asincrono
+      const data = this.doHook('getData', o)
+      let object
+      if (o.type === 'obstacle') object = new Obstacle(data, this.room)
+      if (o.type === 'upright') object = new Upright({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
+      if (o.type === 'shelf') object = new Shelf({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
 
-        await object.init()
-        object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
-        object.object.position.set(o.position.x, o.position.y, o.position.z)
+      await object.init()
+      object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
+      object.object.position.set(o.position.x, o.position.y, o.position.z)
 
-        if (o.material) object.setMaterial(o.material)
+      if (typeof object._setIndex === 'function') object._setIndex()
 
-        if (o.type === 'obstacle') this.room.addObstacle(object, false)
-        if (o.type === 'upright') this.product.addUpright(object, false)
-        if (o.type === 'shelf') this.product.addShelf(object, false)
-      })
+      if (o.material) object.setMaterial(o.material)
+
+      if (o.type === 'obstacle') this.room.addObstacle(object, false)
+      if (o.type === 'upright') this.product.addUpright(object, false)
+      if (o.type === 'shelf') this.product.addShelf(object, false)
+    }
   }
 
   setHook (hook, callback) {

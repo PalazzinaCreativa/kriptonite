@@ -1,14 +1,14 @@
 <script setup>
 import { useConfiguratorStore } from "@/stores/configurator"
 import { storeToRefs } from 'pinia'
-import Undo from "@/components/icons/Undo.vue"
-import Redo from "@/components/icons/Redo.vue"
-import CenterCam from "@/components/icons/CenterCam.vue"
-import Pan from "@/components/icons/Pan.vue"
-import Measure from "@/components/icons/Measure.vue"
-import Human from "@/components/icons/Human.vue"
-import List from "@/components/icons/List.vue"
-import Download from "@/components/icons/Download.vue"
+import Undo from '@/components/icons/Undo.vue'
+import Redo from '@/components/icons/Redo.vue'
+import CenterCam from '@/components/icons/CenterCam.vue'
+import Pan from '@/components/icons/Pan.vue'
+import Dimensions from '@/components/icons/Dimensions.vue'
+import Human from '@/components/icons/Human.vue'
+import List from '@/components/icons/List.vue'
+import Download from '@/components/icons/Download.vue'
 
 const configurator = useConfiguratorStore()
 const { canUndo, canRedo } = storeToRefs(configurator)
@@ -29,8 +29,8 @@ const { canUndo, canRedo } = storeToRefs(configurator)
       <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.centerCam()">
         <CenterCam />
       </div>
-      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleMeasure()">
-        <Measure />
+      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleMeasures()">
+        <Dimensions />
       </div>
       <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleHuman()">
         <Human />

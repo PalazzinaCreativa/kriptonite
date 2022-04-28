@@ -50,137 +50,346 @@ const defaultConfig = {
     product: {
       type: "k1",
       inRoomPosition: "wall",
-      uprightsPosition: 'wall',
-      shelves: [],
+      uprightsPosition: "wall",
+      shelves: [
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 176.37131855292736,
+                  y: 102.4,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.9994999999999497,
+                  y: 1,
+                  z: 1
+              },
+              index: 0
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 176.37131855292733,
+                  y: 147.20000000000002,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.9994999999999495,
+                  y: 1,
+                  z: 1
+              },
+              index: 0
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 176.37131855292733,
+                  y: 204.8,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.9994999999999495,
+                  y: 1,
+                  z: 1
+              },
+              index: 0
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 216.37131855292733,
+                  y: 185.60000000000002,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.9994999999999497,
+                  y: 1,
+                  z: 1
+              },
+              index: 1
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 256.3713185529274,
+                  y: 153.60000000000002,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.9994999999999504,
+                  y: 1,
+                  z: 1
+              },
+              index: 2
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 256.3713185529274,
+                  y: 121.60000000000001,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.9994999999999509,
+                  y: 1,
+                  z: 1
+              },
+              index: 2
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 296.3713185529274,
+                  y: 185.60000000000002,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 0.999499999999949,
+                  y: 1,
+                  z: 1
+              },
+              index: 3
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 346.3713185529274,
+                  y: 128,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 1.4994999999999234,
+                  y: 1,
+                  z: 1
+              },
+              index: 4
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 346.3713185529274,
+                  y: 153.60000000000002,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 1.4994999999999243,
+                  y: 1,
+                  z: 1
+              },
+              index: 4
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 346.3713185529274,
+                  y: 172.8,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 1.4994999999999243,
+                  y: 1,
+                  z: 1
+              },
+              index: 4
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 346.37131855292733,
+                  y: 198.4,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 1.4994999999999221,
+                  y: 1,
+                  z: 1
+              },
+              index: 4
+          },
+          {
+              type: "shelf",
+              id: "shelf01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "shelf_01",
+              position: {
+                  x: 346.37131855292733,
+                  y: 217.60000000000002,
+                  z: 9.25002383344283
+              },
+              scale: {
+                  x: 1.4994999999999221,
+                  y: 1,
+                  z: 1
+              },
+              index: 4
+          }
+      ],
       uprights: [
-        // {
-        //   id: "upright01",
-        //   variantId: "upright03",
-        //   index: 0,
-        //   realIndex: 0,
-        //   position: {
-        //     x: 64.83417138641065,
-        //     y: 192,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7000000000012272,
-        //     y: 1.0000000310996449,
-        //     z: 0.5882319039324431
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright03",
-        //   index: 1,
-        //   realIndex: 1,
-        //   position: {
-        //     x: 124.59074768708271,
-        //     y: 192,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7000000000012272,
-        //     y: 1.0000000310996449,
-        //     z: 0.5882319039324431
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright03",
-        //   index: 2,
-        //   realIndex: 2,
-        //   position: {
-        //     x: 214.80687880273885,
-        //     y: 192,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7000000000012272,
-        //     y: 1.0000000310996449,
-        //     z: 0.5882319039324431
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright01",
-        //   index: 3,
-        //   realIndex: 3,
-        //   position: {
-        //     x: 254.65272348088376,
-        //     y: 192,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7000000000012272,
-        //     y: 1.0000000310996449,
-        //     z: 0.5882319039324431
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright05",
-        //   index: 4,
-        //   realIndex: 4,
-        //   position: {
-        //     x: 344.89143854677707,
-        //     y: 134.4,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7,
-        //     y: 1.000000032393931,
-        //     z: 0.5882295096856646
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright05",
-        //   index: 5,
-        //   realIndex: 5,
-        //   position: {
-        //     x: 404.8200365084119,
-        //     y: 134.4,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7,
-        //     y: 1.000000032393931,
-        //     z: 0.5882295096856646
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright01",
-        //   index: 6,
-        //   realIndex: 6,
-        //   position: {
-        //     x: 494.2650443252532,
-        //     y: 230.4,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7000000000017181,
-        //     y: 1.0000000262141615,
-        //     z: 0.5882339727633173
-        //   }
-        // },
-        // {
-        //   id: "upright01",
-        //   variantId: "upright01",
-        //   index: 6,
-        //   realIndex: 7,
-        //   position: {
-        //     x: 494.5986891114002,
-        //     y: 44.800000000000004,
-        //     z: 1
-        //   },
-        //   scale: {
-        //     x: 1.7000000000017181,
-        //     y: 1.0000000262141615,
-        //     z: 0.5882339727633173
-        //   }
-        // }
+          {
+              type: "upright",
+              id: "upright01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "upright03",
+              position: {
+                  x: 156.37131855292736,
+                  y: 153.60000000000002,
+                  z: 1
+              },
+              scale: {
+                  x: 1.7000000000012272,
+                  y: 1.0000000310996449,
+                  z: 0.5882319039324431
+              }
+          },
+          {
+              type: "upright",
+              id: "upright01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "upright03",
+              position: {
+                  x: 196.37131855292736,
+                  y: 153.60000000000002,
+                  z: 1
+              },
+              scale: {
+                  x: 1.7000000000012272,
+                  y: 1.0000000310996449,
+                  z: 0.5882319039324431
+              }
+          },
+          {
+              type: "upright",
+              id: "upright01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "upright03",
+              position: {
+                  x: 236.37131855292736,
+                  y: 153.60000000000002,
+                  z: 1
+              },
+              scale: {
+                  x: 1.7000000000012272,
+                  y: 1.0000000310996449,
+                  z: 0.5882319039324431
+              }
+          },
+          {
+              type: "upright",
+              id: "upright01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "upright03",
+              position: {
+                  x: 276.3713185529274,
+                  y: 153.60000000000002,
+                  z: 1
+              },
+              scale: {
+                  x: 1.7000000000012272,
+                  y: 1.0000000310996449,
+                  z: 0.5882319039324431
+              }
+          },
+          {
+              type: "upright",
+              id: "upright01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "upright03",
+              position: {
+                  x: 316.3713185529274,
+                  y: 153.60000000000002,
+                  z: 1
+              },
+              scale: {
+                  x: 1.7000000000012272,
+                  y: 1.0000000310996449,
+                  z: 0.5882319039324431
+              }
+          },
+          {
+              type: "upright",
+              id: "upright01",
+              material: {
+                  color: "#4a4a4a"
+              },
+              variantId: "upright03",
+              position: {
+                  x: 376.3713185529274,
+                  y: 153.60000000000002,
+                  z: 1
+              },
+              scale: {
+                  x: 1.7000000000012272,
+                  y: 1.0000000310996449,
+                  z: 0.5882319039324431
+              }
+          }
       ]
     }
 }
