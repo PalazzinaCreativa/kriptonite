@@ -56,14 +56,14 @@ export const shelvesData = [
         }
       },
       {
-        name: 'Scaffale test',
-        id: 'shelf_test',
+        name: 'Contenitore',
+        id: 'shelf_02',
         type: 'shelf',
-        path: '/assets/objects/product/shelves/shelf_test.gltf',
+        path: '/assets/objects/product/shelves/shelf_02.gltf',
         dimensions: {
-          width: 40,
-          height: 14.1,
-          depth: 18.5
+          width: 75,
+          height: 40,
+          depth: 40
         }
       }
     ]
