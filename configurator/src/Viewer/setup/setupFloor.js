@@ -10,7 +10,7 @@ export const setupFloor = async ({ width, roomType, type}) => {
   const types = {
     parquet: {
       name: 'parquet',
-      repeat: 4,
+      repeat: 10,
       ext: 'jpg',
       maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
     }

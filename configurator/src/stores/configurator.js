@@ -7,6 +7,9 @@ export const useConfiguratorStore = defineStore({
     isReady: false,
     canUndo: false,
     canRedo: false,
+    isPanning: false,
+    isShowingMeasures: false,
+    isShowingHuman: false,
     viewerGetter: () => null
   }),
   getters: {
@@ -20,7 +23,10 @@ export const useConfiguratorStore = defineStore({
           id: _.id
         }))
         .reduce((acc, curr) => ({ ...acc, [curr.id]: { ...curr, quantity: acc && acc[curr.id] ? acc[curr.id].quantity + 1 : 1 }}), {})
-    }
+    },
+    // isPanning: (state) => state.viewerGetter()?._isPanning,
+    // isShowingMeasures: (state) => state.viewerGetter()?.product?._visibleMeasures,
+    // isShowingHuman: (state) => state.viewerGetter()?.human?.visible
   },
   actions: {
     setWallColor (wallColor) {
@@ -44,12 +50,15 @@ export const useConfiguratorStore = defineStore({
     },
     togglePan () {
       this.viewerGetter().togglePan()
+      this.isPanning = !this.isPanning
     },
     toggleHuman () {
       this.viewerGetter().toggleHuman()
+      this.isShowingHuman = !this.isShowingHuman
     },
     toggleMeasures () {
       this.viewerGetter().product.toggleMeasures()
+      this.isShowingMeasures = !this.isShowingMeasures
     },
     toggleProductSelection () {
       this.viewerGetter().toggleProductSelection()

@@ -455,6 +455,7 @@ export default class Viewer {
   togglePan () {
     this._isPanning = !this._isPanning
     this.controls.mouseButtons.LEFT = this._isPanning ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE
+    this.controls.touches.ONE = this._isPanning ? THREE.TOUCH.PAN : THREE.TOUCH.ROTATE
   }
 
   toggleProductSelection () {

@@ -23,16 +23,16 @@ const { canUndo, canRedo } = storeToRefs(configurator)
       <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" :class="{ 'pointer-events-none opacity-30': !canRedo }" @click="configurator.redo()">
         <Redo />
       </div>
-      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.togglePan()">
+      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.togglePan()" :class="{ 'bg-black text-white': configurator.isPanning }">
         <Pan />
       </div>
       <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.centerCam()">
         <CenterCam />
       </div>
-      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleMeasures()">
+      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleMeasures()" :class="{ 'bg-black text-white': configurator.isShowingMeasures }">
         <Dimensions />
       </div>
-      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleHuman()">
+      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleHuman()" :class="{ 'bg-black text-white': configurator.isShowingHuman }">
         <Human />
       </div>
       <div class="mt-2.5 w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="$emit('toggle-list')">
