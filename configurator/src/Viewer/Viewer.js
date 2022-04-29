@@ -157,13 +157,12 @@ export default class Viewer {
     const pointer = new THREE.Vector2()
 
     this.domEl.addEventListener('pointermove', (e) => {
-      isDragging = true
-
       pointer.set( // Aggiorno il pointer con le coordinate della posizione attuale del mouse
         (e.clientX / this.renderer.domElement.offsetWidth) * 2 - 1,
         -(e.clientY / this.renderer.domElement.offsetHeight) * 2 + 1
       )
       raycaster.setFromCamera(pointer, this.camera) // Aggiorna il raycaster con le coordinate del mouse per verificare le intersezioni
+
 
       // Se c'è un oggetto da posizionare
       if (this.objectToPlace) {
@@ -204,30 +203,31 @@ export default class Viewer {
       if (!hoveredElement) return
       this.outlinePass.hover.selectedObjects = [hoveredElement.object]
       document.body.style.cursor = 'pointer'
+
+      // Se c'è un elemento selezionato e sono in hover su di lui inizio il drag (se non è un montante)
+      if (hoveredElement && hoveredElement.config.type !== 'upright') {
+      if (!isDragging) return
+      this.objectToPlace = hoveredElement
+      // TODO: Feedback per l'utente per vedere l'oggetto selezionato
+      if (!checkpointPosition && this.objectToPlace) checkpointPosition = { x: this.objectToPlace.getPosition().x, y: this.objectToPlace.getPosition().y, z: this.objectToPlace.getPosition().z } // Backup della posizione dell'elemento. Se lo posiziono in una posizione non idonea, torna in questo punto
+      this.controls.enabled = false
+      }
     })
 
     this.domEl.addEventListener('pointerdown', (e) => {
-      isDragging = true
-      // Se c'è un elemento selezionato e sono in hover su di lui inizio il drag (se non è un montante)
-      if (hoveredElement && hoveredElement.config.type !== 'upright') {
-        setTimeout(() => {
-          if (!isDragging) return
-          this.objectToPlace = hoveredElement
-          if (!checkpointPosition) checkpointPosition = { x: this.objectToPlace.getPosition().x, y: this.objectToPlace.getPosition().y, z: this.objectToPlace.getPosition().z } // Backup della posizione dell'elemento. Se lo posiziono in una posizione non idonea, torna in questo punto
-          this.controls.enabled = false
-        }, 200)
-      }
+      if (hoveredElement) isDragging = true
     })
+
     this.domEl.addEventListener('pointerup', (e) => { // Click
       isDragging = false
       this.controls.enabled = true
-      console.log(this.objectToPlace)
       // Se sto posizionando un elemento
       if (this.objectToPlace) {
         // Se l'oggetto è in una posizione non idonea
         if (this._positioningBlocked || this.objectToPlace._cantBePositioned) {
           if (this._isAddingNewElement) return // Se sto aggiungendo un nuovo elemento non faccio nulla
           if (checkpointPosition) this.objectToPlace.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z) // Se ho una posizione di backup torno in quel punto
+          this.objectToPlace.setMaterial({ opacity: 1 })
           this.objectToPlace = null
           this.selectedElement = null
           checkpointPosition = null
@@ -245,10 +245,10 @@ export default class Viewer {
         this.objectToPlace = null
         checkpointPosition = null
         this.updateConfig()
+        this._isAddingNewElement = false
         if (newConfig.type !== 'obstacle' && this._isAddingNewElement) this.addElement(newConfig)
         return
       }
-      console.log(hoveredElement)
       // Se non sono in hover su nessun elemento, elimino eventuali selezioni
       if (!hoveredElement) {
         this.selectedElement = null

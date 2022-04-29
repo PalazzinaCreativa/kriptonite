@@ -56,7 +56,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -75,7 +76,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -94,7 +96,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -113,7 +116,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -132,7 +136,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -151,7 +156,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -170,7 +176,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -189,7 +196,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -208,7 +216,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -227,7 +236,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -246,7 +256,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -265,7 +276,8 @@ const defaultConfig = {
               type: "shelf",
               id: "shelf01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "shelf_01",
               position: {
@@ -286,7 +298,8 @@ const defaultConfig = {
               type: "upright",
               id: "upright01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "upright03",
               position: {
@@ -304,7 +317,8 @@ const defaultConfig = {
               type: "upright",
               id: "upright01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "upright03",
               position: {
@@ -322,7 +336,8 @@ const defaultConfig = {
               type: "upright",
               id: "upright01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "upright03",
               position: {
@@ -340,7 +355,8 @@ const defaultConfig = {
               type: "upright",
               id: "upright01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "upright03",
               position: {
@@ -358,7 +374,8 @@ const defaultConfig = {
               type: "upright",
               id: "upright01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "upright03",
               position: {
@@ -376,7 +393,8 @@ const defaultConfig = {
               type: "upright",
               id: "upright01",
               material: {
-                  color: "#4a4a4a"
+                  color: "#4a4a4a",
+                  opacity: 1
               },
               variantId: "upright03",
               position: {

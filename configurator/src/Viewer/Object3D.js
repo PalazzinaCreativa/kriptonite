@@ -69,11 +69,12 @@ export default class Object3D {
     if (RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
   }
 
-  setMaterial ({ color, roughness, id }) {
+  setMaterial ({ color, roughness, opacity, id }) {
     this.object.traverse(child => {
       if (child.material) {
-        child.material.color = new THREE.Color(stringToThreeColor(color))
-        child.material.roughness = roughness
+        if (opacity) child.material.opacity = opacity
+        if (color) child.material.color = new THREE.Color(stringToThreeColor(color))
+        if (roughness) child.material.roughness = roughness
       }
     })
 

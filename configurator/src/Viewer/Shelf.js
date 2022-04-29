@@ -15,7 +15,7 @@ export default class Shelf extends Object3D {
 
   async init () {
     await super.init()
-    super.setMaterial(this.config.material || { color: '#4a4a4a' }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
+    super.setMaterial(this.config.material || { color: '#4a4a4a', opacity: 1 }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   setPosition ({ x, y, z }) {
@@ -70,6 +70,8 @@ export default class Shelf extends Object3D {
     if (this.index !== left.index) {
       // Se cambia campata modifico la larghezza (-0.02 per non farli sovrapporre)
       // TODO: inserire modello corretto anzichè scalarlo
+
+      // TODO: Check se scaffale di quella dimensione esiste
       this.setSize({ width: right.getPosition().x - left.getPosition().x - 0.02 })
     }
 
@@ -82,7 +84,10 @@ export default class Shelf extends Object3D {
 
   _setState() {
     this.object.traverse(child => {
-      if (child.material) child.material.opacity = this._cantBePositioned ? 0.2 : 1
+      if (child.material) {
+        child.material.transparent = true
+        child.material.opacity = this._cantBePositioned ? 0.2 : 1
+      }
     })
   }
 }

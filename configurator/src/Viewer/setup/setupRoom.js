@@ -15,7 +15,7 @@ export const setupRoom = async ({ type, dimensions, color }) => {
     {
       name: 'plaster',
       repeat: 16,
-      maps: ['map', 'aoMap', 'bumpMap', 'roughnessMap', 'alphaMap', 'metalnessMap', 'normalMap']
+      maps: ['map', 'aoMap', 'bumpMap', 'alphaMap', 'normalMap']
     }
   )
 

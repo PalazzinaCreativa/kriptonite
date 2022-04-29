@@ -53,8 +53,10 @@ export default class Product {
     if (this._visibleMeasures) {
       this._visibleMeasures = false
       this.measures.visible = false
+      this.viewer.room.main.visible = true
       return
     }
+    this.viewer.room.main.visible = false // TODO: Provare parete e pavimento in trasparenza
     this._createMeasures()
   }
 
@@ -91,7 +93,7 @@ export default class Product {
     const measuresPosition = {
       x: leftmostUpright.getPosition().x + leftmostUpright.getSize().width - DIMENSIONS_GUTTER,
       y: lowestUpright.getPosition().y - lowestUpright.getSize().height / 2 - DIMENSIONS_GUTTER,
-      z: 5
+      z: 50
     }
     this.measures.position.copy(measuresPosition)
 
