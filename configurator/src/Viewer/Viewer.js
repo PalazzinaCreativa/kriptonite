@@ -211,18 +211,17 @@ export default class Viewer {
       // Se c'è un elemento selezionato e sono in hover su di lui inizio il drag (se non è un montante)
       if (hoveredElement && hoveredElement.config.type !== 'upright') {
         setTimeout(() => {
-          if (isDragging) return
+          if (!isDragging) return
           this.objectToPlace = hoveredElement
           if (!checkpointPosition) checkpointPosition = { x: this.objectToPlace.getPosition().x, y: this.objectToPlace.getPosition().y, z: this.objectToPlace.getPosition().z } // Backup della posizione dell'elemento. Se lo posiziono in una posizione non idonea, torna in questo punto
           this.controls.enabled = false
-        }, 50)
-        return
+        }, 200)
       }
     })
     this.domEl.addEventListener('pointerup', (e) => { // Click
       isDragging = false
       this.controls.enabled = true
-
+      console.log(this.objectToPlace)
       // Se sto posizionando un elemento
       if (this.objectToPlace) {
         // Se l'oggetto è in una posizione non idonea

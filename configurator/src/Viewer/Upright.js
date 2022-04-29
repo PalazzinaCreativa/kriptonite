@@ -126,7 +126,11 @@ export default class Upright extends Object3D {
         await upright.destroy()
       }
 
-      for (const shelf of this.product.shelves.filter(s => s.index > index - 1)) {
+      const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1)
+      // TODO: Non funziona il cancella tutto se nearest upright non esiste
+      const shelvesToDelete = nearestUpright ? this.product.shelves.filter(s => s.getPosition().x >= nearestUpright.getPosition().x) : this.product.shelves
+
+      for (const shelf of shelvesToDelete) {
         await shelf.destroy()
       }
 
