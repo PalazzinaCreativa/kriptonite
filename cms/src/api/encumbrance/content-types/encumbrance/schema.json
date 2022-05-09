@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "encumbrances",
+  "info": {
+    "singularName": "encumbrance",
+    "pluralName": "encumbrances",
+    "displayName": "Ingombri",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "model": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "width": {
+      "type": "decimal"
+    },
+    "depth": {
+      "type": "decimal"
+    }
+  }
+}

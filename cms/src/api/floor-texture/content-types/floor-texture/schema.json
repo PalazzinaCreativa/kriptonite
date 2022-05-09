@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "floor_textures",
+  "info": {
+    "singularName": "floor-texture",
+    "pluralName": "floor-textures",
+    "displayName": "Floor textures"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "textures",
+  "info": {
+    "singularName": "texture",
+    "pluralName": "textures",
+    "displayName": "Texture",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

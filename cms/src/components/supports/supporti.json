@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_supports_supportis",
+  "info": {
+    "displayName": "Supporti",
+    "icon": "angle-double-up"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "depth": {
+      "type": "decimal"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "price": {
+      "type": "decimal"
+    }
+  }
+}

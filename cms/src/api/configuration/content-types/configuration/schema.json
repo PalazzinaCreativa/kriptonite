@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "configurations",
+  "info": {
+    "singularName": "configuration",
+    "pluralName": "configurations",
+    "displayName": "Configurazioni",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "uid"
+    },
+    "infos": {
+      "type": "json"
+    },
+    "floor_texture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::floor-texture.floor-texture"
+    }
+  }
+}
