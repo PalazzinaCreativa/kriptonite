@@ -1,6 +1,20 @@
 module.exports = [
   'strapi::errors',
-  'strapi::security',
+  // 'strapi::security',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'kriptonite.s3.eu-central-1.amazonaws.com'],
+          'media-src': ["'self'", 'data:', 'blob:', 'kriptonite.s3.eu-central-1.amazonaws.com'],
+          upgradeInsecureRequests: null,
+        },
+      },
+    },
+  },
   'strapi::cors',
   'strapi::poweredBy',
   'strapi::logger',
