@@ -25,7 +25,7 @@
       "relation": "oneToOne",
       "target": "api::texture.texture"
     },
-    "wood_shelves_variant": {
+    "variants": {
       "displayName": "Varianti",
       "type": "component",
       "repeatable": true,
@@ -38,11 +38,12 @@
       "inversedBy": "wood_shelves"
     },
     "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
     }
   }
 }
