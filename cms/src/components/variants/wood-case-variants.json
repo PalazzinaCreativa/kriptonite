@@ -1,9 +1,8 @@
 {
-  "collectionName": "components_variants_variantis",
+  "collectionName": "components_variants_wood_case_variants",
   "info": {
-    "displayName": "Varianti",
-    "icon": "align-justify",
-    "description": ""
+    "displayName": "wood_case_variants",
+    "icon": "align-left"
   },
   "options": {},
   "attributes": {
@@ -13,28 +12,21 @@
     "sku": {
       "type": "string"
     },
-    "width": {
-      "type": "decimal"
-    },
     "depth": {
       "type": "decimal"
     },
-    "supports": {
-      "displayName": "Supporti",
-      "type": "component",
-      "repeatable": false,
-      "component": "supports.supporti"
+    "width": {
+      "type": "decimal"
     },
     "price": {
       "type": "decimal"
     },
     "model": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
       "allowedTypes": [
         "files"
-      ]
+      ],
+      "type": "media",
+      "multiple": false
     },
     "texture": {
       "type": "relation",

@@ -20,11 +20,6 @@
       "relation": "oneToMany",
       "target": "api::color.color"
     },
-    "texture": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::texture.texture"
-    },
     "variants": {
       "displayName": "Varianti",
       "type": "component",
