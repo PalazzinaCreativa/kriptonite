@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shelves",
+  "info": {
+    "singularName": "shelf",
+    "pluralName": "shelves",
+    "displayName": "Ripiani",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "shelves"
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "colors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::color.color"
+    },
+    "textures": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::texture.texture"
+    },
+    "variants": {
+      "displayName": "Variants",
+      "type": "component",
+      "repeatable": true,
+      "component": "variants.variants"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wood_shelves",
+  "info": {
+    "singularName": "wood-shelf",
+    "pluralName": "wood-shelves",
+    "displayName": "Ripiani legno",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "colors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::color.color"
+    },
+    "variants": {
+      "displayName": "Varianti",
+      "type": "component",
+      "repeatable": true,
+      "component": "variants.varianti"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "wood_shelves"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

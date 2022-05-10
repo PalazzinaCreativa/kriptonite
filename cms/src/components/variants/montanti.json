@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_variants_montantis",
+  "info": {
+    "displayName": "Montanti",
+    "icon": "list",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "model": {
+      "allowedTypes": [
+        "files"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

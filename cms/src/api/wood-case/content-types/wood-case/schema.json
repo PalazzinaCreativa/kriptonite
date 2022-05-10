@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wood_cases",
+  "info": {
+    "singularName": "wood-case",
+    "pluralName": "wood-cases",
+    "displayName": "Contenitori legno",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "height": {
+      "type": "decimal"
+    },
+    "product": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::product.product"
+    },
+    "extras": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::extra.extra"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "variants": {
+      "displayName": "wood_case_variants",
+      "type": "component",
+      "repeatable": true,
+      "component": "variants.wood-case-variants"
+    }
+  }
+}

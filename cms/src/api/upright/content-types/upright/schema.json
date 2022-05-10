@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "uprights",
+  "info": {
+    "singularName": "upright",
+    "pluralName": "uprights",
+    "displayName": "Montanti",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "slot_space": {
+      "type": "decimal"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "wall",
+        "floor"
+      ],
+      "required": true
+    },
+    "colors": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::color.color"
+    },
+    "variants": {
+      "type": "component",
+      "repeatable": true,
+      "component": "variants.montanti"
+    },
+    "prodotti": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::product.product",
+      "inversedBy": "uprights"
+    }
+  }
+}

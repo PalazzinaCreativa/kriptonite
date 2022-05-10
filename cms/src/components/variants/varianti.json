@@ -1,0 +1,45 @@
+{
+  "collectionName": "components_variants_variantis",
+  "info": {
+    "displayName": "Varianti",
+    "icon": "align-justify",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "width": {
+      "type": "decimal"
+    },
+    "depth": {
+      "type": "decimal"
+    },
+    "supports": {
+      "displayName": "Supporti",
+      "type": "component",
+      "repeatable": false,
+      "component": "supports.supporti"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "model": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "texture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::texture.texture"
+    }
+  }
+}

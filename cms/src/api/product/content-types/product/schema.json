@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Prodotti",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "uid"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "uprights": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::upright.upright",
+      "mappedBy": "prodotti"
+    },
+    "shelves": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::shelf.shelf",
+      "mappedBy": "product"
+    },
+    "wood_shelves": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::wood-shelf.wood-shelf",
+      "mappedBy": "product"
+    }
+  }
+}
