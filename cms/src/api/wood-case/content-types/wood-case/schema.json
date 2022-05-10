@@ -37,6 +37,13 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::texture.texture"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

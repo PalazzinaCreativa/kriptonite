@@ -36,6 +36,13 @@
       "relation": "manyToOne",
       "target": "api::product.product",
       "inversedBy": "wood_shelves"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

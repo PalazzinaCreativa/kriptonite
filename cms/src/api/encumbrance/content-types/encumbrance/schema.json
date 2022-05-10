@@ -31,6 +31,13 @@
     },
     "depth": {
       "type": "decimal"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
