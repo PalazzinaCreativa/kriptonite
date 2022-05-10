@@ -29,6 +29,7 @@ module.exports = {
       'semi-bold': 600
     },
     transitionDuration: {
+      300: '300ms',
       400: '400ms',
       600: '600ms',
       800: '800ms',

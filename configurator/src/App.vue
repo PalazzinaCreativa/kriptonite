@@ -439,7 +439,7 @@ body {
   @apply text-black;
 }
 
-strong {
+strong, b {
   @apply font-semi-bold;
 }
 </style>

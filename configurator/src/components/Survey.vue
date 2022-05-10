@@ -1,10 +1,17 @@
 <script setup>
-import { computed, ref, reactive, defineEmits } from 'vue'
+import { computed, ref, reactive, defineEmits, defineAsyncComponent } from 'vue'
 import { initialSetupData } from '@/dataset/initialSetupData'
+import Logo from '@/components/Logo.vue'
 import Question from '@/components/Question.vue'
 import QuestionChoice from '@/components/QuestionChoice.vue'
 import QuestionInput from '@/components/QuestionInput.vue'
 import QuestionButton from '@/components/QuestionButton.vue'
+
+const components = {
+  choice: QuestionChoice,
+  input: QuestionInput,
+  button: QuestionButton
+}
 
 const dimensions = reactive({})
 
@@ -16,7 +23,7 @@ const config = ref({ room: { dimensions: { width: undefined, height: undefined, 
 
 const handleNextStep = (superKey, key, value) => {
   if (superKey && key && value) config.value[superKey][key] = value
-  if (step.value === 0 && config.inRoomPosition !== 'wall') {
+  if (step.value === 1 && config.value.product.inRoomPosition !== 'wall') {
     step.value = 2
     return
   }
@@ -33,31 +40,32 @@ const capitalize = (string) => {
 }
 
 const componentModel = (option) => {
-  return option?.model ? config.room.dimensions[option.model] : null
+  return option?.model ? config.value.room.dimensions[option.model] : null
 }
 
 const isVisible = (question, index) => {
-  return step.value === parseInt(index) && (!question.showIf || question.showIf.includes(config.inRoomPosition))
+  return step.value === parseInt(index) && (!question.showIf || question.showIf.includes(config.value.product.inRoomPosition))
 }
 </script>
 
 <template>
   <div class="relative w-full h-screen">
-    <div v-for="(question, index) in initialSetupData" :key="`question-${index}`" class="h-full w-full">
-      <Question v-if="isVisible(question, index)">
+    <Logo class="fixed m-8"/>
+    <template v-for="(question, index) in initialSetupData">
+      <Question v-if="isVisible(question, index)" :key="`question-${index}`">
         <template #question>
           <div v-html="question.title"/>
         </template>
         <template #paragraph>
-          <div v-html="question.paragraph"/>
+          <p class="text-xs" v-html="question.paragraph"/>
         </template>
         <template #options>
           <div v-for="(option, index) in question.options" :key="index">
-            <component :is="`Question${capitalize(option.component)}`" :option="option" :config="config" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="option.component === 'choice' ? handleNextStep(question.super, question.key, option.key) : null"/>
+            <component :is="components[option.component]" :index="index" :option="option" :config="config" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="option.component !== 'input' ? handleNextStep(question.super, question.key, option.key) : null"/>
           </div>
         </template>
       </Question>
-    </div>
+    </template>
     <!-- <Question v-if="step === 0">
       <template #question>
         <strong>Dove</strong> vuoi inserire il prodotto?
