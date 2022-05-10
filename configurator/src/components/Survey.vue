@@ -2,6 +2,8 @@
 import { computed, ref, reactive, defineEmits } from 'vue'
 import { initialSetupData } from '@/dataset/initialSetupData'
 import Question from '@/components/Question.vue'
+import QuestionChoice from '@/components/QuestionChoice.vue'
+import QuestionInput from '@/components/QuestionInput.vue'
 import QuestionButton from '@/components/QuestionButton.vue'
 
 const dimensions = reactive({})
@@ -25,11 +27,38 @@ const handleNextStep = (superKey, key, value) => {
     return
   }
 }
+
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const componentModel = (option) => {
+  return option?.model ? config.room.dimensions[option.model] : null
+}
+
+const isVisible = (question, index) => {
+  return step.value === parseInt(index) && (!question.showIf || question.showIf.includes(config.inRoomPosition))
+}
 </script>
 
 <template>
   <div class="relative w-full h-screen">
-    <Question v-if="step === 0">
+    <div v-for="(question, index) in initialSetupData" :key="`question-${index}`" class="h-full w-full">
+      <Question v-if="isVisible(question, index)">
+        <template #question>
+          <div v-html="question.title"/>
+        </template>
+        <template #paragraph>
+          <div v-html="question.paragraph"/>
+        </template>
+        <template #options>
+          <div v-for="(option, index) in question.options" :key="index">
+            <component :is="`Question${capitalize(option.component)}`" :option="option" :config="config" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="option.component === 'choice' ? handleNextStep(question.super, question.key, option.key) : null"/>
+          </div>
+        </template>
+      </Question>
+    </div>
+    <!-- <Question v-if="step === 0">
       <template #question>
         <strong>Dove</strong> vuoi inserire il prodotto?
       </template>
@@ -118,6 +147,6 @@ const handleNextStep = (superKey, key, value) => {
         <QuestionButton @click="handleNextStep('product', 'uprightsPosition', 'ground')">A terra</QuestionButton>
         <QuestionButton @click="handleNextStep('product', 'uprightsPosition', 'wall')">A parete</QuestionButton>
       </template>
-    </Question>
+    </Question> -->
   </div>
 </template>

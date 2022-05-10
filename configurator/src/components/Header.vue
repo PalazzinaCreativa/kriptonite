@@ -1,10 +1,10 @@
 <template>
   <div class="fixed flex items-center w-full z-[9]">
-    <Logo/>
+    <LogoCompact/>
     <OptionsList/>
   </div>
 </template>
 <script setup>
-import Logo from '@/components/Logo.vue'
+import LogoCompact from '@/components/LogoCompact.vue'
 import OptionsList from '@/components/OptionsList.vue'
 </script>

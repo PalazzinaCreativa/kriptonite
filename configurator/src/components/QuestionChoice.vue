@@ -1,0 +1,24 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const alpha = Array.from(Array(26)).map((e, i) => i + 65);
+const alphabet = alpha.map((x) => String.fromCharCode(x));
+const button = ref(null)
+const alphaIndex = ref(null)
+
+onMounted(() => {
+  const index = Array.from(button.value.parentNode.children).indexOf(button.value)
+  orderValue.value = alphabet[index] || null
+})
+</script>
+
+<template>
+  <div class="w-full bg-white/40 group relative my-4 cursor-pointer" ref="button">
+    <div class="h-full w-full absolute bg-white transform scale-x-0 left-0 top-0 origin-left group-hover:scale-x-[0.12] group-focus:scale-x-100 transition-transform duration-800 ease-power-out"></div>
+    <div class="absolute left-0 top-0 w-1 bg-white h-full"></div>
+    <div class="flex relative py-4 pl-6 text-m">
+      <div class="text-black/40" v-if="alphaIndex" v-text="alphaIndex"/>
+      <div class="ml-8 text-black"><slot /></div>
+    </div>
+  </div>
+</template>
