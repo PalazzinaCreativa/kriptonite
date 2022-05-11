@@ -61,16 +61,19 @@ export const initialSetupData = [
     super: 'room',
     options: [
       {
+        icon: 'WallClassic',
         component: 'choice',
         label: 'Classica',
         key: 'classic'
       },
       {
+        icon: 'WallNiche',
         component: 'choice',
         label: 'Nicchia',
         key: 'niche'
       },
       {
+        icon: 'WallAttic',
         component: 'choice',
         label: 'Mansarda',
         key: 'attic'
@@ -82,13 +85,14 @@ export const initialSetupData = [
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'dimensions',
     super: 'room',
-    inputs: [
+    options: [
       {
         component: 'input',
         type: 'number',
-        step: '.01',
+        step: '.10',
+        min: '1',
         max: '20',
-        label: 'Larghezza (m)',
+        label: 'Larghezza',
         model: 'width',
         placeholder: "0.00 m",
         showIf: ['classic', 'attic', 'niche']
@@ -96,9 +100,10 @@ export const initialSetupData = [
       {
         component: 'input',
         type: 'number',
-        step: '.01',
+        step: '.10',
+        min: '1',
         max: '20',
-        label: 'Altezza (m)',
+        label: 'Altezza',
         model: 'height',
         placeholder: "0.00 m",
         showIf: ['classic', 'niche']
@@ -106,9 +111,10 @@ export const initialSetupData = [
       {
         component: 'input',
         type: 'number',
-        step: '.01',
+        step: '.10',
+        min: '1',
         max: '20',
-        label: 'Profondità (m)',
+        label: 'Profondità',
         model: 'depth',
         placeholder: "0.00 m",
         showIf: ['niche']
@@ -116,9 +122,10 @@ export const initialSetupData = [
       {
         component: 'input',
         type: 'number',
-        step: '.01',
+        step: '.10',
+        min: '1',
         max: '20',
-        label: 'Altezza sinistra (m)',
+        label: 'Altezza sinistra',
         model: 'leftHeight',
         placeholder: "0.00 m",
         showIf: ['attic']
@@ -126,9 +133,10 @@ export const initialSetupData = [
       {
         component: 'input',
         type: 'number',
-        step: '.01',
+        step: '.10',
+        min: '1',
         max: '20',
-        label: 'Altezza destra (m)',
+        label: 'Altezza destra',
         model: 'rightHeight',
         placeholder: "0.00 m",
         showIf: ['attic']
@@ -145,16 +153,37 @@ export const initialSetupData = [
     super: 'product',
     options: [
       {
-        component: 'choice',
-        label: 'A terra',
+        component: 'card',
+        label: 'K1',
+        description: 'Sistema a parete modulabile, composto da montanti a cremagliera, ripiani e contenitori.',
+        image: 'k1.jpeg',
         key: 'k1'
       },
       {
-        component: 'choice',
-        label: 'A parete',
+        component: 'card',
+        label: 'K2',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'k2.jpeg',
         key: 'k2'
       }
-    ]
+    ],
+    /* footer: {
+      text: 'oppure scegli un altro prodotto:',
+      options: [
+        {
+          label: 'K3+',
+          link: '#'
+        },
+        {
+          label: 'Krossing',
+          link: '#'
+        },
+        {
+          label: 'Nome prodotto',
+          link: '#'
+        }
+      ]
+    } */
   },
   {
     title: 'Dove vuoi <b>posizionare</b> il prodotto?',

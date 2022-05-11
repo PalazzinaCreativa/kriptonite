@@ -2,15 +2,19 @@
 import { computed, ref, reactive, defineEmits, defineAsyncComponent } from 'vue'
 import { initialSetupData } from '@/dataset/initialSetupData'
 import Logo from '@/components/Logo.vue'
+import LoadingBar from '@/components/LoadingBar.vue'
+import Back from '@/components/icons/Back.vue'
 import Question from '@/components/Question.vue'
 import QuestionChoice from '@/components/QuestionChoice.vue'
 import QuestionInput from '@/components/QuestionInput.vue'
 import QuestionButton from '@/components/QuestionButton.vue'
+import QuestionCard from '@/components/QuestionCard.vue'
 
 const components = {
   choice: QuestionChoice,
   input: QuestionInput,
-  button: QuestionButton
+  button: QuestionButton,
+  card: QuestionCard
 }
 
 const dimensions = reactive({})
@@ -35,6 +39,12 @@ const handleNextStep = (superKey, key, value) => {
   }
 }
 
+const goBack = () => {
+  step.value--
+}
+
+const zeroPad = (num, places) => String(num).padStart(places, '0')
+
 const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -53,6 +63,15 @@ const isVisible = (question, index) => {
     <Logo class="fixed m-8"/>
     <template v-for="(question, index) in initialSetupData">
       <Question v-if="isVisible(question, index)" :key="`question-${index}`">
+        <template #progress>
+          <div v-if="step > 0">
+            <div class="flex items-center relative w-full">
+              <Back v-if="step > 1" class="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray" @click="goBack"/>
+              <div class="text-black text-[40px] font-regular text-center w-full" v-text="zeroPad(step, 2)" />
+            </div>
+            <LoadingBar :value="step" :total="initialSetupData.length" class="mt-8 mb-16"/>
+          </div>
+        </template>
         <template #question>
           <div v-html="question.title"/>
         </template>
@@ -62,6 +81,16 @@ const isVisible = (question, index) => {
         <template #options>
           <div v-for="(option, index) in question.options" :key="index">
             <component :is="components[option.component]" :index="index" :option="option" :config="config" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="option.component !== 'input' ? handleNextStep(question.super, question.key, option.key) : null"/>
+          </div>
+        </template>
+        <template #footer>
+          <div v-if="question.footer && question.footer.options.length" class="flex items-center gap-8 w-full">
+            <div v-if="question.footer.text" v-html="question.footer.text" class="min-w-[125px]"/>
+            <div v-for="(option, index) in question.footer.options" :key="index" class="flex gap-4 w-full">
+              <a :href="option.link" class="inline-block">
+                <button role="button" class="bg-white inline-block text-black py-4 px-8" v-html="option.label"/>
+              </a>
+            </div>
           </div>
         </template>
       </Question>

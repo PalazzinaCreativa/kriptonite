@@ -14,12 +14,13 @@ const capitalize = (string) => {
 
 <template>
   <div class="flex gap-12 items-center">
-    <component v-if="props.option.icon && icon" :is="icon" class="text-white w-14"/>
-    <div class="w-full bg-white/40 group relative my-4 cursor-pointer" ref="button">
-      <div class="h-full w-1 absolute bg-white transform left-0 top-0 origin-left group-hover:w-3 group-focus:w-2 transition-all duration-300 ease-power-out"></div>
-      <div class="flex py-4 pl-6 text-m font-regular">
-        <div class="text-black/40" v-if="alphabet[props.index]" v-text="alphabet[props.index]"/>
-        <div class="ml-8 text-black">{{ props.option.label }}<slot /></div>
+    <div class="flex w-full bg-white group relative my-4 cursor-pointer" ref="button">
+      <div v-if="props.option.image" class="w-full">
+        <img class="h-full object-cover w-full" :src="`/assets/images/${props.option.image}`" width="200" height="200" :alt="props.option.image"/>
+      </div>
+      <div class="flex flex-wrap py-10 px-6 w-full">
+        <div class="font-regular text-black text-m mb-4 w-full">{{ props.option.label }}<slot /></div>
+        <div v-if="props.option.description" class="text-xs font-light w-full" v-html="props.option.description" />
       </div>
     </div>
   </div>

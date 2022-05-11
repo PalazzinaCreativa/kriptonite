@@ -1,12 +1,14 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+    },
     colors: {
       yellow: '#FFCC67',
       white: '#FFFFFF',
       black: '#2B3036',
       gray: '#E0E0E0',
+      'dark-gray': '#AEAEAE',
       current: 'currentColor'
     },
     transitionTimingFunction: {
