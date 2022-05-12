@@ -88,57 +88,62 @@ export const initialSetupData = [
     options: [
       {
         component: 'input',
+        entity: 'dimension',
         type: 'number',
         step: '.10',
         min: '1',
         max: '20',
         label: 'Larghezza',
         model: 'width',
-        placeholder: "0.00 m",
+        placeholder: "0cm",
         showIf: ['classic', 'attic', 'niche']
       },
       {
         component: 'input',
+        entity: 'dimension',
         type: 'number',
         step: '.10',
         min: '1',
         max: '20',
         label: 'Altezza',
         model: 'height',
-        placeholder: "0.00 m",
+        placeholder: "0cm",
         showIf: ['classic', 'niche']
       },
       {
         component: 'input',
+        entity: 'dimension',
         type: 'number',
         step: '.10',
         min: '1',
         max: '20',
         label: 'Profondità',
         model: 'depth',
-        placeholder: "0.00 m",
+        placeholder: "0cm",
         showIf: ['niche']
       },
       {
         component: 'input',
+        entity: 'dimension',
         type: 'number',
         step: '.10',
         min: '1',
         max: '20',
         label: 'Altezza sinistra',
         model: 'leftHeight',
-        placeholder: "0.00 m",
+        placeholder: "0cm",
         showIf: ['attic']
       },
       {
         component: 'input',
+        entity: 'dimension',
         type: 'number',
         step: '.10',
         min: '1',
         max: '20',
         label: 'Altezza destra',
         model: 'rightHeight',
-        placeholder: "0.00 m",
+        placeholder: "0cm",
         showIf: ['attic']
       },
       {

@@ -1,7 +1,7 @@
 <script setup>
+import { ref } from 'vue'
 import Survey from '@/components/Survey.vue'
 import Configurator from '@/components/Configurator.vue'
-import { ref } from 'vue'
 
 const config = ref(null)
 const showConfigurator = ref(false)
@@ -428,8 +428,8 @@ const start = (payload) => {
     <div class="fixed right-12 bottom-12 underline text-black cursor-pointer z-50" @click="handleGoToConfigurator">
       Go to configurator
     </div>
-    <Survey @start="start" v-if="!showConfigurator" />
-    <Configurator :config="config" v-else />
+    <Survey v-if="!showConfigurator" @start="start"/>
+    <Configurator v-else :config="config" />
   </div>
 </template>
 

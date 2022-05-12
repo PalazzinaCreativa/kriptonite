@@ -46,9 +46,19 @@ const handleNextStep = (superKey, key, value) => {
   step.value++
 
   if ((step.value === 5 && config.value.product.type === 'k2') || step.value === 6) {
+    // Converto le dimensioni da cm a m per la generazione della stanza
+    config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
+    // Lancio configuratore
     emit('start', config.value)
     return
   }
+}
+
+const convertDimensions = (dimensions) => {
+  return Object.keys(dimensions).reduce((accumulator, key) => {
+    let formattedDimension = typeof dimensions[key] !== 'undefined' ? (parseInt(dimensions[key]) / 100).toString() : dimensions[key] 
+    return { ...accumulator, [key]: formattedDimension };
+  }, {});
 }
 
 const goBack = () => {
@@ -61,8 +71,12 @@ const capitalize = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const componentModel = (option) => {
+/* const componentModel = (option, value) => {
   return option?.model ? config.value.room.dimensions[option.model] : null
+} */
+
+const setDimension = (value, option) => {
+  config.value.room.dimensions[option.model] = value
 }
 
 const isVisible = (question, index) => {
@@ -92,7 +106,7 @@ const isVisible = (question, index) => {
         </template>
         <template #options>
           <div v-for="(option, index) in question.options" :key="index">
-            <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="handleClick(option, question.super, question.key, option.key)"/>
+            <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="config.room.dimensions[option.model]" @input="setDimension($event.target.value, option)" @click="handleClick(option, question.super, question.key, option.key)"/>
           </div>
         </template>
         <template #footer>
