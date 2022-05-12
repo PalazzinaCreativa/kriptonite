@@ -50,7 +50,7 @@ export const initialSetupData = [
       {
         component: 'choice',
         label: 'Altro materiale',
-        key: 'drywall'
+        key: 'other'
       }
     ]
   },

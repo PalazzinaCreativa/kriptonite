@@ -22,8 +22,20 @@ const dimensions = reactive({})
 const emit = defineEmits(['start'])
 const step = ref(0)
 const current = computed(() => initialSetupData[step.value]) // Dati per lo step corrente
-
+const target = ref({ option: {}, isAnimating: false })
 const config = ref({ room: { dimensions: { width: undefined, height: undefined, depth: undefined, leftHeight: undefined, rightHeight: undefined } }, product: {}})
+
+const handleClick = (option, superKey, key, value) => {
+  if (option.component !== 'input') {
+    target.value = { option: option, isAnimating: true }
+    setTimeout(() => {
+      handleNextStep(superKey, key, value)
+      target.value.isAnimating = false
+    }, 500)
+  } else {
+    return null
+  }
+}
 
 const handleNextStep = (superKey, key, value) => {
   if (superKey && key && value) config.value[superKey][key] = value
@@ -80,7 +92,7 @@ const isVisible = (question, index) => {
         </template>
         <template #options>
           <div v-for="(option, index) in question.options" :key="index">
-            <component :is="components[option.component]" :index="index" :option="option" :config="config" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="option.component !== 'input' ? handleNextStep(question.super, question.key, option.key) : null"/>
+            <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="componentModel(option)" @input="config.room.dimensions[option.model] = $event.target.value" @click="handleClick(option, question.super, question.key, option.key)"/>
           </div>
         </template>
         <template #footer>
