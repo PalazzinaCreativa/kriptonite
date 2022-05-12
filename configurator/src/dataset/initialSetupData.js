@@ -35,7 +35,10 @@ export const initialSetupData = [
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'composition',
     super: 'room',
-    showIf: ['wall'],
+    showIf: {
+      entity: 'product.inRoomPosition',
+      values: ['wall']
+    },
     options: [
       {
         component: 'choice',
@@ -85,6 +88,7 @@ export const initialSetupData = [
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'dimensions',
     super: 'room',
+    showIcon: true,
     options: [
       {
         component: 'input',
@@ -96,7 +100,10 @@ export const initialSetupData = [
         label: 'Larghezza',
         model: 'width',
         placeholder: "0cm",
-        showIf: ['classic', 'attic', 'niche']
+        showIf: {
+          entity: 'room.type',
+          values: ['classic', 'attic', 'niche']
+        }
       },
       {
         component: 'input',
@@ -108,7 +115,10 @@ export const initialSetupData = [
         label: 'Altezza',
         model: 'height',
         placeholder: "0cm",
-        showIf: ['classic', 'niche']
+        showIf: {
+          entity: 'room.type',
+          values: ['classic', 'niche']
+        }
       },
       {
         component: 'input',
@@ -120,7 +130,10 @@ export const initialSetupData = [
         label: 'Profondità',
         model: 'depth',
         placeholder: "0cm",
-        showIf: ['niche']
+        showIf: {
+          entity: 'room.type',
+          values: ['niche']
+        }
       },
       {
         component: 'input',
@@ -132,7 +145,10 @@ export const initialSetupData = [
         label: 'Altezza sinistra',
         model: 'leftHeight',
         placeholder: "0cm",
-        showIf: ['attic']
+        showIf: {
+          entity: 'room.type',
+          values: ['attic']
+        }
       },
       {
         component: 'input',
@@ -144,7 +160,10 @@ export const initialSetupData = [
         label: 'Altezza destra',
         model: 'rightHeight',
         placeholder: "0cm",
-        showIf: ['attic']
+        showIf: {
+          entity: 'room.type',
+          values: ['attic']
+        }
       },
       {
         component: 'button',
@@ -162,14 +181,33 @@ export const initialSetupData = [
         label: 'K1',
         description: 'Sistema a parete modulabile, composto da montanti a cremagliera, ripiani e contenitori.',
         image: 'k1.jpeg',
-        key: 'k1'
+        key: 'k1',
+        showIf: {
+          entity: 'product.inRoomPosition',
+          values: ['wall']
+        }
       },
       {
         component: 'card',
         label: 'K2',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'k2.jpeg',
-        key: 'k2'
+        key: 'k2',
+        showIf: {
+          entity: 'product.inRoomPosition',
+          values: ['wall', 'standalone']
+        }
+      },
+      {
+        component: 'card',
+        label: 'K3',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'k3.jpeg',
+        key: 'k3',
+        showIf: {
+          entity: 'product.inRoomPosition',
+          values: ['standalone']
+        }
       }
     ],
     /* footer: {
@@ -196,14 +234,48 @@ export const initialSetupData = [
     super: 'product',
     options: [
       {
-        component: 'choice',
-        label: 'A terra',
-        key: 'ground'
+        component: 'card',
+        label: 'Sospesa',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'floating.jpeg',
+        key: 'floating',
+        showIf: {
+          entity: 'product.type',
+          values: ['k1']
+        }
       },
       {
-        component: 'choice',
-        label: 'A parete',
-        key: 'wall'
+        component: 'card',
+        label: 'A terra',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'ground.jpeg',
+        key: 'ground',
+        showIf: {
+          entity: 'product.type',
+          values: ['k1']
+        }
+      },
+      {
+        component: 'card',
+        label: 'Terra-cielo',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'groundtotop.jpeg',
+        key: 'ground-to-top',
+        showIf: {
+          entity: 'product.type',
+          values: ['k2']
+        }
+      },
+      {
+        component: 'card',
+        label: 'Parete-terra',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'walltoground.jpeg',
+        key: 'wall-to-ground',
+        showIf: {
+          entity: 'product.type',
+          values: ['k2']
+        }
       }
     ]
   }

@@ -1,19 +1,5 @@
-<script setup>
-import { ref, computed, onMounted, defineProps, defineAsyncComponent } from 'vue'
-  
-const icon = computed(() => defineAsyncComponent(() => import(`./icons/${capitalize(props.option.icon)}.vue`)))
-
-const props = defineProps(['index', 'option', 'config'])
-const alpha = Array.from(Array(26)).map((e, i) => i + 65);
-const alphabet = alpha.map((x) => String.fromCharCode(x));
-
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-</script>
-
 <template>
-  <div class="flex gap-12 items-center">
+  <div class="flex gap-12 items-center" v-if="isVisible">
     <div class="flex w-full bg-white group relative my-4 cursor-pointer" ref="button">
       <div v-if="props.option.image" class="w-full">
         <img class="h-full object-cover w-full" :src="`/assets/images/${props.option.image}`" width="200" height="200" :alt="props.option.image"/>
@@ -25,3 +11,22 @@ const capitalize = (string) => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, computed, onMounted, defineProps, defineAsyncComponent } from 'vue'
+import lget from 'lodash.get'
+  
+const icon = computed(() => defineAsyncComponent(() => import(`./icons/${capitalize(props.option.icon)}.vue`)))
+
+const props = defineProps(['index', 'option', 'config'])
+const alpha = Array.from(Array(26)).map((e, i) => i + 65);
+const alphabet = alpha.map((x) => String.fromCharCode(x));
+
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const isVisible = computed(() => {
+  return !props.option.showIf || props.option.showIf.values.includes(lget(props.config, props.option.showIf.entity))
+})
+</script>

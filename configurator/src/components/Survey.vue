@@ -1,89 +1,3 @@
-<script setup>
-import { computed, ref, reactive, defineEmits, defineAsyncComponent } from 'vue'
-import { initialSetupData } from '@/dataset/initialSetupData'
-import Logo from '@/components/Logo.vue'
-import LoadingBar from '@/components/LoadingBar.vue'
-import Back from '@/components/icons/Back.vue'
-import Question from '@/components/Question.vue'
-import QuestionChoice from '@/components/QuestionChoice.vue'
-import QuestionInput from '@/components/QuestionInput.vue'
-import QuestionButton from '@/components/QuestionButton.vue'
-import QuestionCard from '@/components/QuestionCard.vue'
-
-const components = {
-  choice: QuestionChoice,
-  input: QuestionInput,
-  button: QuestionButton,
-  card: QuestionCard
-}
-
-const dimensions = reactive({})
-
-const emit = defineEmits(['start'])
-const step = ref(0)
-const current = computed(() => initialSetupData[step.value]) // Dati per lo step corrente
-const target = ref({ option: {}, isAnimating: false })
-const config = ref({ room: { dimensions: { width: undefined, height: undefined, depth: undefined, leftHeight: undefined, rightHeight: undefined } }, product: {}})
-
-const handleClick = (option, superKey, key, value) => {
-  if (option.component !== 'input') {
-    target.value = { option: option, isAnimating: true }
-    setTimeout(() => {
-      handleNextStep(superKey, key, value)
-      target.value.isAnimating = false
-    }, 500)
-  } else {
-    return null
-  }
-}
-
-const handleNextStep = (superKey, key, value) => {
-  if (superKey && key && value) config.value[superKey][key] = value
-  if (step.value === 1 && config.value.product.inRoomPosition !== 'wall') {
-    step.value = 2
-    return
-  }
-  step.value++
-
-  if ((step.value === 5 && config.value.product.type === 'k2') || step.value === 6) {
-    // Converto le dimensioni da cm a m per la generazione della stanza
-    config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
-    // Lancio configuratore
-    emit('start', config.value)
-    return
-  }
-}
-
-const convertDimensions = (dimensions) => {
-  return Object.keys(dimensions).reduce((accumulator, key) => {
-    let formattedDimension = typeof dimensions[key] !== 'undefined' ? (parseInt(dimensions[key]) / 100).toString() : dimensions[key] 
-    return { ...accumulator, [key]: formattedDimension };
-  }, {});
-}
-
-const goBack = () => {
-  step.value--
-}
-
-const zeroPad = (num, places) => String(num).padStart(places, '0')
-
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-/* const componentModel = (option, value) => {
-  return option?.model ? config.value.room.dimensions[option.model] : null
-} */
-
-const setDimension = (value, option) => {
-  config.value.room.dimensions[option.model] = value
-}
-
-const isVisible = (question, index) => {
-  return step.value === parseInt(index) && (!question.showIf || question.showIf.includes(config.value.product.inRoomPosition))
-}
-</script>
-
 <template>
   <div class="relative w-full h-screen">
     <Logo class="fixed m-8"/>
@@ -105,6 +19,9 @@ const isVisible = (question, index) => {
           <p class="text-xs" v-html="question.paragraph"/>
         </template>
         <template #options>
+          <div v-if="question.showIcon && icon" class="flex flex-wrap items-center justify-center mb-16 w-full">
+            <component :is="icon" class="text-white w-14 h-auto" />
+          </div>
           <div v-for="(option, index) in question.options" :key="index">
             <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="config.room.dimensions[option.model]" @input="setDimension($event.target.value, option)" @click="handleClick(option, question.super, question.key, option.key)"/>
           </div>
@@ -213,3 +130,87 @@ const isVisible = (question, index) => {
     </Question> -->
   </div>
 </template>
+<script setup>
+import { computed, ref, reactive, defineEmits, defineAsyncComponent } from 'vue'
+import lget from 'lodash.get'
+import { initialSetupData } from '@/dataset/initialSetupData'
+import Logo from '@/components/Logo.vue'
+import LoadingBar from '@/components/LoadingBar.vue'
+import Back from '@/components/icons/Back.vue'
+import Question from '@/components/Question.vue'
+import QuestionChoice from '@/components/QuestionChoice.vue'
+import QuestionInput from '@/components/QuestionInput.vue'
+import QuestionButton from '@/components/QuestionButton.vue'
+import QuestionCard from '@/components/QuestionCard.vue'
+
+
+const components = {
+  choice: QuestionChoice,
+  input: QuestionInput,
+  button: QuestionButton,
+  card: QuestionCard
+}
+
+const emit = defineEmits(['start'])
+const step = ref(0)
+const current = computed(() => initialSetupData[step.value]) // Dati per lo step corrente
+const target = ref({ option: {}, isAnimating: false })
+const config = ref({ room: { dimensions: { width: undefined, height: undefined, depth: undefined, leftHeight: undefined, rightHeight: undefined } }, product: {}})
+
+const iconType = ref(config)
+const icon = computed(() => iconType.value.room?.type ? defineAsyncComponent(() => import(`./icons/Wall${capitalize(iconType.value.room.type)}.vue`)) : null)
+
+const handleClick = (option, superKey, key, value) => {
+  if (option.component !== 'input') {
+    target.value = { option: option, isAnimating: true }
+    setTimeout(() => {
+      handleNextStep(superKey, key, value)
+      target.value.isAnimating = false
+    }, 500)
+  } else {
+    return null
+  }
+}
+
+const handleNextStep = (superKey, key, value) => {
+  if (superKey && key && value) config.value[superKey][key] = value
+  if (step.value === 1 && config.value.product.inRoomPosition !== 'wall') {
+    step.value = 2
+    return
+  }
+  step.value++
+
+  if ((step.value === 6 && config.value.product.type === 'k2') || step.value === 7) {
+    // Converto le dimensioni da cm a m per la generazione della stanza
+    config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
+    // Lancio configuratore
+    emit('start', config.value)
+    return
+  }
+}
+
+const convertDimensions = (dimensions) => {
+  return Object.keys(dimensions).reduce((accumulator, key) => {
+    let formattedDimension = typeof dimensions[key] !== 'undefined' ? (parseInt(dimensions[key]) / 100).toString() : dimensions[key] 
+    return { ...accumulator, [key]: formattedDimension };
+  }, {});
+}
+
+const goBack = () => {
+  step.value--
+}
+
+const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const setDimension = (value, option) => {
+  config.value.room.dimensions[option.model] = value
+}
+
+const isVisible = (question, index) => {
+  return step.value === parseInt(index) && (!question.showIf || question.showIf.values.includes(lget(config.value, question.showIf.entity)))
+}
+</script>
