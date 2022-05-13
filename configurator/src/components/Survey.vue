@@ -1,15 +1,15 @@
 <template>
   <div class="relative w-full h-screen">
     <Logo class="fixed m-8"/>
-    <template v-for="(question, index) in initialSetupData">
+    <template v-for="(question, index) in questions">
       <Question v-if="isVisible(question, index)" :key="`question-${index}`">
         <template #progress>
           <div v-if="step > 0">
             <div class="flex items-center relative w-full">
-              <Back v-if="step > 1" class="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray" @click="goBack"/>
+              <Back v-if="step > 1" class="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray" @click="goBack(question)"/>
               <div class="text-black text-[40px] font-regular text-center w-full" v-text="zeroPad(step, 2)" />
             </div>
-            <LoadingBar :value="step" :total="initialSetupData.length" class="mt-8 mb-16"/>
+            <LoadingBar :value="step" :total="questions.length" class="mt-8 mb-16"/>
           </div>
         </template>
         <template #question>
@@ -142,6 +142,8 @@ import QuestionChoice from '@/components/QuestionChoice.vue'
 import QuestionInput from '@/components/QuestionInput.vue'
 import QuestionButton from '@/components/QuestionButton.vue'
 import QuestionCard from '@/components/QuestionCard.vue'
+import { set } from 'pinia/node_modules/vue-demi'
+import { getBaseTransformPreset } from '@vue/compiler-core'
 
 
 const components = {
@@ -153,7 +155,8 @@ const components = {
 
 const emit = defineEmits(['start'])
 const step = ref(0)
-const current = computed(() => initialSetupData[step.value]) // Dati per lo step corrente
+let questions = ref(initialSetupData)
+const current = computed(() => questions[step.value]) // Dati per lo step corrente
 const target = ref({ option: {}, isAnimating: false })
 const config = ref({ room: { dimensions: { width: undefined, height: undefined, depth: undefined, leftHeight: undefined, rightHeight: undefined } }, product: {}})
 
@@ -161,47 +164,38 @@ const iconType = ref(config)
 const icon = computed(() => iconType.value.room?.type ? defineAsyncComponent(() => import(`./icons/Wall${capitalize(iconType.value.room.type)}.vue`)) : null)
 
 const handleClick = (option, question) => {
+  if (question.super && question.key && option.key) config.value[question.super][question.key] = option.key
+  
+  updateQuestions(questions, step)
+
   if (option.component !== 'input') {
     target.value = { option: option, isAnimating: true }
     setTimeout(() => {
       handleNextStep(option, question)
       target.value.isAnimating = false
     }, 500)
-  } else {
-    return null
   }
+  return
 }
 
 const handleNextStep = (option, question) => {
-  if (question.super && question.key && option.key) config.value[question.super][question.key] = option.key
-
-  /* if (step.value === 1 && config.value.product.inRoomPosition !== 'wall') {
-    step.value = 4
-    return
-  } */
-  let nextStep = initialSetupData.findIndex((item) => { return option.nextStep === item.step })
-  
-  console.log(initialSetupData, option.nextStep, nextStep, step.value)
-
-  step.value = option.nextStep && nextStep !== 0 ? nextStep : step.value + 1
-
-  if(option.nextStep === 'configurator') {
+  step.value++
+  if(step.value === questions.value.length) {
     // Converto le dimensioni da cm a m per la generazione della stanza
     config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
     // Lancio configuratore
     emit('start', config.value)
     return
   }
+}
 
-  //step.value++
-
-  /* if ((step.value === 6 && config.value.product.type === 'k2') || step.value === 7) {
-    // Converto le dimensioni da cm a m per la generazione della stanza
-    config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
-    // Lancio configuratore
-    emit('start', config.value)
-    return
-  } */
+const updateQuestions = (questions, nextStep) => {
+  if(nextStep.value === 1) {
+    questions.value = initialSetupData
+    questions.value = Object.keys(config.value.product).length ? questions.value.filter((item) => {
+      return !item.type || item.type === config.value.product.inRoomPosition
+    }) : questions.value
+  }
 }
 
 const convertDimensions = (dimensions) => {
@@ -211,7 +205,9 @@ const convertDimensions = (dimensions) => {
   }, {});
 }
 
-const goBack = () => {
+const goBack = (question) => {
+  let nextStep = step.value - 1
+  updateQuestions(questions, nextStep)
   step.value--
 }
 
