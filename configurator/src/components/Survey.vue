@@ -23,7 +23,7 @@
             <component :is="icon" class="text-white w-14 h-auto" />
           </div>
           <div v-for="(option, index) in question.options" :key="index">
-            <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="config.room.dimensions[option.model]" @input="setDimension($event.target.value, option)" @click="handleClick(option, question.super, question.key, option.key)"/>
+            <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="config.room.dimensions[option.model]" @input="setDimension($event.target.value, option)" @click="handleClick(option, question)"/>
           </div>
         </template>
         <template #footer>
@@ -160,11 +160,11 @@ const config = ref({ room: { dimensions: { width: undefined, height: undefined, 
 const iconType = ref(config)
 const icon = computed(() => iconType.value.room?.type ? defineAsyncComponent(() => import(`./icons/Wall${capitalize(iconType.value.room.type)}.vue`)) : null)
 
-const handleClick = (option, superKey, key, value) => {
+const handleClick = (option, question) => {
   if (option.component !== 'input') {
     target.value = { option: option, isAnimating: true }
     setTimeout(() => {
-      handleNextStep(superKey, key, value)
+      handleNextStep(option, question)
       target.value.isAnimating = false
     }, 500)
   } else {
@@ -172,21 +172,36 @@ const handleClick = (option, superKey, key, value) => {
   }
 }
 
-const handleNextStep = (superKey, key, value) => {
-  if (superKey && key && value) config.value[superKey][key] = value
-  if (step.value === 1 && config.value.product.inRoomPosition !== 'wall') {
-    step.value = 2
-    return
-  }
-  step.value++
+const handleNextStep = (option, question) => {
+  if (question.super && question.key && option.key) config.value[question.super][question.key] = option.key
 
-  if ((step.value === 6 && config.value.product.type === 'k2') || step.value === 7) {
+  /* if (step.value === 1 && config.value.product.inRoomPosition !== 'wall') {
+    step.value = 4
+    return
+  } */
+  let nextStep = initialSetupData.findIndex((item) => { return option.nextStep === item.step })
+  
+  console.log(initialSetupData, option.nextStep, nextStep, step.value)
+
+  step.value = option.nextStep && nextStep !== 0 ? nextStep : step.value + 1
+
+  if(option.nextStep === 'configurator') {
     // Converto le dimensioni da cm a m per la generazione della stanza
     config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
     // Lancio configuratore
     emit('start', config.value)
     return
   }
+
+  //step.value++
+
+  /* if ((step.value === 6 && config.value.product.type === 'k2') || step.value === 7) {
+    // Converto le dimensioni da cm a m per la generazione della stanza
+    config.value.room.dimensions = convertDimensions(config.value.room?.dimensions)
+    // Lancio configuratore
+    emit('start', config.value)
+    return
+  } */
 }
 
 const convertDimensions = (dimensions) => {

@@ -8,11 +8,13 @@ export const initialSetupData = [
       {
         component: 'button',
         label: 'Iniziamo!',
-        key: ''
+        key: '',
+        nextStep: 'start'
       }
     ]
   },
   {
+    step: 'start',
     title: '<b>Dove</b> vuoi inserire il prodotto?',
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'inRoomPosition',
@@ -21,16 +23,19 @@ export const initialSetupData = [
       {
         component: 'choice',
         label: 'A parete',
-        key: 'wall'
+        key: 'wall',
+        nextStep: 'wall-1',
       },
       {
         component: 'choice',
         label: 'In mezzo alla stanza',
-        key: 'standalone'
+        key: 'standalone',
+        nextStep: 'standalone-1'
       }
     ]
   },
   {
+    step: 'wall-1',
     title: 'In che <b>materiale</b> è costruita la parete?',
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'composition',
@@ -43,21 +48,25 @@ export const initialSetupData = [
       {
         component: 'choice',
         label: 'Mattoni',
-        key: 'brick'
+        key: 'brick',
+        nextStep: 'wall-2'
       },
       {
         component: 'choice',
         label: 'Cartongesso',
-        key: 'drywall'
+        key: 'drywall',
+        nextStep: 'wall-2'
       },
       {
         component: 'choice',
         label: 'Altro materiale',
-        key: 'other'
+        key: 'other',
+        nextStep: 'wall-2'
       }
     ]
   },
   {
+    step: 'wall-2',
     title: "<b>Di che tipo</b> è la tua parete?",
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'type',
@@ -67,23 +76,54 @@ export const initialSetupData = [
         icon: 'WallClassic',
         component: 'choice',
         label: 'Classica',
-        key: 'classic'
+        key: 'classic',
+        nextStep: 'dimensions'
       },
       {
         icon: 'WallNiche',
         component: 'choice',
         label: 'Nicchia',
-        key: 'niche'
+        key: 'niche',
+        nextStep: 'dimensions'
       },
       {
         icon: 'WallAttic',
         component: 'choice',
         label: 'Mansarda',
-        key: 'attic'
+        key: 'attic',
+        nextStep: 'dimensions'
       }
     ]
   },
   {
+    step: 'standalone-1',
+    title: "<b>Di che tipo</b> è la tua stanza?",
+    paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
+    key: 'type',
+    super: 'room',
+    showIf: {
+      entity: 'product.inRoomPosition',
+      values: ['standalone']
+    },
+    options: [
+      {
+        icon: 'WallClassic',
+        component: 'choice',
+        label: 'Classica',
+        key: 'classic',
+        nextStep: 'dimensions'
+      },
+      {
+        icon: 'WallAttic',
+        component: 'choice',
+        label: 'Mansarda',
+        key: 'attic',
+        nextStep: 'dimensions'
+      }
+    ]
+  },
+  {
+    step: 'dimensions',
     title: 'Quali sono le <b>dimensioni</b> della parete?',
     paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
     key: 'dimensions',
@@ -142,7 +182,7 @@ export const initialSetupData = [
         step: '.10',
         min: '1',
         max: '20',
-        label: 'Altezza sinistra',
+        label: 'Altezza sx',
         model: 'leftHeight',
         placeholder: "0cm",
         showIf: {
@@ -157,7 +197,7 @@ export const initialSetupData = [
         step: '.10',
         min: '1',
         max: '20',
-        label: 'Altezza destra',
+        label: 'Altezza dx',
         model: 'rightHeight',
         placeholder: "0cm",
         showIf: {
@@ -172,6 +212,7 @@ export const initialSetupData = [
     ]
   },
   {
+    step: 'products',
     title: 'Ecco i prodotti perfetti per te.<br/><b>Quale scegli?</b>',
     key: 'type',
     super: 'product',
@@ -195,15 +236,28 @@ export const initialSetupData = [
         key: 'k2',
         showIf: {
           entity: 'product.inRoomPosition',
-          values: ['wall', 'standalone']
+          values: ['wall']
         }
       },
       {
         component: 'card',
-        label: 'K3',
+        label: 'K2',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'k2.jpeg',
+        key: 'k2',
+        nextStep: 'configurator',
+        showIf: {
+          entity: 'product.inRoomPosition',
+          values: ['standalone']
+        }
+      },
+      {
+        component: 'card',
+        label: 'K3+',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'k3.jpeg',
         key: 'k3',
+        nextStep: 'configurator',
         showIf: {
           entity: 'product.inRoomPosition',
           values: ['standalone']
@@ -229,6 +283,7 @@ export const initialSetupData = [
     } */
   },
   {
+    step: 'positioning',
     title: 'Dove vuoi <b>posizionare</b> il prodotto?',
     key: 'uprightsPosition',
     super: 'product',
@@ -239,6 +294,7 @@ export const initialSetupData = [
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'floating.jpeg',
         key: 'floating',
+        nextStep: 'configurator',
         showIf: {
           entity: 'product.type',
           values: ['k1']
@@ -250,6 +306,7 @@ export const initialSetupData = [
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'ground.jpeg',
         key: 'ground',
+        nextStep: 'configurator',
         showIf: {
           entity: 'product.type',
           values: ['k1']
@@ -261,6 +318,7 @@ export const initialSetupData = [
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'groundtotop.jpeg',
         key: 'ground-to-top',
+        nextStep: 'configurator',
         showIf: {
           entity: 'product.type',
           values: ['k2']
@@ -272,6 +330,7 @@ export const initialSetupData = [
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'walltoground.jpeg',
         key: 'wall-to-ground',
+        nextStep: 'configurator',
         showIf: {
           entity: 'product.type',
           values: ['k2']
