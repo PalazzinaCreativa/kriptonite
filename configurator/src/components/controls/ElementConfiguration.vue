@@ -1,8 +1,8 @@
 <script setup>
+import { ref } from 'vue';
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
 import { uprightsData } from '@/dataset/uprightsData'
-import { ref } from 'vue';
 import { useConfiguratorStore } from '../../stores/configurator';
 
 const props = defineProps(['element'])
@@ -46,7 +46,7 @@ const destroy = () => {
 </script>
 
 <template>
-  <div class="absolute w-full z-20 bg-white h-full p-5">
+  <div class="absolute bg-white h-full p-5 w-full z-3">
     <div class="mb-16" @click="close">Chiudi</div>
     <div v-if="props.element.config.type === 'obstacle'">
       Dimensioni

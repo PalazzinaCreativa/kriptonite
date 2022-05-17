@@ -6,4 +6,4 @@ export const NICHE_PADDING = 100 // Spazio esterno della nicchia
 
 export const GUTTER = 15 // Il prodotto non può essere posizionato a filo con la parete
 
-export const RESTING_ON_THE_GROUND = ['sofa', 'table', 'door']
+export const RESTING_ON_THE_GROUND = ['sofa', 'table', 'door', 'upright_s_tele', 'upright_s']

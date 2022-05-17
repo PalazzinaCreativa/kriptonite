@@ -1,3 +1,16 @@
+<template>
+  <div class="flex h-screen overflow-hidden w-full">
+    <Header/>
+    <div canvas-wrapper class="flex-1 h-full transition-all w-full" ref="canvasWrapper" />
+    <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
+    <Controls class="transition-all w-[450px] z-2">
+      <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="selectedElement = null" />
+      <ProductList v-if="showList" @close="showList = false" />
+      <DownloadModel v-if="showDownload" @close="showDownload = false" />
+    </Controls>
+  </div>
+</template>
+
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 
@@ -63,15 +76,8 @@ onMounted(() => {
 })
 </script>
 
-<template>
-  <div class="flex h-screen w-full">
-    <Header/>
-    <div class="flex-1 h-full" ref="canvasWrapper"></div>
-    <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="w-80">
-      <ElementConfiguration :element="selectedElement" v-if="selectedElement" @close="selectedElement = null" />
-      <ProductList v-if="showList" @close="showList = false" />
-      <DownloadModel v-if="showDownload" @close="showDownload = false" />
-    </Controls>
-  </div>
-</template>
+<style>
+[canvas-wrapper] canvas {
+  width: 100% !important;
+}
+</style>x

@@ -1,6 +1,8 @@
 <template>
-  <div class="fixed flex items-center w-full z-[9]">
-    <LogoCompact/>
+  <div class="fixed flex items-center w-full z-1">
+    <a href="/">
+      <LogoCompact/>
+    </a>
     <OptionsList/>
   </div>
 </template>
