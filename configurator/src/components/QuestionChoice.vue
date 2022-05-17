@@ -1,15 +1,12 @@
 <script setup>
 import { computed, defineProps, defineAsyncComponent } from 'vue'
+import { capitalize } from '../utils/capitalize'
   
 const icon = computed(() => defineAsyncComponent(() => import(`./icons/${capitalize(props.option.icon)}.vue`)))
 
 const props = defineProps(['index', 'option', 'config', 'is-animating'])
 const alpha = Array.from(Array(26)).map((e, i) => i + 65);
 const alphabet = alpha.map((x) => String.fromCharCode(x));
-
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
 </script>
 
 <template>

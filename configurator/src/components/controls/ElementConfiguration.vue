@@ -1,5 +1,33 @@
+<template>
+  <div v-if="element.config" class="absolute bg-white h-full w-full z-4">
+    <div class="bg-light-gray flex items-center justify-between py-4 px-6">
+      <div v-if="element.config.name" v-text="element.config.name" />
+      <Close class="cursor-pointer" @click="close" />
+    </div>
+    <div class="py-4 px-6">
+      <img :src="element.config.image.url" :width="element.config.image.width" :height="element.config.image.height" :alt="element.config.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
+      <div v-if="elementSettingsInstance">
+        <component :is="elementSettingsInstance" :element="element"></component>
+      </div>
+      <div v-if="materials">
+        Materiali
+        <div class="flex flex-wrap my-4">
+          <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
+            <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
+            <div class="mt-2">{{ material.name }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4" @click="addToAll">Aggiungi a tutti</div>
+    <div class="mt-8" @click="destroy">Elimina elemento</div>
+  </div>
+</template>
+
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, defineAsyncComponent } from 'vue';
+import { capitalize } from '../../utils/capitalize'
+import Close from '@/components/icons/Close.vue'
 import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
 import { uprightsData } from '@/dataset/uprightsData'
@@ -8,6 +36,8 @@ import { useConfiguratorStore } from '../../stores/configurator';
 const props = defineProps(['element'])
 const emit = defineEmits(['close'])
 const configurator = useConfiguratorStore()
+
+const elementSettingsInstance = computed(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`)))
 
 const data = {
   obstacle: obstaclesData,
@@ -44,39 +74,3 @@ const destroy = () => {
   close()
 }
 </script>
-
-<template>
-  <div class="absolute bg-white h-full p-5 w-full z-3">
-    <div class="mb-16" @click="close">Chiudi</div>
-    <div v-if="props.element.config.type === 'obstacle'">
-      Dimensioni
-      <form class="flex flex-wrap my-4" @submit.prevent="props.element.setSize(obstacleDimensions)">
-        <div class="m-4">
-          Larghezza
-          <input type="number" class="border border-gray" v-model="obstacleDimensions.width">cm
-        </div>
-        <div class="m-4">
-          Altezza
-          <input type="number" class="border border-gray" v-model="obstacleDimensions.height">cm
-        </div>
-        <div class="m-4">
-          Profondità
-          <input type="number" class="border border-gray" v-model="obstacleDimensions.depth">cm
-        </div>
-        <button type="submit" class="shadow-lg hover:shadow-xl">Imposta</button>
-      </form>
-    </div>
-    <div v-if="materials">
-      Materiali
-      <div class="flex flex-wrap my-4">
-        <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
-          <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
-          <div class="mt-2">{{ material.name }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-4" @click="addToAll">Aggiungi a tutti</div>
-    <div class="mt-8" @click="destroy">Elimina elemento</div>
-  </div>
-</template>

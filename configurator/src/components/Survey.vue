@@ -133,6 +133,8 @@
 <script setup>
 import { computed, ref, reactive, defineEmits, defineAsyncComponent } from 'vue'
 import lget from 'lodash.get'
+import { capitalize } from '../utils/capitalize'
+import { zeroPad } from '../utils/zeroPad'
 import { initialSetupData } from '@/dataset/initialSetupData'
 import Logo from '@/components/Logo.vue'
 import LoadingBar from '@/components/LoadingBar.vue'
@@ -209,12 +211,6 @@ const goBack = (question) => {
   let nextStep = step.value - 1
   updateQuestions(questions, nextStep)
   step.value--
-}
-
-const zeroPad = (num, places) => String(num).padStart(places, '0')
-
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 const setDimension = (value, option) => {

@@ -1,6 +1,7 @@
 <template>
   <div class="flex h-screen overflow-hidden w-full">
-    <Header/>
+    <Header />
+    <Loader :visible="loading" />
     <div canvas-wrapper class="flex-1 h-full transition-all w-full" ref="canvasWrapper" />
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls class="transition-all w-[450px] z-2">
@@ -14,6 +15,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 
+import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
 import Header from '@/components/Header.vue'
@@ -34,10 +36,12 @@ const props = defineProps(['config'])
 
 const canvasWrapper = ref(null)
 const selectedElement = ref(null)
+const loading = ref(false)
 const showList = ref(false)
 const showDownload = ref(false)
 
 onMounted(() => {
+  loading.value = true
   const viewer = new Viewer(
     canvasWrapper.value, // Elemento del dom principale
     props.config,
@@ -46,6 +50,7 @@ onMounted(() => {
         viewerGetter: () => viewer,
         isReady: true
       })
+      loading.value = false
     }
   )
 

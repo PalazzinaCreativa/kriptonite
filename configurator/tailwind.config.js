@@ -2,7 +2,18 @@ module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      animation: {
+        flickering: 'flickering 0.25s infinite',
+      },
+      keyframes: {
+        flickering: {
+          '0%' : { opacity: '1' },
+          '50%' : { opacity: '0.66' },
+          '75%' : { opacity: '0.75' }
+        }
+      },
       fontSize: {
+        xxs: ['0.75rem', '1.28'],
         xs: ['0.875rem', '1.28'],
         s: ['1rem', '1.28'],
         m: ['1.375rem', '1.28'],
@@ -14,6 +25,13 @@ module.exports = {
         regular: 400,
         'semi-bold': 600
       },
+      zIndex: {
+        '1' : '1',
+        '2' : '2',
+        '3' : '3',
+        '4' : '4',
+        '5' : '5'
+      }
     },
     colors: {
       yellow: '#FFCC67',
@@ -42,13 +60,6 @@ module.exports = {
       1800: '1800ms',
       2000: '2000ms',
       2200: '2200ms'
-    },
-    zIndex: {
-      '1' : '1',
-      '2' : '2',
-      '3' : '3',
-      '4' : '4',
-      '5' : '5'
     }
   },
   variants: {

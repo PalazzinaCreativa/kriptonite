@@ -12,10 +12,10 @@
 </template>
 <script setup>
 import { computed, defineProps, defineEmits } from 'vue';
+import { zeroPad } from '../../utils/zeroPad'
 
 const props = defineProps(['id', 'name', 'description', 'active'])
 const emits = defineEmits(['activate'])
-const zeroPad = (num, places) => String(num).padStart(places, '0')
 const activate = (id) => {
   emits('activate', id)
 }

@@ -14,6 +14,7 @@
 
 <script setup>
 import { ref, computed, onMounted, defineProps, defineAsyncComponent } from 'vue'
+import { capitalize } from '../utils/capitalize'
 import lget from 'lodash.get'
   
 const icon = computed(() => defineAsyncComponent(() => import(`./icons/${capitalize(props.option.icon)}.vue`)))
@@ -21,10 +22,6 @@ const icon = computed(() => defineAsyncComponent(() => import(`./icons/${capital
 const props = defineProps(['index', 'option', 'config'])
 const alpha = Array.from(Array(26)).map((e, i) => i + 65);
 const alphabet = alpha.map((x) => String.fromCharCode(x));
-
-const capitalize = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 const isVisible = computed(() => {
   return !props.option.showIf || props.option.showIf.values.includes(lget(props.config, props.option.showIf.entity))

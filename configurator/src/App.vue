@@ -1,3 +1,13 @@
+<template>
+  <div>
+    <Survey v-if="!showConfigurator" @start="start"/>
+    <Configurator v-else :config="config" />
+    <div v-if="!showConfigurator" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
+      Go to configurator
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { ref } from 'vue'
 import Survey from '@/components/Survey.vue'
@@ -753,20 +763,11 @@ const start = (payload) => {
 }
 </script>
 
-<template>
-  <div>
-    <div v-if="!showConfigurator" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
-      Go to configurator
-    </div>
-    <Survey v-if="!showConfigurator" @start="start"/>
-    <Configurator v-else :config="config" />
-  </div>
-</template>
-
 <style>
 body {
-  font-family: 'din-2014', sans-serif;
   @apply text-black;
+
+  font-family: 'din-2014', sans-serif;
 }
 
 strong, b {
