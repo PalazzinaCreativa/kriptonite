@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, computed } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
@@ -25,8 +25,10 @@ import DownloadModel from '@/components/DownloadModel.vue'
 
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
+import useEncumbrancesStore from '@/stores/encumbrances'
 
-import { obstaclesData } from '@/dataset/obstaclesData'
+//import { obstaclesData } from '@/dataset/obstaclesData'
+
 import { uprightsData } from '@/dataset/uprightsData'
 import { shelvesData } from '@/dataset/shelvesData'
 
@@ -39,6 +41,9 @@ const selectedElement = ref(null)
 const loading = ref(false)
 const showList = ref(false)
 const showDownload = ref(false)
+
+const encumbrancesModule = useEncumbrancesStore()
+encumbrancesModule.getEncumbrances()
 
 onMounted(() => {
   loading.value = true
@@ -57,7 +62,7 @@ onMounted(() => {
 // Passo i dati al viewer per popolare il configuratore
   viewer.setHook('getData', ({ type, id, variantId }) => {
     const data = {
-      obstacle: obstaclesData,
+      obstacle: computed(() => encumbrancesModule.index),
       upright: uprightsData,
       shelf: shelvesData
     }
@@ -68,6 +73,7 @@ onMounted(() => {
   })
 
   viewer.setHook('selectElement', (element) => {
+    console.log(element)
     selectedElement.value = element
   })
 

@@ -1,26 +1,33 @@
 <template>
-  <div v-if="element.config" class="absolute bg-white h-full w-full z-4">
-    <div class="bg-light-gray flex items-center justify-between py-4 px-6">
+  <div v-if="element.config" class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-2">
+    <div configuration-header class="bg-light-gray flex items-center justify-between py-4 px-6 w-full">
       <div v-if="element.config.name" v-text="element.config.name" />
       <Close class="cursor-pointer" @click="close" />
     </div>
-    <div class="py-4 px-6">
-      <img :src="element.config.image.url" :width="element.config.image.width" :height="element.config.image.height" :alt="element.config.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
-      <div v-if="elementSettingsInstance">
-        <component :is="elementSettingsInstance" :element="element"></component>
-      </div>
-      <div v-if="materials">
-        Materiali
-        <div class="flex flex-wrap my-4">
-          <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
-            <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
-            <div class="mt-2">{{ material.name }}</div>
+    <div configuration-content class="grow h-full w-full">
+      <div class="py-4 px-6">
+        <img :src="element.config.image.url" :width="element.config.image.width" :height="element.config.image.height" :alt="element.config.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
+        <div v-if="elementSettingsInstance">
+          <div class="flex flex-wrap my-4 w-full">
+            <component :is="elementSettingsInstance" :element="element"></component>
+          </div>
+        </div>
+        <div v-if="materials">
+          Materiali
+          <div class="flex flex-wrap my-4">
+            <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
+              <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
+              <div class="mt-2">{{ material.name }}</div>
+            </div>
           </div>
         </div>
       </div>
+      <div v-if="element.config.material" class="mt-4" @click="addToAll">Aggiungi a tutti</div>
     </div>
-    <div class="mt-4" @click="addToAll">Aggiungi a tutti</div>
-    <div class="mt-8" @click="destroy">Elimina elemento</div>
+    <div configuration-actions class="flex w-full">
+      <Btn class="bg-light-gray" label="Annulla" @click="destroy" />
+      <Btn class="bg-yellow" label="Inserisci elemento" @click="addElement" />
+    </div>
   </div>
 </template>
 
@@ -32,9 +39,10 @@ import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
 import { uprightsData } from '@/dataset/uprightsData'
 import { useConfiguratorStore } from '../../stores/configurator';
+import Btn from '@/components/forms/Button.vue'
 
 const props = defineProps(['element'])
-const emit = defineEmits(['close'])
+const emits = defineEmits(['close'])
 const configurator = useConfiguratorStore()
 
 const elementSettingsInstance = computed(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`)))
@@ -66,7 +74,12 @@ const addToAll = () => {
 
 const close = () => {
   configurator.removeSelection()
-  emit('close')
+  emits('close')
+}
+
+const addElement = () => {
+  props.element.setSize(props.element.config)
+  emits('close')
 }
 
 const destroy = () => {

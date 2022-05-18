@@ -5,7 +5,7 @@ const c = new Client({
   baseURL: 'https://kriptonite-cms-i6snh.ondigitalocean.app'
 })
 
-export const useEncumbrancesStore = defineStore({
+export default defineStore({
   id: "encumbrances",
   state: () => ({
     list: []

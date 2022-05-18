@@ -1,29 +1,14 @@
 <template>
-
-  <form class="flex flex-wrap my-4" @submit.prevent="props.element.setSize(element.config)">
-    <TextField v-model="width" name="width" label="Larghezza" placeholder="cm"/>
-    
-    <div class="m-4">
-      Larghezza
-      <input type="number" class="border border-gray" v-model="element.config.width">cm
-    </div>
-    <div class="m-4">
-      Altezza
-      <input type="number" class="border border-gray" v-model="element.config.height">cm
-    </div>
-    <div class="m-4">
-      Profondità
-      <input type="number" class="border border-gray" v-model="element.config.depth">cm
-    </div>
-    <button type="submit" class="shadow-lg hover:shadow-xl">Imposta</button>
-  </form>
+  <div element-settings class="flex flex-col justify-center gap-10 w-[300px] mx-auto">
+    <NumberField class="w-full" v-model="element.config.width" name="width" label="Larghezza" append="cm"/>
+    <NumberField class="w-full" v-model="element.config.height" name="height" label="Altezza" append="cm"/>
+    <NumberField class="w-full" v-model="element.config.depth" name="depth" label="Profondità" append="cm"/>
+  </div>
 </template>
 
 <script setup>
   import { ref, defineProps } from 'vue';
-  import TextField from '@/components/forms/TextField.vue'
+  import NumberField from '@/components/forms/NumberField.vue'
 
   const props = defineProps(['element'])
-
-  const width = ref(0)
 </script>

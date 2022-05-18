@@ -5,7 +5,7 @@ const c = new Client({
   baseURL: 'https://kriptonite-cms-i6snh.ondigitalocean.app'
 })
 
-export const useUprightsStore = defineStore({
+export default defineStore({
   id: "uprights",
   state: () => ({
     list: []
@@ -20,7 +20,7 @@ export const useUprightsStore = defineStore({
   actions: {
     async getUprights(id) {
       let response = await c.getUprightsByProduct(id)
-      this.list = response.data
+      this.list = response
     }
   }
 });

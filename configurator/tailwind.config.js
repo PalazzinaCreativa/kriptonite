@@ -4,8 +4,17 @@ module.exports = {
     extend: {
       animation: {
         flickering: 'flickering 0.25s infinite',
+        button: 'button 0.2s cubic-bezier(.75,.1,.22,.99)'
       },
       keyframes: {
+        button: {
+          '0%' : { transform: 'translateY(0)', opacity: '1' },
+          '49%' : { transform: 'translateY(-30px)', opacity: '1' },
+          '50%' : { transform: 'translateY(-30px)', opacity: '0' },
+          '51%' : { transform: 'translateY(30px)', opacity: '0' },
+          '52%' : { transform: 'translateY(30px)', opacity: '1' },
+          '100%' : { transform: 'translateY(0)', opacity: '1' }
+        },
         flickering: {
           '0%' : { opacity: '1' },
           '50%' : { opacity: '0.66' },

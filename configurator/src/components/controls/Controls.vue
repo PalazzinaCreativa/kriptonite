@@ -9,7 +9,7 @@
         </ControlsSection>
       </div>
     </div>
-    <div sidebar-trigger class="absolute bottom-[50px] border border-gray bg-white cursor-pointer flex h-8 items-center justify-center rounded-full transform -translate-x-1/2 duration-400 transition-all w-8 hover:border-yellow" :class="isOpen ? '' : 'bg-black border-white text-white -rotate-180 -translate-x-[200%]'" @click="toggleSidebar">
+    <div sidebar-trigger class="absolute bottom-[50px] border border-gray bg-white cursor-pointer flex h-8 items-center justify-center rounded-full transform -translate-x-1/2 duration-400 transition-all w-8 hover:border-yellow z-3" :class="isOpen ? '' : 'bg-black border-white text-white -rotate-180 -translate-x-[200%]'" @click="toggleSidebar">
       <Arrow class="text-dark-gray" />
     </div>
   </div>
