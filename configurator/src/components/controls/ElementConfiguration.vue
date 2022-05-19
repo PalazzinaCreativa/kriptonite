@@ -1,18 +1,18 @@
 <template>
-  <div v-if="element.config" class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-2">
+  <div v-if="element.config" class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-5">
     <div configuration-header class="bg-light-gray flex items-center justify-between py-4 px-6 w-full">
       <div v-if="element.config.name" v-text="element.config.name" />
       <Close class="cursor-pointer" @click="close" />
     </div>
     <div configuration-content class="grow h-full w-full">
       <div class="py-4 px-6">
-        <img :src="element.config.image.url" :width="element.config.image.width" :height="element.config.image.height" :alt="element.config.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
+        <img v-if="element.config.image" :src="element.config.image.url" :width="element.config.image.width" :height="element.config.image.height" :alt="element.config.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
             <component :is="elementSettingsInstance" :element="element"></component>
           </div>
         </div>
-        <div v-if="materials">
+        <!-- <div v-if="materials">
           Materiali
           <div class="flex flex-wrap my-4">
             <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
@@ -20,13 +20,15 @@
               <div class="mt-2">{{ material.name }}</div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div v-if="element.config.material" class="mt-4" @click="addToAll">Aggiungi a tutti</div>
+      <div class="flex items-center justify-center">
+        <span v-if="element.config.material" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
+      </div>
     </div>
     <div configuration-actions class="flex w-full">
-      <Btn class="bg-light-gray" label="Annulla" @click="destroy" />
-      <Btn class="bg-yellow" label="Inserisci elemento" @click="addElement" />
+      <Btn class="bg-light-gray" label="Elimina elemento" @click="destroy" />
+      <Btn class="bg-yellow" label="Aggiorna elemento" @click="addElement" />
     </div>
   </div>
 </template>

@@ -283,7 +283,7 @@ export default class Viewer {
     this.outlinePass.hover.selectedObjects = []
     this.outlinePass.select.selectedObjects = [element.object]
     this.selectedElement = element
-    this.zoomOnTarget({ ...element.getPosition(), z: 150 })
+    this.zoomOnTarget({ ...element.getPosition(), z:300 })
     this.doHook('selectElement', element)
     document.body.style.cursor = 'auto'
   }
@@ -331,6 +331,7 @@ export default class Viewer {
     if (config.type === 'obstacle') element = new Obstacle(config, this.room)
     if (config.type === 'upright') element = new Upright(config, this.product)
     if (config.type === 'shelf') element = new Shelf(config, this.product)
+    console.log(config)
     await element.init()
 
     if (config.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
