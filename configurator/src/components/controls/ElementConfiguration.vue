@@ -12,15 +12,19 @@
             <component :is="elementSettingsInstance" :element="element"></component>
           </div>
         </div>
-        <!-- <div v-if="materials">
-          Materiali
-          <div class="flex flex-wrap my-4">
-            <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
+        <div v-if="textures || materials" class="my-4">
+          <div class="uppercase text-center w-full">Finitura</div>
+          <div class="flex flex-wrap justify-center gap-12 my-4">
+            <div v-for="texture in textures" :key="`texture-${texture.id}`" class="flex flex-wrap justify-center cursor-pointer"  @click="setMaterial(texture)">
+              <div class="border-2 w-14 h-14 rounded-full" :class="element.config.material.id === texture.id ? 'border-2 border-yellow' : 'border-dark-gray'" :style="`background: url('${texture.thumb}') center center / cover`"></div>
+              <div class="text-center mt-3 w-full">{{ texture.name }}</div>
+            </div>
+            <!-- <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
               <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
               <div class="mt-2">{{ material.name }}</div>
-            </div>
+            </div> -->
           </div>
-        </div> -->
+        </div>
       </div>
       <div class="flex items-center justify-center">
         <span v-if="element.config.material" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
@@ -41,13 +45,17 @@ import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
 import { uprightsData } from '@/dataset/uprightsData'
 import { useConfiguratorStore } from '../../stores/configurator';
+import useTexturesStore from '../../stores/textures';
 import Btn from '@/components/forms/Button.vue'
 
 const props = defineProps(['element'])
 const emits = defineEmits(['close'])
 const configurator = useConfiguratorStore()
+const texturesModule = useTexturesStore()
 
 const elementSettingsInstance = computed(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`)))
+
+const textures = texturesModule.index
 
 const data = {
   obstacle: obstaclesData,

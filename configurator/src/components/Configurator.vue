@@ -26,10 +26,11 @@ import DownloadModel from '@/components/DownloadModel.vue'
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useEncumbrancesStore from '@/stores/encumbrances'
+import useUprightsStore from '@/stores/uprights'
+import useTexturesStore from '@/stores/textures'
 
 //import { obstaclesData } from '@/dataset/obstaclesData'
-
-import { uprightsData } from '@/dataset/uprightsData'
+//import { uprightsData } from '@/dataset/uprightsData'
 import { shelvesData } from '@/dataset/shelvesData'
 
 const configurator = useConfiguratorStore()
@@ -44,6 +45,12 @@ const showDownload = ref(false)
 
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()
+
+const uprightsModule = useUprightsStore()
+uprightsModule.getUprights(1)
+
+const texturesModule = useTexturesStore()
+texturesModule.getTextures()
 
 onMounted(() => {
   loading.value = true
@@ -63,7 +70,7 @@ onMounted(() => {
   viewer.setHook('getData', ({ type, id, variantId }) => {
     const data = {
       obstacle: computed(() => encumbrancesModule.index),
-      upright: uprightsData,
+      upright: computed(() => uprightsModule.index),
       shelf: shelvesData
     }
 
