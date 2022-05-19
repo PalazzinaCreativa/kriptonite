@@ -1,5 +1,5 @@
 import { detectCollision } from './detectCollision'
-import { GUTTER } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER } from '@/dataset/defaultConfiguratorValues'
 
 export const placeObject = ({ point, element, room, collidables }) => {
   const { width, height, depth } = element.getSize()

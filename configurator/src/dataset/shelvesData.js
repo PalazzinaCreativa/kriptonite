@@ -71,6 +71,17 @@ export const shelvesData = [
           height: 40,
           depth: 40
         }
+      },
+      {
+        name: 'Contenitore 75',
+        id: 'shelf_03',
+        type: 'shelf',
+        path: '/assets/objects/product/shelves/K1_75_battente.gltf',
+        dimensions: {
+          width: 75,
+          height: 40,
+          depth: 40
+        }
       }
     ]
   }

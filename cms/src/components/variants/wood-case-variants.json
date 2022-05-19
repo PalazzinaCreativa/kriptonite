@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_variants_wood_case_variants",
+  "info": {
+    "displayName": "wood_case_variants",
+    "icon": "align-left"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "depth": {
+      "type": "decimal"
+    },
+    "width": {
+      "type": "decimal"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "model": {
+      "allowedTypes": [
+        "files"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "texture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::texture.texture"
+    }
+  }
+}

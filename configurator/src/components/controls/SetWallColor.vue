@@ -41,7 +41,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative z-20">
+  <div class="relative z-1">
     <h2>Seleziona il colore della parete</h2>
     <div class="block w-6 h-6 mt-2 rounded-md shadow-md hover:shadow-lg cursor-pointer" :style="{ backgroundColor: wallColor }" @click="showPicker = !showPicker" ref="toggle">
     </div>

@@ -35,6 +35,11 @@
       "allowedTypes": [
         "files"
       ]
+    },
+    "texture": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::texture.texture"
     }
   }
 }

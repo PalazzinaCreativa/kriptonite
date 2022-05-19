@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "gsap": "^3.10.4",
+    "lodash.get": "^4.4.2",
     "pinia": "^2.0.13",
+    "qs": "^6.10.3",
     "three": "^0.139.2",
     "three-csg-ts": "^3.1.10",
     "vue": "^3.2.31",
@@ -26,5 +28,8 @@
     "prettier": "^2.5.1",
     "tailwindcss": "^3.0.23",
     "vite": "^2.9.1"
+  },
+  "volta": {
+    "node": "16.15.0"
   }
 }

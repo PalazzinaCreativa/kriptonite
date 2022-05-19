@@ -98,6 +98,28 @@ export const uprightsData = [
           height: 249,
           depth: 2
         }
+      },
+      {
+        name: 'Montante cielo-terra estensibile',
+        id: 'upright_s_tele',
+        type: 'upright',
+        path: '/assets/objects/product/uprights/K2_tele_medio.gltf',
+        dimensions: {
+          width: 9.98,
+          height: 250,
+          depth: 2
+        }
+      },
+      {
+        name: 'Montante cielo-terra su misura',
+        id: 'upright_s',
+        type: 'upright',
+        path: '/assets/objects/product/uprights/K2_a_misura.gltf',
+        dimensions: {
+          width: 9.98,
+          height: 300,
+          depth: 2
+        }
       }
     ]
   }

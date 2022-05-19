@@ -1,12 +1,54 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        flickering: 'flickering 0.25s infinite',
+        button: 'button 0.2s cubic-bezier(.75,.1,.22,.99)'
+      },
+      keyframes: {
+        button: {
+          '0%' : { transform: 'translateY(0)', opacity: '1' },
+          '49%' : { transform: 'translateY(-30px)', opacity: '1' },
+          '50%' : { transform: 'translateY(-30px)', opacity: '0' },
+          '51%' : { transform: 'translateY(30px)', opacity: '0' },
+          '52%' : { transform: 'translateY(30px)', opacity: '1' },
+          '100%' : { transform: 'translateY(0)', opacity: '1' }
+        },
+        flickering: {
+          '0%' : { opacity: '1' },
+          '50%' : { opacity: '0.66' },
+          '75%' : { opacity: '0.75' }
+        }
+      },
+      fontSize: {
+        xxs: ['0.75rem', '1.28'],
+        xs: ['0.875rem', '1.28'],
+        s: ['1rem', '1.28'],
+        m: ['1.375rem', '1.28'],
+        l: ['1.875rem', '1.28'],
+        xl: ['2.5rem', '1.28']
+      },
+      fontWeight: {
+        light: 300,
+        regular: 400,
+        'semi-bold': 600
+      },
+      zIndex: {
+        '1' : '1',
+        '2' : '2',
+        '3' : '3',
+        '4' : '4',
+        '5' : '5'
+      }
+    },
     colors: {
       yellow: '#FFCC67',
       white: '#FFFFFF',
       black: '#2B3036',
+      'light-gray': '#F6F6F6',
       gray: '#E0E0E0',
+      'dark-gray': '#AEAEAE',
       current: 'currentColor'
     },
     transitionTimingFunction: {
@@ -16,19 +58,8 @@ module.exports = {
       'power-out': 'cubic-bezier(0.82, 0, 0.36, 1)',
       bounce: 'cubic-bezier(.17,.67,.3,1.33)'
     },
-    fontSize: {
-      xs: ['0.875rem', '1.28'],
-      s: ['1rem', '1.28'],
-      m: ['1.375rem', '1.28'],
-      l: ['1.875rem', '1.28'],
-      xl: ['2.5rem', '1.28']
-    },
-    fontWeight: {
-      light: 300,
-      regular: 400,
-      'semi-bold': 600
-    },
     transitionDuration: {
+      300: '300ms',
       400: '400ms',
       600: '600ms',
       800: '800ms',
@@ -38,7 +69,7 @@ module.exports = {
       1800: '1800ms',
       2000: '2000ms',
       2200: '2200ms'
-    },
+    }
   },
   variants: {
     extend: {},

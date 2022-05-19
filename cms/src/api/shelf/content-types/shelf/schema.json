@@ -39,6 +39,13 @@
       "type": "component",
       "repeatable": true,
       "component": "variants.variants"
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
