@@ -1,7 +1,7 @@
 <template>
   <div v-if="element.config" class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-5">
     <div configuration-header class="bg-light-gray flex items-center justify-between py-4 px-6 w-full">
-      <div v-if="element.config.name" v-text="element.config.name" />
+      <div v-if="mainElement" v-text="mainElement.name" />
       <Close class="cursor-pointer" @click="close" />
     </div>
     <div configuration-content class="grow h-full w-full">
@@ -41,27 +41,42 @@
 import { ref, computed, defineAsyncComponent } from 'vue';
 import { capitalize } from '../../utils/capitalize'
 import Close from '@/components/icons/Close.vue'
-import { obstaclesData } from '@/dataset/obstaclesData'
+/* import { obstaclesData } from '@/dataset/obstaclesData'
 import { shelvesData } from '@/dataset/shelvesData'
-import { uprightsData } from '@/dataset/uprightsData'
+import { uprightsData } from '@/dataset/uprightsData' */
 import { useConfiguratorStore } from '../../stores/configurator';
+import useEncumbrancesStore from '../../stores/encumbrances';
+import useUprightsStore from '../../stores/uprights';
+import useShelvesStore from '../../stores/shelves';
 import useTexturesStore from '../../stores/textures';
 import Btn from '@/components/forms/Button.vue'
 
 const props = defineProps(['element'])
 const emits = defineEmits(['close'])
 const configurator = useConfiguratorStore()
+const encumbrancesModule = useEncumbrancesStore()
+const uprightsModule = useUprightsStore()
+const shelvesModule = useShelvesStore()
 const texturesModule = useTexturesStore()
 
 const elementSettingsInstance = computed(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`)))
-
+const encumbrances = encumbrancesModule.index
+const uprights = uprightsModule.index
+const shelves = shelvesModule.index
 const textures = texturesModule.index
 
 const data = {
-  obstacle: obstaclesData,
-  upright: uprightsData,
-  shelf: shelvesData
+  obstacle: encumbrances,
+  upright: uprights,
+  shelf: shelves,
+  //cases: cases
 }
+
+const mainElement = computed(() => {
+  return data[props.element.config.type].length ? data[props.element.config.type].find((item) => {
+    return item.id === props.element.config.id
+  }) : null
+})
 
 const materials = ref(data[props.element.config.type][0].materials)
 
