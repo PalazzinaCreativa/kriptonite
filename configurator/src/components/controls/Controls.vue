@@ -20,7 +20,7 @@ import { ref, computed, defineProps } from 'vue'
 //import { controlsList } from '../../dataset/controls'
 import ControlsSection from '@/components/controls/ControlsSection.vue'
 import SetWallColor from '@/components/controls/SetWallColor.vue'
-/* import AddObstacles from '@/components/controls/AddObstacles.vue'
+/* import AddObstacle from '@/components/controls/AddObstacle.vue'
 import AddUpright from '@/components/controls/AddUpright.vue'
 import AddShelf from '@/components/controls/AddShelf.vue' */
 import Arrow from '@/components/icons/Arrow.vue'

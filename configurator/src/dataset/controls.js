@@ -3,7 +3,7 @@ export const controlsList = [
     id: 1,
     name: 'Ostacoli',
     description: 'Seleziona e posiziona eventuali ostacoli presenti sulla parete su cui intendi montare la libreria.',
-    component: 'AddObstacles',
+    component: 'AddObstacle',
     active: true
   },
   {
@@ -14,17 +14,17 @@ export const controlsList = [
   },
   {
     id: 3,
-    name: 'Ripiani e contenitori',
+    name: 'Ripiani',
     component: 'AddShelf',
     active: false
   },
-  /* {
+  {
     id: 4,
     name: 'Contenitori',
-    component: null,
+    component: 'addContainer',
     active: false
   },
-  {
+  /*{
     id: 5,
     name: 'Decorazioni',
     component: null,

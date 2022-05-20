@@ -235,8 +235,8 @@ export const initialSetupData = [
           entity: 'product.inRoomPosition',
           values: ['standalone']
         }
-      },
-      {
+      }
+      /* {
         component: 'card',
         label: 'K3+',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
@@ -246,7 +246,7 @@ export const initialSetupData = [
           entity: 'product.inRoomPosition',
           values: ['standalone']
         }
-      }
+      } */
     ],
     /* footer: {
       text: 'oppure scegli un altro prodotto:',
