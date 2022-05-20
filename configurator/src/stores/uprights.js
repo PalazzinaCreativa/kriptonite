@@ -46,8 +46,8 @@ export default defineStore({
             return variant.name.indexOf('gesso') < 0
           })
         }
-        //return upright.id === 1
-        return upright
+        return id === 1 ? upright.id === 1 : upright
+        //return upright
       }) : []
     },
 
