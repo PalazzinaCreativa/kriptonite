@@ -25,13 +25,28 @@ export default defineStore({
   actions: {
     async getUprights(id) {
       let response = id ? await c.getUprightsByProduct(id) : []
-      this.list = response.length ? response.map((upright) => {
+      // Corretta
+      /* this.list = response.length ? response.map((upright) => {
         if(upright.variants?.length) {
           upright.variants.map((variant) => {
             variant.type = 'upright'
             variant.path = variant.model || ''
           })
         }
+        return upright
+      }) : [] */
+
+      // Filtro i risultati mostrando solo il montante a parete
+      this.list = response.length ? response.map((upright) => {
+        // Nascondo i montanti cartongesso al momento
+        if(upright.variants?.length) {
+          upright.variants = upright.variants.filter((variant) => {
+            variant.type = 'upright'
+            variant.path = variant.model || ''
+            return variant.name.indexOf('gesso') < 0
+          })
+        }
+        //return upright.id === 1
         return upright
       }) : []
     },

@@ -9,9 +9,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import useProductsStore from '@/stores/products'
 import Survey from '@/components/Survey.vue'
 import Configurator from '@/components/Configurator.vue'
+
+const productsModule = useProductsStore()
+productsModule.getProducts()
 
 const config = ref(null)
 const showConfigurator = ref(false)
@@ -1082,12 +1086,18 @@ const defaultConfigK2 = {
     }
 }
 
+const products = computed(() => productsModule.index)
+
 const handleGoToConfigurator = () => {
   config.value = fastConfigK1 //fastConfigK1 //defaultConfigK2
   showConfigurator.value = true
 }
 
 const start = (payload) => {
+  const selectedProduct = payload.product?.type ? products.value.find((product) => {
+    return product.sku === payload.product.type
+  }) : products.value[0]
+  productsModule.setSelectedProduct(selectedProduct)
   config.value = payload
   showConfigurator.value = true
 }

@@ -25,6 +25,7 @@ import DownloadModel from '@/components/DownloadModel.vue'
 
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
+import useProductsStore from '@/stores/products'
 import useEncumbrancesStore from '@/stores/encumbrances'
 import useUprightsStore from '@/stores/uprights'
 import useTexturesStore from '@/stores/textures'
@@ -48,11 +49,13 @@ controlsList.map((item) => {
   item.componentInstance = item.component ? defineAsyncComponent(() => import(`./controls/${item.component}.vue`)) : null
 })
 
+const productsModule = useProductsStore()
+
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()
 
 const uprightsModule = useUprightsStore()
-uprightsModule.getUprights(1)
+uprightsModule.getUprights(productsModule.selectedProduct.id)
 
 const texturesModule = useTexturesStore()
 texturesModule.getTextures()

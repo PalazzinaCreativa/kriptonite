@@ -245,7 +245,7 @@ export default class Viewer {
         this.objectToPlace = null
         checkpointPosition = null
         this.updateConfig()
-        this._isAddingNewElement = false
+        this._isAddingNewElement = true // abilita / disabilita la funzione che permette di aggiungere l'elemento scelto in maniera consecutiva
         if (newConfig.type !== 'obstacle' && this._isAddingNewElement) this.addElement(newConfig)
         return
       }
