@@ -37,7 +37,7 @@ export default defineStore({
       }) : [] */
 
       // Filtro i risultati mostrando solo il montante a parete
-      this.list = response.length ? response.map((upright) => {
+      this.list = response.length ? response.filter((upright) => {
         // Nascondo i montanti cartongesso al momento
         if(upright.variants?.length) {
           upright.variants = upright.variants.filter((variant) => {

@@ -1088,16 +1088,22 @@ const defaultConfigK2 = {
 
 const products = computed(() => productsModule.index)
 
+const setSelectedProduct = (product) => {
+  const selectedProduct = product.type ? products.value.find((item) => {
+    return item.sku === product.type
+  }) : products.value[0]
+  productsModule.setSelectedProduct(selectedProduct)
+}
+
 const handleGoToConfigurator = () => {
-  config.value = fastConfigK1 //fastConfigK1 //defaultConfigK2
+  const selectedConfig = fastConfigK1 //fastConfigK1 //defaultConfigK2
+  config.value = selectedConfig
+  setSelectedProduct(selectedConfig.product)
   showConfigurator.value = true
 }
 
 const start = (payload) => {
-  const selectedProduct = payload.product?.type ? products.value.find((product) => {
-    return product.sku === payload.product.type
-  }) : products.value[0]
-  productsModule.setSelectedProduct(selectedProduct)
+  setSelectedProduct(payload.product)
   config.value = payload
   showConfigurator.value = true
 }
