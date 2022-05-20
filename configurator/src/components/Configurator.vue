@@ -4,7 +4,7 @@
     <Loader :visible="loading" />
     <div canvas-wrapper class="flex-1 h-full transition-all w-full" ref="canvasWrapper" />
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="transition-all w-[450px] z-2">
+    <Controls class="transition-all w-[450px] z-2" :controls="controlsList">
       <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="selectedElement = null" />
       <ProductList v-if="showList" @close="showList = false" />
       <DownloadModel v-if="showDownload" @close="showDownload = false" />
@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, computed } from 'vue'
+import { onMounted, reactive, ref, computed, defineAsyncComponent } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
@@ -29,6 +29,7 @@ import useEncumbrancesStore from '@/stores/encumbrances'
 import useUprightsStore from '@/stores/uprights'
 import useTexturesStore from '@/stores/textures'
 
+import { controlsList } from '@/dataset/controls'
 //import { obstaclesData } from '@/dataset/obstaclesData'
 //import { uprightsData } from '@/dataset/uprightsData'
 import { shelvesData } from '@/dataset/shelvesData'
@@ -42,6 +43,10 @@ const selectedElement = ref(null)
 const loading = ref(false)
 const showList = ref(false)
 const showDownload = ref(false)
+
+controlsList.map((item) => {
+  item.componentInstance = item.component ? defineAsyncComponent(() => import(`./controls/${item.component}.vue`)) : null
+})
 
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()

@@ -14,11 +14,11 @@ export const controlsList = [
   },
   {
     id: 3,
-    name: 'Ripiani',
+    name: 'Ripiani e contenitori',
     component: 'AddShelf',
     active: false
   },
-  {
+  /* {
     id: 4,
     name: 'Contenitori',
     component: null,
@@ -29,5 +29,5 @@ export const controlsList = [
     name: 'Decorazioni',
     component: null,
     active: false
-  },
+  }, */
 ]

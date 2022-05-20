@@ -76,7 +76,8 @@ class Client {
 
     const req = this._buildRequest({
       url: `api/encumbrances?${query}`,
-      method: 'GET'
+      method: 'GET',
+      mode: 'no-cors'
     })
     
     const res = await fetch(req)
@@ -106,7 +107,8 @@ class Client {
 
     const req = this._buildRequest({
       url: `api/uprights?${query}`,
-      method: 'GET'
+      method: 'GET',
+      mode: 'no-cors'
     })
     
     const res = await fetch(req)
@@ -219,7 +221,8 @@ class Client {
 
     const req = this._buildRequest({
       url: `api/textures?${query}`,
-      method: 'GET'
+      method: 'GET',
+      mode: 'no-cors'
     })
     
     const res = await fetch(req)
