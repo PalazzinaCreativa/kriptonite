@@ -4,7 +4,7 @@
       <div v-if="mainElement" v-text="mainElement.name" />
       <Close class="cursor-pointer" @click="close" />
     </div>
-    <div configuration-content class="grow h-full w-full">
+    <div configuration-content class="grow w-full">
       <div class="py-4 px-6">
         <img v-if="element.config.image" :src="element.config.image.url" :width="element.config.image.width" :height="element.config.image.height" :alt="element.config.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
         <div v-if="elementSettingsInstance">
@@ -12,18 +12,18 @@
             <component :is="elementSettingsInstance" :element="element"></component>
           </div>
         </div>
-        <div v-if="element.config.material && (textures || materials)" class="my-4">
+        <div v-if="element.config.texture" class="my-4">
           <div class="uppercase text-center w-full">Finitura</div>
           <div class="flex flex-wrap justify-center gap-12 my-4">
-            <div v-for="texture in textures" :key="`texture-${texture.id}`" class="flex flex-wrap justify-center cursor-pointer"  @click="setMaterial(texture)">
+            <div v-for="texture in textures" :key="`texture-${texture.id}`" class="flex flex-wrap justify-center cursor-pointer" @click="setMaterial(texture)">
               <div class="border-2 w-14 h-14 rounded-full" :class="element.config.material.id === texture.id ? 'border-2 border-yellow' : 'border-dark-gray'" :style="`background: url('${texture.thumb}') center center / cover`"></div>
               <div class="text-center mt-3 w-full">{{ texture.name }}</div>
             </div>
-            <!-- <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
-              <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
-              <div class="mt-2">{{ material.name }}</div>
-            </div> -->
           </div>
+          <!-- <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
+            <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
+            <div class="mt-2">{{ material.name }}</div>
+          </div> -->
         </div>
       </div>
       <div class="flex items-center justify-center">
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineAsyncComponent } from 'vue';
+import { ref, computed, markRaw, defineAsyncComponent } from 'vue';
 import { capitalize } from '../../utils/capitalize'
 import Close from '@/components/icons/Close.vue'
 /* import { obstaclesData } from '@/dataset/obstaclesData'
@@ -48,6 +48,7 @@ import { useConfiguratorStore } from '../../stores/configurator';
 import useEncumbrancesStore from '../../stores/encumbrances';
 import useUprightsStore from '../../stores/uprights';
 import useShelvesStore from '../../stores/shelves';
+import useCasesStore from '../../stores/cases';
 import useTexturesStore from '../../stores/textures';
 import Btn from '@/components/forms/Button.vue'
 
@@ -57,19 +58,21 @@ const configurator = useConfiguratorStore()
 const encumbrancesModule = useEncumbrancesStore()
 const uprightsModule = useUprightsStore()
 const shelvesModule = useShelvesStore()
+const casesModule = useCasesStore()
 const texturesModule = useTexturesStore()
 
-const elementSettingsInstance = computed(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`)))
+const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`))))
 const encumbrances = encumbrancesModule.index
 const uprights = uprightsModule.index
 const shelves = shelvesModule.index
+const cases = casesModule.index
 const textures = texturesModule.index
 
 const data = {
   obstacle: encumbrances,
   upright: uprights,
   shelf: shelves,
-  //cases: cases
+  case: cases
 }
 
 const mainElement = computed(() => {
@@ -78,7 +81,7 @@ const mainElement = computed(() => {
   }) : null
 })
 
-const materials = ref(data[props.element.config.type][0].materials)
+const materials = ref(data[props.element.config?.type][0]?.materials)
 
 const obstacleDimensions = ref({
   width: props.element.getSize().width,
@@ -89,6 +92,13 @@ const obstacleDimensions = ref({
 const setMaterial = (material) => {
   props.element.setMaterial(material)
   configurator.updateConfig()
+}
+
+if(props.element.config.texture && textures.length) {
+  let startingTexture = textures.find((texture) => {
+    return props.element.config.texture === texture.id
+  })
+  setMaterial(startingTexture)
 }
 
 const addToAll = () => {

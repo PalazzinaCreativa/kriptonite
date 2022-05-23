@@ -16,6 +16,7 @@ import Obstacle from './Obstacle'
 import Product from './Product'
 import Upright from './Upright'
 import Shelf from './Shelf'
+import Case from './Case'
 import { loadObject } from './utils/loadObject'
 import { placeObject } from './utils/placeObject'
 import { isTouchDevice } from './utils/isTouchDevice'
@@ -130,6 +131,8 @@ export default class Viewer {
       if (o.type === 'obstacle') object = new Obstacle(data, this.room)
       if (o.type === 'upright') object = new Upright({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
       if (o.type === 'shelf') object = new Shelf({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
+      if (o.type === 'case') object = new Case({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
+
 
       await object.init()
       object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
@@ -142,6 +145,7 @@ export default class Viewer {
       if (o.type === 'obstacle') this.room.addObstacle(object, false)
       if (o.type === 'upright') this.product.addUpright(object, false)
       if (o.type === 'shelf') this.product.addShelf(object, false)
+      if (o.type === 'case') this.product.addCase(object, false)
     }
   }
 
@@ -173,7 +177,7 @@ export default class Viewer {
         const objectPlaced = placeObject({
           point: roomIntersection.point,
           element: this.objectToPlace,
-          collidables: this._getAllObjects(this.objectToPlace?.config?.type === 'shelf' ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
+          collidables: this._getAllObjects((this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
           room: this.config.room
         }) // Torna false se trova collisioni con altri oggetti
 
@@ -239,6 +243,8 @@ export default class Viewer {
         if (this.objectToPlace.config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
         if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
         if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
+        if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
+
 
         const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
 
@@ -313,6 +319,11 @@ export default class Viewer {
           ? this.product.shelves.map(shelf => shelf.object)
           : []
       )
+      .concat(
+        !but.includes('cases')
+          ? this.product.cases.map(item => item.object)
+          : []
+      )
       .flat()
       .filter(o => !!o)
   }
@@ -331,12 +342,15 @@ export default class Viewer {
     if (config.type === 'obstacle') element = new Obstacle(config, this.room)
     if (config.type === 'upright') element = new Upright(config, this.product)
     if (config.type === 'shelf') element = new Shelf(config, this.product)
+    if (config.type === 'case') element = new Case(config, this.product)
+
     console.log(config)
     await element.init()
 
     if (config.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
 
     this.objectToPlace = element
+    if(!this.objectToPlace.object) return
     this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -50) // Posizione inziiale
 
     this.doHook('selectElement', this.objectToPlace)
@@ -377,6 +391,18 @@ export default class Viewer {
         index: shelf.index,
         realIndex: shelf.realIndex
       }))
+    
+    const cases = this.product.cases
+      .map(item => ({
+        type: 'case',
+        id: item.id,
+        material: item.config.material,
+        variantId: item.variantId,
+        position: { x: item.object.position.x, y: item.object.position.y, z: item.object.position.z },
+        scale: { x: item.object.scale.x, y: item.object.scale.y, z: item.object.scale.z },
+        index: item.index,
+        realIndex: item.realIndex
+      }))
 
     this.config.room.wallColor = wallColor
     this.config.room.floorType = floorType
@@ -384,6 +410,7 @@ export default class Viewer {
     this.config.room.obstacles = obstacles
     this.config.product.uprights = uprights
     this.config.product.shelves = shelves
+    this.config.product.cases = cases
 
     // Imposto lo storico
     // Se non sono all'inizio dello storico e faccio modifiche, rimuovo tutta lo storico tranne che per la situazione attuale e quella nuova

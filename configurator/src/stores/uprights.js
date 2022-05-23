@@ -43,7 +43,7 @@ export default defineStore({
           upright.variants = upright.variants.filter((variant) => {
             variant.type = 'upright'
             variant.path = variant.model || ''
-            return variant.name.indexOf('gesso') < 0
+            return variant
           })
         }
         return id === 1 ? upright.id === 1 : upright

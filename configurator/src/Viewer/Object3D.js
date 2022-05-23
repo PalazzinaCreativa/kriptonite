@@ -10,6 +10,7 @@ export default class Object3D {
   }
 
   async init () {
+    if(!this.config.path) return
     this.object = await loadObject(this.config.path)
     this.object.name = this.config.id || this.config.type
     if (!this.config.dimensions) return
@@ -34,6 +35,7 @@ export default class Object3D {
   getSiblings () {
     if (this.config.type === 'upright') return this.product.uprights
     if (this.config.type === 'shelf') return this.product.shelves
+    if (this.config.type === 'case') return this.product.cases
     if (this.config.type === 'obstacle') return this.room.obstacles
   }
 
@@ -70,11 +72,13 @@ export default class Object3D {
   }
 
   setMaterial ({ image, color, roughness, opacity, id }) {
+    if(!this.object) return
     this.object.traverse(child => {
       if (child.material) {
         if (opacity) { child.material.opacity = opacity } else { child.material.opacity = 1 }
         if (color) { child.material.color = new THREE.Color(stringToThreeColor(color)) }
         if (roughness) { child.material.roughness = roughness } else { child.material.roughness = 0.8 }
+        // TODO
         if (image) child.material.image = new THREE.TextureLoader().load(image)
       }
     })

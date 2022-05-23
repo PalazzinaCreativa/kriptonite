@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, computed, defineAsyncComponent } from 'vue'
+import { onMounted, reactive, ref, markRaw, computed, defineAsyncComponent } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
@@ -45,7 +45,7 @@ const showList = ref(false)
 const showDownload = ref(false)
 
 controlsList.map((item) => {
-  item.componentInstance = item.component ? defineAsyncComponent(() => import(`./controls/${item.component}.vue`)) : null
+  item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
 })
 
 const encumbrancesModule = useEncumbrancesStore()
@@ -75,7 +75,8 @@ onMounted(() => {
     const data = {
       obstacle: computed(() => encumbrancesModule.index),
       upright: computed(() => uprightsModule.index),
-      shelf: shelvesData
+      shelf: shelvesData,
+      //case: casesData
     }
 
     const el = data[type].find(p => p.id === id)

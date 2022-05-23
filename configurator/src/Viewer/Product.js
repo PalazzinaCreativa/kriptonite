@@ -3,8 +3,9 @@ import { createLine } from './utils/createLine'
 import { createMeasure } from './utils/createMeasure'
 export default class Product {
   constructor (viewer, { inRoomPosition, uprightsPosition }) {
-    this.shelves = []
     this.uprights = []
+    this.shelves = []
+    this.cases = []
 
     this.viewer = viewer
 
@@ -16,15 +17,20 @@ export default class Product {
     this.id = 'product'
   }
 
+  addUpright (upright) {
+    this.object.add(upright.object)
+    this.uprights.push(upright)
+    this.removeWireframes()
+  }
+
   addShelf (shelf) {
     this.object.add(shelf.object)
     this.shelves.push(shelf)
   }
 
-  addUpright (upright) {
-    this.object.add(upright.object)
-    this.uprights.push(upright)
-    this.removeWireframes()
+  addCase (item) {
+    this.object.add(item.object)
+    this.cases.push(item)
   }
 
   // Rimuovo le guide
