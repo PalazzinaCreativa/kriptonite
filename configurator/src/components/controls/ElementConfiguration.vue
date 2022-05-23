@@ -12,7 +12,7 @@
             <component :is="elementSettingsInstance" :element="element"></component>
           </div>
         </div>
-        <div v-if="textures || materials" class="my-4">
+        <div v-if="element.config.material && (textures || materials)" class="my-4">
           <div class="uppercase text-center w-full">Finitura</div>
           <div class="flex flex-wrap justify-center gap-12 my-4">
             <div v-for="texture in textures" :key="`texture-${texture.id}`" class="flex flex-wrap justify-center cursor-pointer"  @click="setMaterial(texture)">
