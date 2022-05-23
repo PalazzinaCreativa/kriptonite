@@ -165,6 +165,47 @@ class Client {
     return data
   }
 
+  /**
+   * Get available shelves infprmation given the product id
+   * @param {int} product_id 
+   * @returns 
+   */
+  async getCasesByProduct (product_id) {
+    const query = qs.stringify({
+      filters: {
+        product: {
+          id: product_id
+        }
+      },
+      populate: [
+        'image',
+        'colors',
+        'variants',
+        'variants.model',
+      ],
+    }, {
+      encodeValuesOnly: true,
+    })
+
+    const req = this._buildRequest({
+      url: `api/cases?${query}`,
+      method: 'GET'
+    })
+    
+    const res = await fetch(req)
+    const { data } = await res.json()
+    for (const entry of data) {
+      entry.colors = entry.colors.map(e => e.id)
+      entry.variants = entry.variants.map(variant => {
+        if (variant.model) {
+          variant.model = variant.model.url
+        }
+        return variant
+      })
+    }
+    return data
+  }
+
 /**
    * Get available shelves infprmation given the product id
    * @param {int} product_id 
@@ -189,6 +230,49 @@ class Client {
 
   const req = this._buildRequest({
     url: `api/wood-shelves?${query}`,
+    method: 'GET'
+  })
+  
+  const res = await fetch(req)
+  const { data } = await res.json()
+  for (const entry of data) {
+    entry.variants = entry.variants.map(variant => {
+      if (variant.model) {
+        variant.model = variant.model.url
+      }
+      if (variant.texture) {
+        variant.texture = variant.texture.id
+      }
+      return variant
+    })
+  }
+  return data
+}
+
+/**
+   * Get available shelves infprmation given the product id
+   * @param {int} product_id 
+   * @returns 
+   */
+ async getWoodCasesByProduct (product_id) {
+  const query = qs.stringify({
+    filters: {
+      product: {
+        id: product_id
+      }
+    },
+    populate: [
+      'image',
+      'variants',
+      'variants.model',
+      'variants.texture'
+    ],
+  }, {
+    encodeValuesOnly: true,
+  })
+
+  const req = this._buildRequest({
+    url: `api/wood-cases?${query}`,
     method: 'GET'
   })
   
