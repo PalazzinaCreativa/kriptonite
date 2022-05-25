@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed flex items-center w-full z-1">
+  <div header class="flex items-center w-full z-1">
     <a href="/">
       <LogoCompact/>
     </a>

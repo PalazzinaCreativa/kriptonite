@@ -45,7 +45,7 @@ export default defineStore({
         if(item.variants?.length) {
           item.variants.map((variant) => {
             variant.type = 'case'
-            variant.material = 'metal'
+            variant.material = { ...variant.material, nature: 'metal' }
             variant.path = variant.model || ''
           })
         }
@@ -59,7 +59,8 @@ export default defineStore({
         if(item.variants?.length) {
           item.variants.map((variant) => {
             variant.type = 'case'
-            variant.material = 'wood'
+            variant.material = { ...variant.material, nature: 'wood' }
+            variant.nature = 'wood'
             variant.path = variant.model || 'https://kriptonite.s3.eu-central-1.amazonaws.com/K1_75_battente_fdbc078e64.gltf'
           })
         }

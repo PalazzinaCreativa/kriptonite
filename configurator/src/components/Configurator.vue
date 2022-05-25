@@ -1,10 +1,15 @@
 <template>
   <div class="flex h-screen overflow-hidden w-full">
-    <Header />
     <Loader :visible="loading" />
-    <div canvas-wrapper class="flex-1 h-full transition-all w-full" ref="canvasWrapper" />
+    <div class="relative w-full">
+      <Header class="absolute" />
+      <div canvas-wrapper class="h-full w-full" ref="canvasWrapper" />
+    </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls class="transition-all w-[450px] z-2" :controls="controlsList">
+      <Transition name="slide-in">
+        <RoomSettings v-if="isEditingRoom" class="relative z-5" :element="config.room" @close="closeRoomSettings" />
+      </Transition>
       <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="selectedElement = null" />
       <ProductList v-if="showList" @close="showList = false" />
       <DownloadModel v-if="showDownload" @close="showDownload = false" />
@@ -17,6 +22,7 @@ import { onMounted, reactive, ref, markRaw, computed, defineAsyncComponent } fro
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
+import RoomSettings from '@/components/controls/RoomSettings.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
 import Header from '@/components/Header.vue'
 import Actions from '@/components/Actions.vue'
@@ -25,6 +31,7 @@ import DownloadModel from '@/components/DownloadModel.vue'
 
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
+import useOptionsStore from '@/stores/options'
 import useEncumbrancesStore from '@/stores/encumbrances'
 import useUprightsStore from '@/stores/uprights'
 import useShelvesStore from '@/stores/shelves'
@@ -49,7 +56,7 @@ const showDownload = ref(false)
 controlsList.map((item) => {
   item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
 })
-
+const optionsModule = useOptionsStore()
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()
 
@@ -58,6 +65,13 @@ const shelvesModule = useShelvesStore()
 const casesModule = useCasesStore()
 const texturesModule = useTexturesStore()
 texturesModule.getTextures()
+
+const selectedOption = computed(() => optionsModule.selected)
+const isEditingRoom = computed(() => selectedOption.value.id === 2)
+
+const closeRoomSettings = () => {
+  optionsModule.resetSelectedOption()
+}
 
 onMounted(() => {
   loading.value = true
@@ -88,7 +102,6 @@ onMounted(() => {
   })
 
   viewer.setHook('selectElement', (element) => {
-    console.log(element)
     selectedElement.value = element
   })
 
@@ -103,7 +116,17 @@ onMounted(() => {
 </script>
 
 <style>
-/* [canvas-wrapper] canvas {
+[canvas-wrapper] canvas {
   width: 100% !important;
-} */
+}
+
+.slide-in-enter-active,
+.slide-in-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-in-enter-from,
+.slide-in-leave-to {
+  transform: translateX(100%);
+}
 </style>
