@@ -1,15 +1,22 @@
+<template>
+  <div class="relative z-1">
+    <div class="uppercase text-center w-full">Colore pareti</div>
+    <div room-color class="my-4" ref="pickerWrapper">
+      <ColorPicker theme="light" :color="wallColor" :sucker-hide="true" :colors-default="colorSuggestions" @changeColor="handleChangeColor" class="color-picker" />
+    </div>
+  </div>
+</template>
+
 <script setup>
-import { ColorPicker } from 'vue-color-kit'
-import 'vue-color-kit/dist/vue-color-kit.css'
 import { onMounted, ref, nextTick, onBeforeUnmount } from 'vue'
 import { useConfiguratorStore } from '@/stores/configurator'
+import { ColorPicker } from 'vue-color-kit'
+import 'vue-color-kit/dist/vue-color-kit.css'
 
 const configurator = useConfiguratorStore()
-const wallColor = ref('#ffffff')
-const showPicker = ref(false)
-const pickerWrapper = ref(null)
-const toggle = ref(null)
 
+const wallColor = ref('#FFFFFF')
+const colorSuggestions = ref(['#FFFFFF', '#787878', '#A6BAA6', '#8F9DB8', '#B5A596', '#B05E6D', '#F0CCD5'])
 let wallColorTimeout
 
 const handleChangeColor = ({ hex }) => {
@@ -20,52 +27,73 @@ const handleChangeColor = ({ hex }) => {
     configurator.updateConfig()
   }, 500)
 }
-
-const hidePickerOnClickOutside = (e)=> {
-  if (!showPicker.value) return
-  nextTick(() => {
-    if (!pickerWrapper.value || toggle.value.contains(e.target) || pickerWrapper.value.contains(e.target)) return
-    showPicker.value = false
-  })
-}
-
-// Nascondi il picker al click al di fuori del picker
-onMounted(() => {
-  window.addEventListener('click', hidePickerOnClickOutside)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('click', hidePickerOnClickOutside)
-})
-
 </script>
 
-<template>
-  <div class="relative z-1">
-    <h2>Seleziona il colore della parete</h2>
-    <div class="block w-6 h-6 mt-2 rounded-md shadow-md hover:shadow-lg cursor-pointer" :style="{ backgroundColor: wallColor }" @click="showPicker = !showPicker" ref="toggle">
-    </div>
-    <div class="absolute" v-if="showPicker" ref="pickerWrapper">
-      <ColorPicker
-        theme="light"
-        :color="wallColor"
-        :sucker-hide="true"
-        :colors-default="['#ffffff', '#d1d1d1', '#bb0220', '#0244bb']"
-        @changeColor="handleChangeColor"
-        class="color-picker"
-      />
-    </div>
-  </div>
-</template>
+<style>
+[room-color] .hu-color-picker {
+  background-color: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column-reverse;
+  margin: 0;
+  width: 100% !important;
+}
 
-<style scoped>
-:deep(.color-picker .color-alpha),
-:deep(.color-picker .color-show),
-:deep(.color-picker .color-type ) {
+[room-color] .color-set {
+  justify-content: center;
+}
+
+[room-color] .hu-color-picker .hue canvas {
+  border: 2px solid #AEAEAE;
+  border-radius: 0.33rem;
+  height: 100%;
+}
+
+[room-color] .hu-color-picker .saturation canvas {
+  border: 2px solid #AEAEAE;
+  border-radius: 0.33rem;
+  overflow: hidden;
+}
+
+[room-color] .hu-color-picker .saturation {
+  margin-right: 1rem;
+}
+
+[room-color] .hu-color-picker .color-alpha,
+[room-color] .hu-color-picker .color-show,
+[room-color] .hu-color-picker .color-type {
   display: none;
 }
 
-:deep(.color-picker) {
-  z-index: 51;
+[room-color] .colors {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+[room-color] .colors .item {
+  border-radius: 100%;
+  overflow: hidden;
+  height: 2rem;
+  margin-left: 0;
+  margin-top: 0;
+  overflow: hidden;
+  width: 2rem;
+}
+
+[room-color] .colors .item:hover {
+  transform: scale(1.05);
+}
+
+[room-color] .colors .item .color {
+  border: 2px solid #AEAEAE;
+  border-radius: 100%;
+  overflow: hidden;
+  transition: all .4s;
+}
+
+[room-color] .colors .item .color:hover {
+  border-color: #FFCC67;
+  transition: all .4s;
 }
 </style>

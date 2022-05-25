@@ -22,7 +22,7 @@ export default defineStore({
       },
       {
         id: 2,
-        name: 'parquet',
+        name: 'parquet 2',
         image: '/assets/textures/parquet/parquet_map.jpg',
         thumb: '/assets/textures/parquet/parquet_map.jpg',
         repeat: 20,

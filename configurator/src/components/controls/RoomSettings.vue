@@ -5,7 +5,7 @@
       <Close class="cursor-pointer" @click="close" />
     </div>
     <div configuration-content class="grow w-full">
-      <div class="py-4 px-6">
+      <div class="mt-8 px-6">
         <SetWallColor @changeColor="color => $emit('changeColor', color)" />
       </div>
       <Textures title="Pavimento" :element="element" entity="room" @setTexture="setMaterial"/>
@@ -22,6 +22,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useConfiguratorStore } from '@/stores/configurator'
 import { capitalize } from '@/utils/capitalize'
 import useTexturesStore from '@/stores/textures';
 
@@ -38,12 +39,13 @@ const props = defineProps(['element'])
 const emits = defineEmits(['close'])
 const title = ref('Opzioni stanza')
 
-//const configurator = useConfiguratorStore()
+const configurator = useConfiguratorStore()
 
 //const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`))))
 
 const setMaterial = (material) => {
-  props.element.setMaterial(material)
+  //props.element.setMaterial(material)
+  configurator.changeFloor(material)
   configurator.updateConfig()
 }
 

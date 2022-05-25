@@ -15,8 +15,8 @@ export const useConfiguratorStore = defineStore({
   getters: {
     productList: (state) => {
       if (!state.viewerGetter()) return []
-      const { uprights, shelves } = state.viewerGetter().config.product
-      return [...uprights, ...shelves]
+      const { uprights, shelves, cases } = state.viewerGetter().config.product
+      return [...uprights, ...shelves, ...cases]
         .map(_ => ({
           name: _.id,
           scale: _.scale,
