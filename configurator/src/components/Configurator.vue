@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, computed, defineAsyncComponent } from 'vue'
+import { onMounted, reactive, ref, markRaw, computed, defineAsyncComponent } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
@@ -27,12 +27,14 @@ import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useEncumbrancesStore from '@/stores/encumbrances'
 import useUprightsStore from '@/stores/uprights'
+import useShelvesStore from '@/stores/shelves'
+import useCasesStore from '@/stores/cases'
 import useTexturesStore from '@/stores/textures'
 
 import { controlsList } from '@/dataset/controls'
 //import { obstaclesData } from '@/dataset/obstaclesData'
 //import { uprightsData } from '@/dataset/uprightsData'
-import { shelvesData } from '@/dataset/shelvesData'
+//import { shelvesData } from '@/dataset/shelvesData'
 
 const configurator = useConfiguratorStore()
 
@@ -45,14 +47,15 @@ const showList = ref(false)
 const showDownload = ref(false)
 
 controlsList.map((item) => {
-  item.componentInstance = item.component ? defineAsyncComponent(() => import(`./controls/${item.component}.vue`)) : null
+  item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
 })
 
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()
 
 const uprightsModule = useUprightsStore()
-
+const shelvesModule = useShelvesStore()
+const casesModule = useCasesStore()
 const texturesModule = useTexturesStore()
 texturesModule.getTextures()
 
@@ -75,7 +78,8 @@ onMounted(() => {
     const data = {
       obstacle: computed(() => encumbrancesModule.index),
       upright: computed(() => uprightsModule.index),
-      shelf: shelvesData
+      shelf: computed(() => shelvesModule.index),
+      case: computed(() => casesModule.index)
     }
 
     const el = data[type].find(p => p.id === id)
@@ -99,7 +103,7 @@ onMounted(() => {
 </script>
 
 <style>
-[canvas-wrapper] canvas {
+/* [canvas-wrapper] canvas {
   width: 100% !important;
-}
-</style>x
+} */
+</style>

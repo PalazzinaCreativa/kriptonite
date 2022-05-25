@@ -6,10 +6,10 @@ const c = new Client({
 })
 
 export default defineStore({
-  id: "textures",
+  id: "colors",
   state: () => ({
     list: [],
-    selectedTexture: null
+    selectedColor: null
   }),
 
   getters: {
@@ -18,18 +18,18 @@ export default defineStore({
     },
 
     selected: (state) => {
-      return state.selectedTexture
+      return state.selectedColor
     }
   },
   
   actions: {
-    async getTextures() {
-      let response = await c.getTextures()
+    async getColors() {
+      let response = await c.getColors()
       this.list = response
     },
 
-    setSelectedTexture(texture) {
-      this.selectedTexture = texture
+    setSelectedColor(color) {
+      this.selectedColor = color
     }
   }
 });

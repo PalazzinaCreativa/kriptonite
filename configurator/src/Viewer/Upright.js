@@ -24,6 +24,20 @@ export default class Upright extends Object3D {
     super.setMaterial(this.config.material || { color: '#4a4a4a' }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
+  // test per non stretchare l'oggetto su asse x e z
+  setSize (dimensions) {
+    const { width, height, depth } = this.getSize()
+
+    const scale = {
+      x: 1,
+      y: 1.5, //dimensions.height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : height / this.product.viewer?.room?.config?.dimensions?.height,
+      z: 1
+    }
+
+    this.object.scale.set(scale.x, scale.y, scale.z)
+    //if (RESTING_ON_THE_GROUND && RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+  }
+
   setPosition ({ x, y, z }) {
     const gridY = Math.floor(y / currentGap) * currentGap // Calcolo y in base alla distanza tra i buchi per allineare tutti i montanti
     const groundY = this.getSize().height / 2
@@ -75,6 +89,35 @@ export default class Upright extends Object3D {
 
     this._cantBePositioned = cantBePositioned
     this._setState()
+
+    setTimeout(() => {
+      const extensibleGroup = new THREE.Group();
+      //extensibleGroup.add()
+
+      let topExtensibleNodes = [
+        "2c3f3b2f-3524-428a-bdef-7c7bdec0809e",
+        "f1fee69c-217e-4d12-9d70-20e143095452",
+        "96e5c1e9-c28d-47e8-85e6-6f0321851e7a",
+        "b9eaf16e-577d-41ba-b517-370ea6152d67",
+        "8078a7ef-f074-4839-b5cd-904c1306517f"
+      ]
+      let bottomExtensibleNodes = [
+        "528a80f9-89cf-4936-85e4-13cc380872e6",
+        "d88781bb-3fbc-458d-9ab1-aadbbba0ed0b",
+        "da26f6aa-6fb5-4e05-9b8d-0d41a5462616",
+        "983a1035-22ed-44de-a3b4-f0d995d7c3cd",
+        "8dbee752-dc2c-4ef1-8437-8701bc065cae"
+      ]
+      // Se è un montante terra-cielo, adatto l'altezza del montante all'altezza della stanza
+      if(this.config.variantId === 'upright_s_tele') {
+        this.product?.object?.children[0].children[0].children.length ? this.product.object.children[0].children[0].children.map((node) => {
+            console.log(node, node.uuid)
+            /* if(topExtensibleNodes.includes(node.uuid)) {
+              node.position.y = -50
+            } */
+        }) : []
+      }
+    }, 1500)
   }
 
   _setState() {

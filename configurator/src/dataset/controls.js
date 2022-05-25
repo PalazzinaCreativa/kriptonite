@@ -21,7 +21,7 @@ export const controlsList = [
   {
     id: 4,
     name: 'Contenitori',
-    component: 'AddContainer',
+    component: 'AddCase',
     active: false
   },
   /*{

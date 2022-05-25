@@ -36,7 +36,6 @@ export default defineStore({
     async getShelves(id) {
       await this.getStandardShelves(id)
       await this.getWoodenShelves(id)
-      console.log(this.standardList, this.woodenList)
       this.list = [...this.standardList, ...this.woodenList]
     },
 
@@ -46,6 +45,7 @@ export default defineStore({
         if(shelf.variants?.length) {
           shelf.variants.map((variant) => {
             variant.type = 'shelf'
+            variant.material = 'metal'
             variant.path = variant.model || ''
           })
         }
@@ -59,6 +59,7 @@ export default defineStore({
         if(shelf.variants?.length) {
           shelf.variants.map((variant) => {
             variant.type = 'shelf'
+            variant.material = 'wood'
             variant.path = variant.model || ''
           })
         }
