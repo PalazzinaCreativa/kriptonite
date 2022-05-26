@@ -22,10 +22,19 @@ export default defineStore({
       },
       {
         id: 2,
-        name: 'parquet 2',
-        image: '/assets/textures/parquet/parquet_map.jpg',
-        thumb: '/assets/textures/parquet/parquet_map.jpg',
-        repeat: 20,
+        name: 'bamboo',
+        image: '/assets/textures/bamboo/bamboo_map.jpg',
+        thumb: '/assets/textures/bamboo/bamboo_map.jpg',
+        repeat: [7, 9],
+        ext: 'jpg',
+        maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
+      },
+      {
+        id: 3,
+        name: 'gres_tiles',
+        image: '/assets/textures/gres_tiles/gres_tiles_map.jpg',
+        thumb: '/assets/textures/gres_tiles/gres_tiles_map.jpg',
+        repeat: [1, 2],
         ext: 'jpg',
         maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
       }

@@ -32,6 +32,9 @@ export const useConfiguratorStore = defineStore({
     setWallColor (wallColor) {
       this.viewerGetter().room.changeWallColor(wallColor)
     },
+    changeFloor (texture) {
+      this.viewerGetter().room.changeFloor(texture)
+    },
     addElement (options, callback) {
       this.viewerGetter().addElement({ ...options }, callback)
     },
