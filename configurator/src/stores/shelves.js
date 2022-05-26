@@ -45,7 +45,7 @@ export default defineStore({
         if(shelf.variants?.length) {
           shelf.variants.map((variant) => {
             variant.type = 'shelf'
-            variant.material = { ...variant.material, nature: 'metal' }
+            variant.nature = 'metallo'
             variant.path = variant.model || ''
           })
         }
@@ -59,7 +59,7 @@ export default defineStore({
         if(shelf.variants?.length) {
           shelf.variants.map((variant) => {
             variant.type = 'shelf'
-            variant.material = { ...variant.material, nature: 'wood' }
+            variant.nature = 'legno'
             variant.path = variant.model || ''
           })
         }

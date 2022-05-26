@@ -8,13 +8,35 @@ const c = new Client({
 export default defineStore({
   id: "textures",
   state: () => ({
-    list: [],
+    list: [
+      {
+        id: 3,
+        name: "wood-light",
+        createdAt:"2022-05-10T08:57:13.477Z",
+        updatedAt:"2022-05-10T08:57:14.405Z",
+        publishedAt:"2022-05-10T08:57:14.401Z",
+        ext: 'jpg',
+        maps: ['map', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'],
+        repeat: 1,
+        thumb:'/assets/textures/wood-light/wood-light_map.jpg'
+      },
+      {
+        id: 4,
+        name: "wood-dark",
+        createdAt:"2022-05-10T08:57:13.477Z",
+        updatedAt:"2022-05-10T08:57:14.405Z",
+        publishedAt:"2022-05-10T08:57:14.401Z",
+        ext: 'jpg',
+        maps: ['map', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'],
+        repeat: 1,
+        thumb:'/assets/textures/wood-dark/wood-dark_map.jpg'
+      }
+    ],
     roomList: [],
     roomTextures: [
       {
         id: 1,
         name: 'parquet',
-        image: '/assets/textures/parquet/parquet_map.jpg',
         thumb: '/assets/textures/parquet/parquet_map.jpg',
         repeat: 10,
         ext: 'jpg',
@@ -23,7 +45,6 @@ export default defineStore({
       {
         id: 2,
         name: 'bamboo',
-        image: '/assets/textures/bamboo/bamboo_map.jpg',
         thumb: '/assets/textures/bamboo/bamboo_map.jpg',
         repeat: [7, 9],
         ext: 'jpg',
@@ -32,7 +53,6 @@ export default defineStore({
       {
         id: 3,
         name: 'gres_tiles',
-        image: '/assets/textures/gres_tiles/gres_tiles_map.jpg',
         thumb: '/assets/textures/gres_tiles/gres_tiles_map.jpg',
         repeat: [1, 2],
         ext: 'jpg',
@@ -59,7 +79,7 @@ export default defineStore({
   actions: {
     async getTextures() {
       let response = await c.getTextures()
-      this.list = response
+      this.list = [ ...this.list, ...response ]
     },
 
     async getRoomTextures() {

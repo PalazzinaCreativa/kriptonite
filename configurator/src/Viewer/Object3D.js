@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
 import { stringToThreeColor } from './utils/stringToThreeColor'
+import { addTexture } from "./utils/addTexture";
 import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
@@ -71,19 +72,26 @@ export default class Object3D {
     if (RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
   }
 
-  setMaterial ({ image, color, roughness, opacity, id }) {
+  setMaterial ({ texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id }) {
     if(!this.object) return
-    this.object.traverse(child => {
+    //console.log('setMaterial', texture, nature, color, roughness, opacity, id)
+    this.object.traverse(async child => {
       if (child.material) {
-        if (opacity) { child.material.opacity = opacity } else { child.material.opacity = 1 }
-        if (color) { child.material.color = new THREE.Color(stringToThreeColor(color)) }
-        if (roughness) { child.material.roughness = roughness } else { child.material.roughness = 0.8 }
-        // TODO
-        if (image) child.material.image = new THREE.TextureLoader().load(image)
+        child.material.transparent = false
+        if (opacity) child.material.opacity = opacity
+        if (color && child.material.name != 'legno') { child.material.color = new THREE.Color(stringToThreeColor(color)) }
+        if (roughness) child.material.roughness = roughness
+        // Applico la texture ai legni
+        if (texture && child.material.name) {
+          if(child.material.name === nature) {
+            texture.repeat = [2, 2]
+            await addTexture(child.material, texture)
+          }
+        }
       }
     })
 
-    this.config.material = { color, roughness, id, image }
+    this.config.material = { color, roughness, id, texture, nature }
   }
 
   setSiblingsMaterial (material) {

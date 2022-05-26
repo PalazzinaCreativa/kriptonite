@@ -11,7 +11,7 @@ import * as THREE from 'three'
     /textures/{nome_texture}/{nome_texture}_{nome_mappa}.{ext}
 */
 
-export const addTexture = (material, { name = 'texture', repeat = 4, maps, ext = 'png' }) => {
+export const addTexture = (material, { name = 'texture', repeat = 4, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', image = null }) => {
   if (!material) {
     console.error(`Nessun materiale selezionato per la texture ${name}`)
     return
@@ -23,29 +23,26 @@ export const addTexture = (material, { name = 'texture', repeat = 4, maps, ext =
 
   const textureLoader = new THREE.TextureLoader()
 
+  let path 
+  
   return Promise.all(
-    maps
-      .map(mapName => {
-        return new Promise((resolve, reject) => {
-          textureLoader.load(
-            `/assets/textures/${name}/${name}_${mapName}.${ext}`,
-            (map) => {
-              map.wrapS = THREE.RepeatWrapping
-              map.wrapT = THREE.RepeatWrapping
-              map.anisotropy = 16
-              if (repeat.length) {
-                map.repeat.set(repeat[0], repeat[1])
-              } else {
-                map.repeat.set(repeat, repeat)
-              }
-              material[mapName] = map
-              material.needsUpdate = true
-              resolve(map)
-            },
-            undefined,
-            (e) => reject(e)
-          )
-        })
+    maps.map(mapName => {
+      path = image || `/assets/textures/${name}/${name}_${mapName}.${ext}`
+      return new Promise((resolve, reject) => {
+        textureLoader.load(path, (map) => {
+          map.wrapS = THREE.RepeatWrapping
+          map.wrapT = THREE.RepeatWrapping
+          map.anisotropy = 16
+          if (repeat.length) {
+            map.repeat.set(repeat[0], repeat[1])
+          } else {
+            map.repeat.set(repeat, repeat)
+          }
+          material[mapName] = map
+          material.needsUpdate = true
+          resolve(map)
+        }, undefined, (e) => reject(e))
       })
+    })
   )
 }

@@ -48,7 +48,7 @@
   const variants = computed(() => casesModule.variants)
 
   getVariants()
-  setRelativeProduct()
+  //setRelativeProduct()
 
   const isSelected = (variantId) => props.element.variantId === variantId
 </script>

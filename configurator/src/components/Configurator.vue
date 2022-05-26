@@ -95,10 +95,14 @@ onMounted(() => {
       shelf: computed(() => shelvesModule.index),
       case: computed(() => casesModule.index)
     }
-
-    const el = data[type].find(p => p.id === id)
-    if (!variantId) return el
-    return { ...el.variants.find(v => v.id === variantId), id, variantId }
+    console.log(data[type].value)
+    if(data[type].value.length) {
+      const el = data[type].value.find(p => p.id === id)
+      if (!variantId) return el
+      console.log(el)
+      //location.reload()
+      return { ...el.variants.find(v => v.id === variantId), id, variantId }
+    }
   })
 
   viewer.setHook('selectElement', (element) => {

@@ -291,7 +291,7 @@ export default class Viewer {
     this.outlinePass.hover.selectedObjects = []
     this.outlinePass.select.selectedObjects = [element.object]
     this.selectedElement = element
-    this.zoomOnTarget({ ...element.getPosition(), z:300 })
+    this.zoomOnTarget({ ...element.getPosition(), z: 300 })
     this.doHook('selectElement', element)
     document.body.style.cursor = 'auto'
   }

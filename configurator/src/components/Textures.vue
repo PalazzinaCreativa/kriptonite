@@ -24,9 +24,13 @@ const emits = defineEmits(['setTexture'])
 const title = computed(() => props.title || 'Finitura')
 
 
-const setMaterial = (material) => {
-  texturesModule.setSelectedTexture(material)
-  emits('setTexture', material)
+const setMaterial = (texture) => {
+  texturesModule.setSelectedTexture(texture)
+  if(props.element.config?.nature) {
+    emits('setTexture', { texture: texture, nature: props.element.config.nature })
+  } else {
+    emits('setTexture', texture)
+  }
 }
 
 if(props.element.config?.texture && textures && textures.length) {

@@ -69,7 +69,7 @@ const mainElement = computed(() => {
   }) : null
 })
 
-const materials = ref(data[props.element.config?.type][0]?.materials)
+const materials = ref(data[props.element.config?.type][0]?.material)
 
 const obstacleDimensions = ref({
   width: props.element.getSize().width,
@@ -78,7 +78,7 @@ const obstacleDimensions = ref({
 })
 
 const setMaterial = (material) => {
-  props.element.setMaterial(material)
+  props.element.setMaterial({ ...props.element.config?.material, ...material })
   configurator.updateConfig()
 }
 
