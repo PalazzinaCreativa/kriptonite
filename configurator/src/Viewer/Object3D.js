@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
 import { stringToThreeColor } from './utils/stringToThreeColor'
 import { addTexture } from "./utils/addTexture";
-import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
+//import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
     this.config = config
@@ -48,7 +48,7 @@ export default class Object3D {
 
     const normalizeY = !y
       ? this.getPosition().y
-      : RESTING_ON_THE_GROUND.includes(this.id)
+      : this.config.grounded
         ? this.getSize().height / 2
         : y
 
@@ -69,7 +69,15 @@ export default class Object3D {
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
-    if (RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+    if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+  }
+
+  // Test per vedere se si può modificare
+  updateElement(element) {
+    this.config = element
+    this.variantId = element.variantId
+    this.id = element.id
+    // Riesco a modificarlo, ma non ad aggiornare la scena
   }
 
   setMaterial ({ texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id }) {

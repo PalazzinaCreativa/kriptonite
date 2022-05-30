@@ -23,8 +23,8 @@
       </div>
     </div>
     <div configuration-actions class="flex fixed bottom-0 left-0 w-full">
-      <Btn v-if="destroyLabel" class="bg-light-gray" :label="destroyLabel" @click="destroy" />
-      <Btn v-if="addLabel" class="bg-yellow" :label="addLabel" @click="addElement" />
+      <Btn v-if="destroyLabel" class="bg-light-gray w-full" :label="destroyLabel" @click="handleCancel" />
+      <Btn v-if="addLabel" class="bg-yellow w-full" :label="addLabel" @click="addElement" />
     </div>
   </div>
 </template>
@@ -114,17 +114,23 @@ const updateDimensions = (dimensions) => {
   props.element.setSize(elementConfig.value)
 }
 
-const addLabel = props.element.isEdit ? 'Aggiorna elemento' : 'Inserisci elemento'
+const addLabel = props.element.isEdit ? '' : ''
 
-const destroyLabel = props.element.isEdit ? 'Elimina elemento' : 'Annulla'
+const destroyLabel = props.element.isEdit ? 'Elimina elemento' : 'Chiudi'
 
 const addElement = () => {
   updateDimensions(elementConfig.value)
   close()
 }
 
+const handleCancel = () => {
+  if(props.element.isEdit) {
+    destroy()
+  }
+  close()
+}
+
 const destroy = () => {
   props.element.destroy()
-  close()
 }
 </script>

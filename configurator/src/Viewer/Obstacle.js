@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import Object3D from "./Object3D"
-import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
+//import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 
 export default class Obstacle extends Object3D {
   constructor (options, room) {

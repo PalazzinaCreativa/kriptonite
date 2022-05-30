@@ -28,6 +28,8 @@ export default class Upright extends Object3D {
   setSize (dimensions) {
     const { width, height, depth } = this.getSize()
 
+    console.log('montante K2', this.product.viewer?.room?.config?.dimensions?.height, height)
+
     const scale = {
       x: 1,
       y: 1.5, //dimensions.height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : height / this.product.viewer?.room?.config?.dimensions?.height,
@@ -35,7 +37,7 @@ export default class Upright extends Object3D {
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
-    //if (RESTING_ON_THE_GROUND && RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+    if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
   }
 
   setPosition ({ x, y, z }) {
@@ -47,13 +49,14 @@ export default class Upright extends Object3D {
   }
 
   _setIndex () {
+    this.isPlaced = true
     if (!this.product.uprights.length) {
       this.index = 0
       this.realIndex = 0
       return
     }
 
-    // Imposto l'indice basandomi sul monmtante più a destra. Se l'asse x è lo stesso, allora avranno lo stesso indice
+    // Imposto l'indice basandomi sul montante più a destra. Se l'asse x è lo stesso, allora avranno lo stesso indice
     const latestUpright = this.product.uprights.reduce((prev, current) => (prev.index > current.index) ? prev : current)
     this.index = latestUpright.getPosition().x === this.getPosition().x
       ? latestUpright.index

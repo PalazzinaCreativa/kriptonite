@@ -4,6 +4,11 @@
     <div class="relative w-full">
       <Header class="absolute" />
       <div canvas-wrapper class="h-full w-full" ref="canvasWrapper" />
+      <Btn v-if="selectedElement" @click="closeElementSettings" class="absolute overflow-hidden bottom-16 left-1/2 -translate-x-1/2 rounded-full">
+        <template #prepend>
+          <Close class="cursor-pointer"/>
+        </template> Termina inserimento
+      </Btn>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls class="transition-all w-[450px] z-2" :controls="controlsList">
@@ -28,6 +33,8 @@ import Header from '@/components/Header.vue'
 import Actions from '@/components/Actions.vue'
 import ProductList from '@/components/ProductList.vue'
 import DownloadModel from '@/components/DownloadModel.vue'
+import Btn from '@/components/forms/Button.vue'
+import Close from '@/components/icons/Close.vue'
 
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
@@ -78,6 +85,7 @@ const closeRoomSettings = () => {
 
 const closeElementSettings = () => {
   selectedElement.value = null
+  configurator.removeSelection()
 }
 
 onMounted(() => {

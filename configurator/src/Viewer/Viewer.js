@@ -357,7 +357,8 @@ export default class Viewer {
 
     this.objectToPlace = element
     if(!this.objectToPlace.object) return
-    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, 1) // Posizione inziiale
+    let initialZ = config.type !== 'obstacle' ? -50 : 1 // se è un elemento ripetibile la posizione di default è dietro il muro
+    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, initialZ) // Posizione inziiale
 
     this.doHook('selectElement', this.objectToPlace)
 

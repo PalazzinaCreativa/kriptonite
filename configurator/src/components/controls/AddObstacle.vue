@@ -11,7 +11,6 @@
 
 <script setup>
 import { computed } from 'vue'
-// import { obstaclesData } from '@/dataset/obstaclesData'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useEncumbrancesStore from '@/stores/encumbrances'
 
