@@ -41,6 +41,17 @@
       "relation": "manyToOne",
       "target": "api::product.product",
       "inversedBy": "uprights"
+    },
+    "grounded": {
+      "type": "boolean",
+      "default": false
+    },
+    "image": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }
