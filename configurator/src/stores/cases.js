@@ -60,7 +60,7 @@ export default defineStore({
           item.variants.map((variant) => {
             variant.type = 'case'
             variant.nature = 'legno'
-            variant.path = variant.model || 'https://kriptonite.s3.eu-central-1.amazonaws.com/K1_75_battente_fdbc078e64.gltf'
+            variant.path = variant.model // || 'https://kriptonite.s3.eu-central-1.amazonaws.com/K1_75_battente_fdbc078e64.gltf'
           })
         }
         return item

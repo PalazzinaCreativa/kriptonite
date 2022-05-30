@@ -23,15 +23,27 @@ const emits = defineEmits(['setColor'])
 
 const setMaterial = (material) => {
   // Mappo le proprietà del colore nell'oggetto nuovo
-  material = { ...material, color: material.code }
+  material = { ...props.element.config.material, ...material, color: material.code }
   colorsModule.setSelectedColor(material)
   emits('setColor', material)
 }
 
-if(props.element.config.color && colors.length) {
-  let startingColor = colors.find((color) => {
-    return props.element.config.color === color.id
-  })
-  setMaterial(startingColor)
-}
+if(colors.value && colors.value.length) {
+  // Se non ho già impostato un colore
+  if(typeof props.element.config?.material?.id === "undefined") {
+    // Se ho già dato un colore ad un altro elemento in precedenza
+    if(Object.keys(selectedColor.value).length) {
+      console.log('si ho un colore selezionato')
+      setMaterial(selectedColor.value)
+    } else {
+      console.log('non ho un colore selezionato')
+      // imposto il primo delle scelte dei colori
+      setMaterial(colors.value[0])
+    }
+  } else {
+    // altrimenti imposto quello già assegnato al modello in precedenza
+    let assignedColor = colors.value.find((color) => props.element.config.material.id === color.id)
+    colorsModule.setSelectedColor(assignedColor)
+  }
+} 
 </script>

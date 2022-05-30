@@ -8,7 +8,23 @@ const c = new Client({
 export default defineStore({
   id: "encumbrances",
   state: () => ({
-    list: []
+    list: [
+      {
+        name: 'Altro',
+        type: 'obstacle',
+        id: 'generic',
+        path: '/assets/objects/obstacles/generic/generic.gltf',
+        image: {
+          url: '/assets/objects/obstacles/generic/generic.png',
+          width: 150,
+          height: 150,
+          alt: 'generic obstacle'
+        },
+        width: 90,
+        height: 70,
+        depth: 50
+      }
+    ]
   }),
 
   getters: {
@@ -19,12 +35,17 @@ export default defineStore({
   
   actions: {
     async getEncumbrances() {
+      let encumbrancesList = this.list
       let response = await c.getEncumbrances()
-      this.list = response.data?.length ? response.data.map((encumbrace) => {
+      let encumbrances = response.data?.length ? response.data.map((encumbrace) => {
         encumbrace.type = 'obstacle'
         encumbrace.path = encumbrace.model ? encumbrace.model.url : ''
         return encumbrace
       }) : []
+
+      console.log(this.list, encumbrances)
+
+      this.list = [ ...this.list, ...encumbrances ]
     }
   }
 });

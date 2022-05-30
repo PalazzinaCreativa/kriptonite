@@ -16,6 +16,5 @@ import useEncumbrancesStore from '@/stores/encumbrances'
 
 const configurator = useConfiguratorStore()
 const encumbrancesModule = useEncumbrancesStore()
-encumbrancesModule.getEncumbrances()
 const encumbrances = computed(() => encumbrancesModule.index)
 </script>
