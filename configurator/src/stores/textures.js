@@ -16,20 +16,60 @@ export default defineStore({
         updatedAt:"2022-05-10T08:57:14.405Z",
         publishedAt:"2022-05-10T08:57:14.401Z",
         ext: 'jpg',
-        maps: ['map', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'],
-        repeat: 1,
+        maps: [
+          'map',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ],
+        repeat: 2,
         thumb:'/assets/textures/wood-light/wood-light_map.jpg'
       },
       {
         id: 4,
+        name: "wood-light-2",
+        createdAt:"2022-05-10T08:57:13.477Z",
+        updatedAt:"2022-05-10T08:57:14.405Z",
+        publishedAt:"2022-05-10T08:57:14.401Z",
+        ext: 'jpg',
+        maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'],
+        repeat: 2,
+        thumb:'/assets/textures/wood-light-2/wood-light-2_map.jpg'
+      },
+      {
+        id: 5,
         name: "wood-dark",
         createdAt:"2022-05-10T08:57:13.477Z",
         updatedAt:"2022-05-10T08:57:14.405Z",
         publishedAt:"2022-05-10T08:57:14.401Z",
         ext: 'jpg',
-        maps: ['map', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'],
-        repeat: 1,
+        maps: [
+          'map',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ],
+        repeat: 2,
         thumb:'/assets/textures/wood-dark/wood-dark_map.jpg'
+      },
+      {
+        id: 6,
+        name: "wood-dark-2",
+        createdAt:"2022-05-10T08:57:13.477Z",
+        updatedAt:"2022-05-10T08:57:14.405Z",
+        publishedAt:"2022-05-10T08:57:14.401Z",
+        ext: 'jpg',
+        maps: [
+          'map',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ],
+        repeat: 2,
+        thumb:'/assets/textures/wood-dark-2/wood-dark-2_map.jpg'
       }
     ],
     roomList: [],
@@ -40,7 +80,14 @@ export default defineStore({
         thumb: '/assets/textures/parquet/parquet_map.jpg',
         repeat: 10,
         ext: 'jpg',
-        maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
+        maps: [
+          'map',
+          //'aoMap',
+          //'normalMap',
+          //'bumpMap',
+          //'roughnessMap',
+          'metalnessMap'
+        ]
       },
       {
         id: 2,
@@ -48,15 +95,44 @@ export default defineStore({
         thumb: '/assets/textures/bamboo/bamboo_map.jpg',
         repeat: [7, 9],
         ext: 'jpg',
-        maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
+        maps: [
+          'map',
+          'aoMap',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ]
       },
-      {
+      /* {
         id: 3,
         name: 'gres_tiles',
         thumb: '/assets/textures/gres_tiles/gres_tiles_map.jpg',
         repeat: [1, 2],
         ext: 'jpg',
-        maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
+        maps: [
+          'map',
+          //'aoMap',
+          //'normalMap',
+          //'bumpMap',
+          //'roughnessMap',
+          'metalnessMap'
+        ]
+      }, */
+      {
+        id: 4,
+        name: 'tiles',
+        thumb: '/assets/textures/tiles/tiles_map.jpg',
+        repeat: [1, 2],
+        ext: 'jpg',
+        maps: [
+          'map',
+          'aoMap',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ]
       }
     ],
     selectedTexture: null

@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z, GUTTER } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 
@@ -108,6 +108,7 @@ export default class Upright extends Object3D {
         "983a1035-22ed-44de-a3b4-f0d995d7c3cd",
         "8dbee752-dc2c-4ef1-8437-8701bc065cae"
       ]
+
       // Se è un montante terra-cielo, adatto l'altezza del montante all'altezza della stanza
       if(this.config.variantId === 'upright_s_tele') {
         this.product?.object?.children[0].children[0].children.length ? this.product.object.children[0].children[0].children.map((node) => {
@@ -162,7 +163,7 @@ export default class Upright extends Object3D {
   async destroy () {
     // Se non è l'ultimo montante cancello tutti i montanti più a destra e tutti gli scaffali
     if (this.getSiblings().find(s => s.index > this.index) && !this.product._isDestroying) {
-      if (!window.confirm('ocio che cancelli tutto')) return
+      if (!window.confirm('Sei sicuro di voler eliminare tutto?')) return
       this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
       const index = this.index - 1
       for (const upright of this.product.uprights.filter(u => u.index > index)) {

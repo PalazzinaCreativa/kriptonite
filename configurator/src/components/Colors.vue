@@ -8,10 +8,6 @@
       </div>
     </div>
   </div>
-  <!-- <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
-      <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
-      <div class="mt-2">{{ material.name }}</div>
-    </div> -->
 </template>
 
 <script setup>
@@ -19,7 +15,6 @@ import { computed, defineProps, defineEmits } from 'vue';
 import useColorsStore from '@/stores/colors';
 
 const colorsModule = useColorsStore()
-colorsModule.getColors()
 const colors = computed(() => colorsModule.index)
 const selectedColor = computed(() => colorsModule.selected)
 

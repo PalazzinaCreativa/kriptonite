@@ -10,7 +10,7 @@
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="relative z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
-      <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="selectedElement = null" />
+      <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
       <ProductList v-if="showList" @close="showList = false" />
       <DownloadModel v-if="showDownload" @close="showDownload = false" />
     </Controls>
@@ -37,6 +37,7 @@ import useUprightsStore from '@/stores/uprights'
 import useShelvesStore from '@/stores/shelves'
 import useCasesStore from '@/stores/cases'
 import useTexturesStore from '@/stores/textures'
+import useColorsStore from '@/stores/colors'
 
 import { controlsList } from '@/dataset/controls'
 //import { obstaclesData } from '@/dataset/obstaclesData'
@@ -63,6 +64,8 @@ encumbrancesModule.getEncumbrances()
 const uprightsModule = useUprightsStore()
 const shelvesModule = useShelvesStore()
 const casesModule = useCasesStore()
+const colorsModule = useColorsStore()
+colorsModule.getColors()
 const texturesModule = useTexturesStore()
 texturesModule.getTextures()
 
@@ -71,6 +74,10 @@ const isEditingRoom = computed(() => selectedOption.value.id === 2)
 
 const closeRoomSettings = () => {
   optionsModule.resetSelectedOption()
+}
+
+const closeElementSettings = () => {
+  selectedElement.value = null
 }
 
 onMounted(() => {
@@ -95,7 +102,7 @@ onMounted(() => {
       shelf: computed(() => shelvesModule.index),
       case: computed(() => casesModule.index)
     }
-    console.log(data[type].value)
+    //console.log(data[type].value)
     if(data[type].value.length) {
       const el = data[type].value.find(p => p.id === id)
       if (!variantId) return el

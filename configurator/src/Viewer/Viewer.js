@@ -251,8 +251,11 @@ export default class Viewer {
         this.objectToPlace = null
         checkpointPosition = null
         this.updateConfig()
-        this._isAddingNewElement = true // abilita / disabilita la funzione che permette di aggiungere l'elemento scelto in maniera consecutiva
-        if (newConfig.type !== 'obstacle' && this._isAddingNewElement) this.addElement(newConfig)
+        this._isAddingNewElement = false // abilita / disabilita la funzione che permette di aggiungere l'elemento scelto in maniera consecutiva
+        if (newConfig.type !== 'obstacle') {
+          this.addElement(newConfig)
+          this._isAddingNewElement = true
+        }
         return
       }
       // Se non sono in hover su nessun elemento, elimino eventuali selezioni
@@ -288,6 +291,7 @@ export default class Viewer {
   }
 
   _selectElement (element) {
+    element.isEdit = true
     this.outlinePass.hover.selectedObjects = []
     this.outlinePass.select.selectedObjects = [element.object]
     this.selectedElement = element
@@ -353,7 +357,7 @@ export default class Viewer {
 
     this.objectToPlace = element
     if(!this.objectToPlace.object) return
-    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -50) // Posizione inziiale
+    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, 1) // Posizione inziiale
 
     this.doHook('selectElement', this.objectToPlace)
 

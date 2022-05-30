@@ -1,6 +1,8 @@
 <template>
   <div class="relative w-full h-screen">
-    <Logo class="fixed m-8"/>
+    <a href="/">
+      <Logo class="fixed m-8"/>
+    </a>
     <template v-for="(question, index) in questions">
       <Question v-if="isVisible(question, index)" :key="`question-${index}`">
         <template #progress>

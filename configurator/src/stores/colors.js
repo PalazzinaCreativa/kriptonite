@@ -9,7 +9,7 @@ export default defineStore({
   id: "colors",
   state: () => ({
     list: [],
-    selectedColor: null
+    selectedColor: {}
   }),
 
   getters: {
@@ -29,7 +29,7 @@ export default defineStore({
     },
 
     setSelectedColor(color) {
-      this.selectedColor = color
+      this.selectedColor = color ?? {}
     }
   }
 });

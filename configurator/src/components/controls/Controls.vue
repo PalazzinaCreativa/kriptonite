@@ -1,5 +1,5 @@
 <template>
-  <div class="relative duration-400 transform transition-all" :class="isOpen ? 'w-full' : 'w-0 translate-x-full'">
+  <div class="border-l border-gray relative duration-400 transform transition-all" :class="isOpen ? 'w-full' : 'w-0 translate-x-full'">
     <slot />
     <div class="h-full bg-whiteshadow-md flex flex-col relative" v-if="configurator.isReady">
       <div v-if="controls.length">
@@ -27,7 +27,7 @@ const controlsList = ref(props.controls)
 
 const setActive = (index) => {
   controlsList.value.map((control, i) => {
-    control.active = index === i + 1
+    control.active = index === i + 1 ? !control.active : false
   })
 }
 

@@ -11,7 +11,7 @@ import * as THREE from 'three'
     /textures/{nome_texture}/{nome_texture}_{nome_mappa}.{ext}
 */
 
-export const addTexture = (material, { name = 'texture', repeat = 4, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', image = null }) => {
+export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 0, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', image = null }) => {
   if (!material) {
     console.error(`Nessun materiale selezionato per la texture ${name}`)
     return
@@ -33,6 +33,7 @@ export const addTexture = (material, { name = 'texture', repeat = 4, maps = ['ma
           map.wrapS = THREE.RepeatWrapping
           map.wrapT = THREE.RepeatWrapping
           map.anisotropy = 16
+          map.rotation = rotation
           if (repeat.length) {
             map.repeat.set(repeat[0], repeat[1])
           } else {
