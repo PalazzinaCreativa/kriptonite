@@ -43,6 +43,9 @@
       "relation": "oneToMany",
       "target": "api::wood-shelf.wood-shelf",
       "mappedBy": "product"
+    },
+    "description": {
+      "type": "richtext"
     }
   }
 }
