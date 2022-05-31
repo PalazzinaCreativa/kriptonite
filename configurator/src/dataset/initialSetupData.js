@@ -277,7 +277,7 @@ export const initialSetupData = [
         label: 'Sospesa',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'floating.jpeg',
-        key: 'floating',
+        key: 'wall',
         showIf: {
           entity: 'product.type',
           values: ['k1']
@@ -288,7 +288,7 @@ export const initialSetupData = [
         label: 'A terra',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'ground.jpeg',
-        key: 'ground',
+        key: 'standalone',
         showIf: {
           entity: 'product.type',
           values: ['k1']
@@ -299,7 +299,7 @@ export const initialSetupData = [
         label: 'Terra-cielo',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'groundtotop.jpeg',
-        key: 'ground-to-top',
+        key: 'standalone',
         showIf: {
           entity: 'product.type',
           values: ['k2']
@@ -310,7 +310,26 @@ export const initialSetupData = [
         label: 'Parete-terra',
         description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
         image: 'walltoground.jpeg',
-        key: 'wall-to-ground',
+        key: 'wall',
+        showIf: {
+          entity: 'product.type',
+          values: ['k2']
+        }
+      }
+    ]
+  },
+  {
+    type: 'standalone',
+    title: 'Come vuoi <b>posizionare</b> il prodotto?',
+    key: 'uprightsPosition',
+    super: 'product',
+    options: [
+      {
+        component: 'card',
+        label: 'Terra-cielo',
+        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        image: 'groundtotop.jpeg',
+        key: 'standalone',
         showIf: {
           entity: 'product.type',
           values: ['k2']

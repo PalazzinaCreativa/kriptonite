@@ -10,7 +10,8 @@ export const useConfiguratorStore = defineStore({
     isPanning: false,
     isShowingMeasures: false,
     isShowingHuman: false,
-    viewerGetter: () => null
+    viewerGetter: () => null,
+    productOptions: null
   }),
   getters: {
     productList: (state) => {
@@ -27,6 +28,7 @@ export const useConfiguratorStore = defineStore({
     // isPanning: (state) => state.viewerGetter()?._isPanning,
     // isShowingMeasures: (state) => state.viewerGetter()?.product?._visibleMeasures,
     // isShowingHuman: (state) => state.viewerGetter()?.human?.visible
+    options: (state) => state.productOptions
   },
   actions: {
     setWallColor (wallColor) {
@@ -34,6 +36,9 @@ export const useConfiguratorStore = defineStore({
     },
     changeFloor (texture) {
       this.viewerGetter().room.changeFloor(texture)
+    },
+    setOptions (options) {
+      this.productOptions = options || null
     },
     addElement (options, callback) {
       this.viewerGetter().addElement({ ...options }, callback)

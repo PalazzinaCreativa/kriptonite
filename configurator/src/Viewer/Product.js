@@ -50,7 +50,7 @@ export default class Product {
   reset () {
     this.uprights.forEach(u => this.object.remove(u.object))
     this.shelves.forEach(s => this.object.remove(s.object))
-    this.cases.forEach(c => this.object.remove(s.object))
+    this.cases.forEach(c => this.object.remove(c.object))
 
     this.uprights = []
     this.shelves = []

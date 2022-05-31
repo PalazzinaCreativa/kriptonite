@@ -91,6 +91,7 @@ const closeElementSettings = () => {
 }
 
 onMounted(() => {
+  configurator.setOptions(props.config.product)
   loading.value = true
   const viewer = new Viewer(
     canvasWrapper.value, // Elemento del dom principale

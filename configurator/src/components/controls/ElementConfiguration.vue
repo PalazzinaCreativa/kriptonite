@@ -55,7 +55,7 @@ const casesModule = useCasesStore()
 const colorsModule = useColorsStore()
 const texturesModule = useTexturesStore()
 
-const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`))))
+const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(/* @vite-ignore */`./${capitalize(props.element.config.type)}Settings.vue`))))
 
 const encumbrances = encumbrancesModule.index
 const uprights = uprightsModule.index
@@ -117,7 +117,7 @@ const updateDimensions = (dimensions) => {
   props.element.setSize(elementConfig.value)
 }
 
-const addLabel = props.element.isEdit ? '' : ''
+const addLabel = props.element.isEdit ? '' : 'Aggiungi'
 
 const destroyLabel = props.element.isEdit ? 'Elimina elemento' : 'Termina inserimento'
 
