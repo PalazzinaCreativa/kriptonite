@@ -22,8 +22,9 @@ const props = defineProps(['element'])
 const emits = defineEmits(['setColor'])
 
 const setMaterial = (material) => {
+  let elementMaterial = props.element.config.material
   // Mappo le proprietà del colore nell'oggetto nuovo
-  material = { ...props.element.config.material, ...material, color: material.code }
+  material = { ...elementMaterial, ...material, color: material.code }
   colorsModule.setSelectedColor(material)
   emits('setColor', material)
 }

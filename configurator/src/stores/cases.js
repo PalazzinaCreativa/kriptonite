@@ -41,7 +41,7 @@ export default defineStore({
 
     async getStandardCases(id) {
       let response = id ? await c.getCasesByProduct(id) : []
-      this.standardList = response.length ? response.map((item) => {
+      let completeList = response.length ? response.map((item) => {
         if(item.variants?.length) {
           item.variants.map((variant) => {
             variant.type = 'case'
@@ -51,11 +51,25 @@ export default defineStore({
         }
         return item
       }) : []
+
+      // Merge variants of models with the same name and unique by it.
+      if(completeList.length) {
+        completeList.reduce((oldList, newList) => {
+          if(oldList.name && (oldList.name === newList.name)) {
+            oldList.variants = [ ...oldList.variants, ...newList.variants]
+          }
+          return oldList
+        })
+      }
+
+      this.standardList = completeList.filter((list, i, self) => {
+        return self.findIndex(item => item.name === list.name) === i
+      })
     },
 
     async getWoodenCases(id) {
       let response = id ? await c.getWoodCasesByProduct(id) : []
-      this.woodenList = response.length ? response.map((item) => {
+      let completeList = response.length ? response.map((item) => {
         if(item.variants?.length) {
           item.variants.map((variant) => {
             variant.type = 'case'
@@ -65,6 +79,20 @@ export default defineStore({
         }
         return item
       }) : []
+
+      // Merge variants of models with the same name and unique by it.
+      if(completeList.length) {
+        completeList.reduce((oldList, newList) => {
+          if(oldList.name && (oldList.name === newList.name)) {
+            oldList.variants = [ ...oldList.variants, ...newList.variants]
+          }
+          return oldList
+        })
+      }
+
+      this.woodenList = completeList.filter((list, i, self) => {
+        return self.findIndex(item => item.name === list.name) === i
+      })
     },
 
     getVariants(id, filters = {}) {

@@ -43,9 +43,7 @@ export default defineStore({
         return encumbrace
       }) : []
 
-      console.log(this.list, encumbrances)
-
-      this.list = [ ...this.list, ...encumbrances ]
+      this.list = [ ...encumbrances, ...this.list ]
     }
   }
 });

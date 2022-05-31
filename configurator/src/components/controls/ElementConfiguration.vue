@@ -79,7 +79,10 @@ const mainElement = computed(() => {
   }) : null
 })
 
-const materials = ref(data[props.element.config?.type][0]?.material)
+const selectedMaterial = computed(() => {
+  return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: props.element.config.nature }
+})
+
 var elementConfig = ref(props.element.config)
 
 const obstacleDimensions = ref({
@@ -99,8 +102,8 @@ const updateElement = (element) => {
 }
 
 const addToAll = () => {
-  const material = materials.value.find(m => m.id === props.element.config.material.id)
-  props.element.setSiblingsMaterial(material)
+  //const material = materials.value.find(m => m.id === props.element.config.material.id)
+  props.element.setSiblingsMaterial(selectedMaterial.value)
   configurator.updateConfig()
 }
 
@@ -116,7 +119,7 @@ const updateDimensions = (dimensions) => {
 
 const addLabel = props.element.isEdit ? '' : ''
 
-const destroyLabel = props.element.isEdit ? 'Elimina elemento' : 'Chiudi'
+const destroyLabel = props.element.isEdit ? 'Elimina elemento' : 'Termina inserimento'
 
 const addElement = () => {
   updateDimensions(elementConfig.value)

@@ -34,10 +34,10 @@ export default class Object3D {
   }
 
   getSiblings () {
+    if (this.config.type === 'obstacle') return this.room.obstacles
     if (this.config.type === 'upright') return this.product.uprights
     if (this.config.type === 'shelf') return this.product.shelves
     if (this.config.type === 'case') return this.product.cases
-    if (this.config.type === 'obstacle') return this.room.obstacles
   }
 
   setPosition ({ x, y, z }) {
@@ -92,11 +92,11 @@ export default class Object3D {
         // Applico la texture ai legni
         if (texture && child.material.name) {
           texture.rotation = 1.5708 // Pi Greco / 2 per dare 90° in radianti
-          if(child.material.name === 'legno_v') {
+          if(child.material.name.indexOf('legno_v') >= 0) {
             texture.rotation = 0
           }
           if (child.material.name.indexOf(nature) >= 0) {
-            texture.repeat = [2, 2]
+            texture.repeat = [4, 4]
             await addTexture(child.material, texture)
           }
         }
@@ -111,7 +111,7 @@ export default class Object3D {
   }
 
   destroy () {
-    this.object.parent.remove(this.object)
+    this.object.parent?.remove(this.object)
     this.getSiblings().splice(this.getSiblings().indexOf(this), 1)
   }
 }

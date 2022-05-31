@@ -4,11 +4,13 @@
     <div class="relative w-full">
       <Header class="absolute" />
       <div canvas-wrapper class="h-full w-full" ref="canvasWrapper" />
-      <Btn v-if="selectedElement" @click="closeElementSettings" class="absolute overflow-hidden bottom-16 left-1/2 -translate-x-1/2 rounded-full">
-        <template #prepend>
-          <Close class="cursor-pointer"/>
-        </template> Termina inserimento
-      </Btn>
+      <Transition name="slide-up">
+        <Btn v-if="selectedElement" @click="closeElementSettings" class="absolute bg-light-gray overflow-hidden bottom-16 left-1/2 -translate-x-1/2 transform rounded-full">
+          <template #prepend>
+            <Close class="cursor-pointer"/>
+          </template> Termina inserimento
+        </Btn>
+      </Transition>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls class="transition-all w-[450px] z-2" :controls="controlsList">
@@ -147,5 +149,15 @@ onMounted(() => {
 .slide-in-enter-from,
 .slide-in-leave-to {
   transform: translateX(100%);
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100px);
 }
 </style>

@@ -24,10 +24,11 @@ export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
 
+    // Lista di dati da salvare per il cliente e per ripopolare il viewer
     this.config = {
       room,
       product
-    } // Lista di dati da salvare per il cliente e per ripopolare il viewer
+    }
 
     this.selectedObject = null // Elemento selezionato
     this.objectToPlace = null // Oggetto da inserire
@@ -41,13 +42,13 @@ export default class Viewer {
     this._history = []
     this._historyPosition = 0
 
-    // Normalize dimensions
+    // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer
     Object.entries(this.config.room.dimensions)
       .forEach(([key, value]) => {
         this.config.room.dimensions[key] = value * 100
-      }) // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer
+      })
 
-    // Se la stanza è mansardata setta come altezza l'altezz massima
+    // Se la stanza è mansardata setta come altezza l'altezza massima possibile
     if (this.config.room.type === 'attic') {
       this.config.room.dimensions.height = Math.max(this.config.room.dimensions.leftHeight, this.config.room.dimensions.rightHeight)
     }
@@ -61,7 +62,9 @@ export default class Viewer {
     this.camera = setupCamera(dimensions, this.domEl)
 
     this.room = new Room(this, { type, dimensions })
-    await this.room.init() // Aspetto che carichi tutte le texture di pavimento e stanza
+    
+    // Aspetto che carichi tutte le texture di pavimento e stanza
+    await this.room.init()
 
     this.product = new Product(this, { inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
     this.obstacles = []
@@ -336,13 +339,17 @@ export default class Viewer {
 
   async addElement (config) {
     this._isAddingNewElement = true
-    if (isTouchDevice()) this.controls.enabled = false // Se è un dispositivo touch disabilito i movimenti di camera al touch
-    // resetto eventuali imppostazioni di un precedente inserimento
+
+    // Se è un dispositivo touch disabilito i movimenti di camera al touch
+    if (isTouchDevice()) this.controls.enabled = false
+
+    // resetto eventuali impostazioni di un precedente inserimento
     if (this.objectToPlace) {
       this.scene.remove(this.objectToPlace.object)
       this.objectToPlace = null
       this.product.removeWireframes()
     }
+
     // Inizializzo un nuovo elemento
     let element
     if (config.type === 'obstacle') element = new Obstacle(config, this.room)
@@ -350,14 +357,16 @@ export default class Viewer {
     if (config.type === 'shelf') element = new Shelf(config, this.product)
     if (config.type === 'case') element = new Case(config, this.product)
 
-    console.log(config)
     await element.init()
 
+    // Creo le linee guida
     if (config.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
 
     this.objectToPlace = element
     if(!this.objectToPlace.object) return
-    let initialZ = config.type !== 'obstacle' ? -50 : 1 // se è un elemento ripetibile la posizione di default è dietro il muro
+
+    // Se è un elemento ripetibile la posizione di default è dietro il muro (-50)
+    let initialZ = config.type !== 'obstacle' ? -50 : 1
     this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, initialZ) // Posizione inziiale
 
     this.doHook('selectElement', this.objectToPlace)
