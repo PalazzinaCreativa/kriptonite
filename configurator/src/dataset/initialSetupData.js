@@ -323,6 +323,7 @@ export const initialSetupData = [
     title: 'Come vuoi <b>posizionare</b> il prodotto?',
     key: 'uprightsPosition',
     super: 'product',
+    fastForward: true,
     options: [
       {
         component: 'card',
