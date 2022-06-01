@@ -12,6 +12,7 @@ export default defineStore({
       {
         id: 3,
         name: "wood-light",
+        label: 'Rovere',
         createdAt:"2022-05-10T08:57:13.477Z",
         updatedAt:"2022-05-10T08:57:14.405Z",
         publishedAt:"2022-05-10T08:57:14.401Z",
@@ -29,6 +30,7 @@ export default defineStore({
       {
         id: 4,
         name: "wood-light-2",
+        label: 'Rovere dark',
         createdAt:"2022-05-10T08:57:13.477Z",
         updatedAt:"2022-05-10T08:57:14.405Z",
         publishedAt:"2022-05-10T08:57:14.401Z",
@@ -39,24 +41,8 @@ export default defineStore({
       },
       {
         id: 5,
-        name: "wood-dark",
-        createdAt:"2022-05-10T08:57:13.477Z",
-        updatedAt:"2022-05-10T08:57:14.405Z",
-        publishedAt:"2022-05-10T08:57:14.401Z",
-        ext: 'jpg',
-        maps: [
-          'map',
-          'normalMap',
-          'bumpMap',
-          'roughnessMap',
-          'metalnessMap'
-        ],
-        repeat: 2,
-        thumb:'/assets/textures/wood-dark/wood-dark_map.jpg'
-      },
-      {
-        id: 6,
         name: "wood-dark-2",
+        label: 'Canaletto',
         createdAt:"2022-05-10T08:57:13.477Z",
         updatedAt:"2022-05-10T08:57:14.405Z",
         publishedAt:"2022-05-10T08:57:14.401Z",
@@ -70,6 +56,24 @@ export default defineStore({
         ],
         repeat: 2,
         thumb:'/assets/textures/wood-dark-2/wood-dark-2_map.jpg'
+      },
+      {
+        id: 6,
+        name: "wood-dark",
+        label: 'Canaletto dark',
+        createdAt:"2022-05-10T08:57:13.477Z",
+        updatedAt:"2022-05-10T08:57:14.405Z",
+        publishedAt:"2022-05-10T08:57:14.401Z",
+        ext: 'jpg',
+        maps: [
+          'map',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ],
+        repeat: 2,
+        thumb:'/assets/textures/wood-dark/wood-dark_map.jpg'
       }
     ],
     roomList: [],
@@ -155,7 +159,13 @@ export default defineStore({
   actions: {
     async getTextures() {
       let response = await c.getTextures()
-      this.list = [ ...this.list, ...response ]
+      //var completeList = [ ...this.list, ...response ]
+      // Tolgo momentaneamente le texture caricate
+      var completeList = this.list
+      this.list = completeList.length ? completeList.map((texture) => {
+        texture.label = typeof texture.label !== 'undefined' ? texture.label : texture.name
+        return texture
+      }) : this.list
     },
 
     async getRoomTextures() {

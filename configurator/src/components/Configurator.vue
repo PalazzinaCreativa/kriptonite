@@ -11,9 +11,10 @@
           </template> Termina inserimento
         </Btn>
       </Transition>
+      <Tip class="fixed bottom-8 left-8 z-5" />
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="transition-all w-[450px] z-2" :controls="controlsList">
+    <Controls class="transition-all w-[320px] lg:w-[450px] xl:w-[500px] z-2" :controls="controlsList" @download="showDownload = true" @destroy="tabulaRasa">
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="relative z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
@@ -29,6 +30,7 @@ import { onMounted, reactive, ref, markRaw, computed, defineAsyncComponent } fro
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
+import Tip from '@/components/Tip.vue'
 import RoomSettings from '@/components/controls/RoomSettings.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
 import Header from '@/components/Header.vue'
@@ -117,7 +119,6 @@ onMounted(() => {
     if(data[type].value.length) {
       const el = data[type].value.find(p => p.id === id)
       if (!variantId) return el
-      console.log(el)
       //location.reload()
       return { ...el.variants.find(v => v.id === variantId), id, variantId }
     }
@@ -135,6 +136,11 @@ onMounted(() => {
     configurator.$patch({ canUndo, canRedo })
   })
 })
+
+const tabulaRasa = () => {
+  console.log('reset scene')
+}
+
 </script>
 
 <style>

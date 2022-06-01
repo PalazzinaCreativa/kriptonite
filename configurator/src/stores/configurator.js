@@ -14,14 +14,16 @@ export const useConfiguratorStore = defineStore({
     productOptions: null
   }),
   getters: {
+    // La distinta dei prodotti utilizzati non funziona perché a monte sbaglia come mappare le cose!
     productList: (state) => {
       if (!state.viewerGetter()) return []
       const { uprights, shelves, cases } = state.viewerGetter().config.product
       return [...uprights, ...shelves, ...cases]
-        .map(_ => ({
-          name: _.id,
-          scale: _.scale,
-          id: _.id
+        .map(item => ({
+          name: item.id,
+          scale: item.scale,
+          id: item.id,
+          item: item
         }))
         .reduce((acc, curr) => ({ ...acc, [curr.id]: { ...curr, quantity: acc && acc[curr.id] ? acc[curr.id].quantity + 1 : 1 }}), {})
     },

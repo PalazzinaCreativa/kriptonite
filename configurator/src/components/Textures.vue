@@ -4,7 +4,7 @@
     <div class="flex flex-wrap justify-center gap-12 my-8">
       <div v-for="texture in textures" :key="`texture-${texture.id}`" class="flex flex-col items-center justify-center cursor-pointer max-w-[150px]" @click="setMaterial(texture)">
         <div class="border-2 w-14 h-14 rounded-full" :class="selectedTexture && selectedTexture.id === texture.id ? 'border-2 border-yellow' : 'border-dark-gray'" :style="`background: url('${texture.thumb}') center center / cover`"></div>
-        <div class="text-center mt-3 w-full" v-text="texture.name" />
+        <div class="text-center mt-3 w-full" v-text="texture.label" />
       </div>
     </div>
   </div>

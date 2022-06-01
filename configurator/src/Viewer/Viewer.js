@@ -353,9 +353,9 @@ export default class Viewer {
     // Inizializzo un nuovo elemento
     let element
     if (config.type === 'obstacle') element = new Obstacle(config, this.room)
-    if (config.type === 'upright') element = new Upright(config, this.product)
-    if (config.type === 'shelf') element = new Shelf(config, this.product)
-    if (config.type === 'case') element = new Case(config, this.product)
+    if (config.type === 'upright') element = new Upright(config, {...this.product, type: this.config.product?.type })
+    if (config.type === 'shelf') element = new Shelf(config, {...this.product, type: this.config.product?.type })
+    if (config.type === 'case') element = new Case(config, {...this.product, type: this.config.product?.type })
 
     await element.init()
 
@@ -365,9 +365,9 @@ export default class Viewer {
     this.objectToPlace = element
     if(!this.objectToPlace.object) return
 
-    // Se è un elemento ripetibile la posizione di default è dietro il muro (-50)
-    let initialZ = config.type !== 'obstacle' ? -50 : 1
-    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, initialZ) // Posizione inziiale
+    // Se è un elemento ripetibile la posizione di default è dietro il muro (-50) altrimenti se è a parete lo posiziono contro il muro
+    let initialZ = this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 1
+    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, initialZ)
 
     this.doHook('selectElement', this.objectToPlace)
 

@@ -1,9 +1,9 @@
 <template>
-<Transition>
-  <div loader v-if="props.visible" class="bg-white fixed flex items-center justify-center top-0 left-0 h-screen w-screen p-8 z-50">
-    <Logo class="animate-flickering"/>
-  </div>
-</Transition>
+  <Transition>
+    <div loader v-if="props.visible" class="bg-white fixed flex items-center justify-center top-0 left-0 h-screen w-screen p-8 z-50">
+      <Logo class="animate-flickering"/>
+    </div>
+  </Transition>
 </template>
 <script setup>
   import { defineProps } from 'vue'
@@ -12,7 +12,7 @@
   const props = defineProps(['visible'])
 </script>
 <style scoped>
-.v-enter-active, .v-leave-active {
+.v-leave-active {
   transition: opacity 0.5s 0.15s cubic-bezier(.63,.06,.71,.03);
 }
 
