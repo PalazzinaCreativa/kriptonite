@@ -16,6 +16,8 @@ export default class Upright extends Object3D {
     this.product = product
     this._cantBePositioned = false
     this.config.type = 'upright'
+    this.currentGap = this.product.slot_space || defaultGap
+    
     if (typeof config.index !== 'undefined') this.index = config.index
     if (typeof config.realIndex !== 'undefined') this.realIndex = config.realIndex
   }
