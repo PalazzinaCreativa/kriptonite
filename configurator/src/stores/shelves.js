@@ -68,12 +68,12 @@ export default defineStore({
     },
 
     getVariants(id) {
-      let fullVariantList = (this.list.length && id) ? this.list.filter((shelf) => {
+      let fullVariantsList = (this.list.length && id) ? this.list.filter((shelf) => {
         return shelf.id === id
       })[0].variants : []
 
       // Unique by depth
-      this.variantsList = fullVariantList.length ? fullVariantList.filter((variant, i, self) => {
+      this.variantsList = fullVariantsList.length ? fullVariantsList.filter((variant, i, self) => {
         return self.findIndex(item => item.depth === variant.depth) === i
       }) : []
     }

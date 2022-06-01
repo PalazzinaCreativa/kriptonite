@@ -56,9 +56,23 @@ export default defineStore({
     },
 
     getVariants(id) {
-      this.variantsList = (this.list.length && id) ? this.list.filter((upright) => {
+      let fullVariantsList = (this.list.length && id) ? this.list.filter((upright) => {
         return upright.id === id
       })[0].variants : []
+
+      // Unique by height
+      // Se i montanti hanno delle varianti "Sinistra Centro Destra", prendo le varianti di centro
+      if(fullVariantsList.length) {
+        if(fullVariantsList.some((variant) => variant.sku?.slice(-1) === 'C')) {
+          this.variantsList = fullVariantsList.filter((variant, i) => {
+            return variant.sku?.slice(-1) === 'C'
+          })
+        } else {
+          this.variantsList = fullVariantsList.filter((variant, i, self) => {
+            return self.findIndex(item => item.height === variant.height) === i
+          })
+        }
+      }
     }
   }
 });
