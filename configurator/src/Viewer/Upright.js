@@ -16,8 +16,6 @@ export default class Upright extends Object3D {
     this.product = product
     this._cantBePositioned = false
     this.config.type = 'upright'
-    this.currentGap = this.product.slot_space || defaultGap
-    
     if (typeof config.index !== 'undefined') this.index = config.index
     if (typeof config.realIndex !== 'undefined') this.realIndex = config.realIndex
   }
@@ -45,6 +43,7 @@ export default class Upright extends Object3D {
   }
 
   setPosition ({ x, y, z }) {
+    const currentGap = this.product?.slot_space || defaultGap
     const gridY = Math.floor(y / currentGap) * currentGap // Calcolo y in base alla distanza tra i buchi per allineare tutti i montanti
     const groundY = this.getSize().height / 2
     super.setPosition({ x, y: this.product.uprightsPosition === 'ground' ? groundY : gridY, z })
