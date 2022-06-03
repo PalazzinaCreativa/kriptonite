@@ -34,11 +34,11 @@ class Client {
     const req = this._buildRequest({
       url: 'api/configurations',
       method: 'POST',
-      body : { infos: { a: 1 } }
+      body : {}
     })
     
     const res = await fetch(req)
-    const data = await res.json()
+    const { data } = await res.json()
     return data
   }
 
@@ -337,6 +337,42 @@ class Client {
     const res = await fetch(req)
     const { data } = await res.json()
     return data 
+  }
+
+
+  /**
+   * Retrieve configuration by code
+   * @param String code 
+   * @returns 
+   */
+  async getConfiguration(code) {
+    //fed68199-7f3c-4b61-a7c3-008e6c4b22ad
+    const req = this._buildRequest({
+      url: `api/configurations/${code}`,
+      method: 'GET'
+    })
+
+    const res = await fetch(req)
+    const { data } = await res.json()
+    return data 
+  }
+
+  /**
+   * Update configuration with given object, will be put inside infos variable
+   * @param String code 
+   * @param Object payload 
+   * @returns 
+   */
+  async updateConfiguration(code, payload) {
+    const req = this._buildRequest({
+      url: `api/configurations/${code}`,
+      method: 'PUT',
+      body : { infos: payload}
+    })
+    
+    const res = await fetch(req)
+    const { data } = await res.json()
+    return data
   }
 
 }
