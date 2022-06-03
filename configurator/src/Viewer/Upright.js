@@ -18,21 +18,28 @@ export default class Upright extends Object3D {
     this.config.type = 'upright'
     if (typeof config.index !== 'undefined') this.index = config.index
     if (typeof config.realIndex !== 'undefined') this.realIndex = config.realIndex
+
+    window.addEventListener('confirmModal', (event) => {
+      this.confirmDestroy()
+    })
   }
 
 
   async init () {
     await super.init()
+    //console.log(this.config, this.product)
+    this.setSize()
     super.setMaterial(this.config.material || { color: '#4a4a4a' }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   // test per non stretchare l'oggetto su asse x e z
   setSize (dimensions) {
+
     const { width, height, depth } = this.getSize()
 
-    console.log('montante K2', this.product.viewer?.room?.config?.dimensions?.height, height)
+    //console.log('montante K2', this.product, this.config, this.product.viewer?.room, this.product.viewer?.room?.config?.dimensions?.height, height)
 
-    const scale = {
+    const scale = { //ERO QUI
       x: 1,
       y: 1.5, //dimensions.height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : height / this.product.viewer?.room?.config?.dimensions?.height,
       z: 1

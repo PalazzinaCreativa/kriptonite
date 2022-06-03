@@ -56,7 +56,6 @@ import useColorsStore from '@/stores/colors'
 import useTipsStore from '@/stores/tips'
 
 import { controlsList } from '@/dataset/controls'
-import { tips } from '@/dataset/tips'
 
 //import { obstaclesData } from '@/dataset/obstaclesData'
 //import { uprightsData } from '@/dataset/uprightsData'
