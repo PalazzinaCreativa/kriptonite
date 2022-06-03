@@ -20,15 +20,19 @@ import Case from './Case'
 import { loadObject } from './utils/loadObject'
 import { placeObject } from './utils/placeObject'
 import { isTouchDevice } from './utils/isTouchDevice'
+import { STANDALONE_Z } from '../dataset/defaultConfiguratorValues'
 export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
 
+    
     // Lista di dati da salvare per il cliente e per ripopolare il viewer
     this.config = {
       room,
       product
     }
+
+    //console.log('si', this.config)
 
     this.selectedObject = null // Elemento selezionato
     this.objectToPlace = null // Oggetto da inserire
@@ -247,7 +251,6 @@ export default class Viewer {
         if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
         if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
         if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
-
 
         const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
 

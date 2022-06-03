@@ -34,10 +34,10 @@ if(colors.value && colors.value.length) {
   if(typeof props.element.config?.material?.id === "undefined") {
     // Se ho già dato un colore ad un altro elemento in precedenza
     if(Object.keys(selectedColor.value).length) {
-      console.log('si ho un colore selezionato')
+      //console.log('si ho un colore selezionato')
       setMaterial(selectedColor.value)
     } else {
-      console.log('non ho un colore selezionato')
+      //console.log('non ho un colore selezionato')
       // imposto il primo delle scelte dei colori
       setMaterial(colors.value[0])
     }

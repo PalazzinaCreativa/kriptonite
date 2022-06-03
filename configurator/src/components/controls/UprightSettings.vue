@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-  import { computed, defineProps, defineEmits } from 'vue';
+  import { ref, computed, defineProps, defineEmits } from 'vue';
   import { useConfiguratorStore } from '@/stores/configurator'
   import useUprightsStore from '@/stores/uprights'
 

@@ -32,13 +32,13 @@ const setMaterial = (texture) => {
 // Se non ho già impostato una texture
 if(!props.element.config?.material?.texture) {
   // imposto la texture di default del modello a database
-    console.log('non ho texture applicate', props.element.config?.texture, textures.value)
+    //console.log('non ho texture applicate', props.element.config?.texture, textures.value)
   if(props.element.config?.texture && textures.value && textures.value.length) {
     let startingTexture = textures.value.find((texture) => props.element.config.texture === texture.id)
     setMaterial(startingTexture)
   }
 } else {
-  console.log('texture già applicata al modello', props.element.config.material.texture)
+  //console.log('texture già applicata al modello', props.element.config.material.texture)
   // altrimenti imposto quella assegnata al modello in precedenza
   texturesModule.setSelectedTexture(props.element.config.material.texture)
 }

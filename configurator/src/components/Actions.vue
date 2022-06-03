@@ -35,9 +35,9 @@ const { canUndo, canRedo } = storeToRefs(configurator)
       <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleHuman()" :class="{ 'bg-black text-white': configurator.isShowingHuman }">
         <Human />
       </div>
-      <div class="mt-2.5 w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="$emit('toggle-list')">
+      <!-- <div class="mt-2.5 w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="$emit('toggle-list')">
         <List />
-      </div>
+      </div> -->
       <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="$emit('toggle-download')">
         <Download />
       </div>

@@ -118,7 +118,7 @@ export default class Upright extends Object3D {
       // Se è un montante terra-cielo, adatto l'altezza del montante all'altezza della stanza
       if(this.config.variantId === 'upright_s_tele') {
         this.product?.object?.children[0].children[0].children.length ? this.product.object.children[0].children[0].children.map((node) => {
-            console.log(node, node.uuid)
+            //console.log(node, node.uuid)
             /* if(topExtensibleNodes.includes(node.uuid)) {
               node.position.y = -50
             } */
@@ -176,27 +176,31 @@ export default class Upright extends Object3D {
       })
   }
 
-  async destroy () {
+  destroy () {
     // Se non è l'ultimo montante cancello tutti i montanti più a destra e tutti gli scaffali
     if (this.getSiblings().find(s => s.index > this.index) && !this.product._isDestroying) {
-      if (!window.confirm('Sei sicuro di voler eliminare tutto?')) return
-      this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
-      const index = this.index - 1
-      for (const upright of this.product.uprights.filter(u => u.index > index)) {
-        await upright.destroy()
-      }
-
-      const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1)
-      // TODO: Non funziona il cancella tutto se nearest upright non esiste
-      const shelvesToDelete = nearestUpright ? this.product.shelves.filter(s => s.getPosition().x >= nearestUpright.getPosition().x) : this.product.shelves
-
-      for (const shelf of shelvesToDelete) {
-        await shelf.destroy()
-      }
-
-      this.product._isDestroying = false
-      return
+      super.alert()
+    } else {
+      super.destroy()
     }
-    super.destroy()
+  }
+
+  async confirmDestroy() {
+    this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
+    const index = this.index - 1
+    for (const upright of this.product.uprights.filter(u => u.index > index)) {
+      await upright.destroy()
+    }
+
+    const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1)
+    // TODO: Non funziona il cancella tutto se nearest upright non esiste
+    const shelvesToDelete = nearestUpright ? this.product.shelves.filter(s => s.getPosition().x >= nearestUpright.getPosition().x) : this.product.shelves
+
+    for (const shelf of shelvesToDelete) {
+      await shelf.destroy()
+    }
+
+    this.product._isDestroying = false
+    return
   }
 }

@@ -15,11 +15,13 @@ import { onMounted, computed } from 'vue'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useProductsStore from '@/stores/products'
 import useUprightsStore from '@/stores/uprights'
+import useTipsStore from '@/stores/tips'
 
 const configurator = useConfiguratorStore()
 const productsModule = useProductsStore()
 const uprightsModule = useUprightsStore()
 uprightsModule.getUprights(productsModule.selectedProduct.id)
+const tipsModule = useTipsStore()
 
 const productOptions = computed(() => configurator.options)
 const uprights = computed(() => {
@@ -28,11 +30,13 @@ const uprights = computed(() => {
   })) : []
 })
 
-// Prova: Se ho un solo montante, apro direttamente le sue varianti per l'aggiunta
-/* onMounted(() => {
-  if(uprights.value.length === 1) {
+onMounted(() => {
+  tipsModule.setActiveTip('uprights')
+
+  // Prova: Se ho un solo montante, apro direttamente le sue varianti per l'aggiunta
+  /* if(uprights.value.length === 1) {
     let upright = uprights.value[0]
     configurator.addElement({ ...upright.variants[0], id: upright.id, variantId: upright.variants[0].id })
-  }
-}) */
+  } */
+})
 </script>

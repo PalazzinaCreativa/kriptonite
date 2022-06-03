@@ -32,7 +32,7 @@ const sharedLink = 'https://www.kriptonite.com/configuratortestlink'
 const requestQuoteLabel = '' //'Richiedi preventivo'
 
 const requestQuote = () => {
-  console.log('Richiedi preventivo')
+  //console.log('Richiedi preventivo')
 }
 
 const copyLink = () => {

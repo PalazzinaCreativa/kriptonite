@@ -15,7 +15,8 @@
     "three": "^0.139.2",
     "three-csg-ts": "^3.1.10",
     "vue": "^3.2.31",
-    "vue-color-kit": "^1.0.5"
+    "vue-color-kit": "^1.0.5",
+    "vue3-cookies": "^1.0.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.1",

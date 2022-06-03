@@ -60,6 +60,7 @@ export default class Object3D {
   }
 
   setSize (dimensions) {
+    //console.log('object3dSetSize')
     const { width, height, depth } = this.getSize()
 
     const scale = {
@@ -78,6 +79,10 @@ export default class Object3D {
     this.variantId = element.variantId
     this.id = element.id
     // Riesco a modificarlo, ma non ad aggiornare la scena
+  }
+
+  alert(state) {
+    window.dispatchEvent(new Event('alert'))
   }
 
   setMaterial ({ texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id }) {

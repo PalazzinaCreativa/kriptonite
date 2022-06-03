@@ -9,7 +9,6 @@ export const createText = (string, params) => {
     const textParams = params
     loader.load('/assets/fonts/helvetiker_regular.typeface.json', (font) => {
       let params = { ...textParams, font }
-      console.log(params)
       const text = new TextGeometry(textToWrite, params)
       resolve(text)
     })

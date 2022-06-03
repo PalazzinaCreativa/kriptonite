@@ -11,7 +11,10 @@
           </template> Termina inserimento
         </Btn>
       </Transition>
-      <Tip class="fixed bottom-8 left-8 z-5" />
+      <Tips />
+      <Teleport to="body">
+        <Alert :visible="isAlerting" message="Eliminando questo montante eliminerai tutti quelli alla sua destra e i ripiani ad essi collegati.<br/><br/>Vuoi continuare?" @confirm="confirm" @cancel="closeModal"/>
+      </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls class="transition-all w-[320px] lg:w-[450px] xl:w-[500px] z-2" :controls="controlsList" @download="showDownload = true" @destroy="tabulaRasa">
@@ -30,7 +33,7 @@ import { onMounted, reactive, ref, markRaw, computed, defineAsyncComponent } fro
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
-import Tip from '@/components/Tip.vue'
+import Tips from '@/components/Tips.vue'
 import RoomSettings from '@/components/controls/RoomSettings.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
 import Header from '@/components/Header.vue'
@@ -39,6 +42,7 @@ import ProductList from '@/components/ProductList.vue'
 import DownloadModel from '@/components/DownloadModel.vue'
 import Btn from '@/components/forms/Button.vue'
 import Close from '@/components/icons/Close.vue'
+import Alert from '@/components/Alert.vue'
 
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
@@ -49,8 +53,11 @@ import useShelvesStore from '@/stores/shelves'
 import useCasesStore from '@/stores/cases'
 import useTexturesStore from '@/stores/textures'
 import useColorsStore from '@/stores/colors'
+import useTipsStore from '@/stores/tips'
 
 import { controlsList } from '@/dataset/controls'
+import { tips } from '@/dataset/tips'
+
 //import { obstaclesData } from '@/dataset/obstaclesData'
 //import { uprightsData } from '@/dataset/uprightsData'
 //import { shelvesData } from '@/dataset/shelvesData'
@@ -64,6 +71,7 @@ const selectedElement = ref(null)
 const loading = ref(false)
 const showList = ref(false)
 const showDownload = ref(false)
+const tip = ref({})
 
 controlsList.map((item) => {
   item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
@@ -79,6 +87,8 @@ const colorsModule = useColorsStore()
 colorsModule.getColors()
 const texturesModule = useTexturesStore()
 texturesModule.getTextures()
+const tipsModule = useTipsStore()
+tipsModule.getCookies()
 
 const selectedOption = computed(() => optionsModule.selected)
 const isEditingRoom = computed(() => selectedOption.value.id === 2)
@@ -92,8 +102,30 @@ const closeElementSettings = () => {
   configurator.removeSelection()
 }
 
+const isAlerting = ref(false)
+
+window.addEventListener('alert', (event) => {
+  openModal()
+})
+
+const openModal = () => {
+  isAlerting.value = true
+}
+
+const closeModal = () => {
+  isAlerting.value = false
+}
+
+const confirm = () => {
+  window.dispatchEvent(new Event('confirmModal'))
+  isAlerting.value = false
+}
+
 onMounted(() => {
   configurator.setOptions(props.config.product)
+  // Apro il consiglio iniziale
+  tipsModule.setActiveTip('intro')
+
   loading.value = true
   const viewer = new Viewer(
     canvasWrapper.value, // Elemento del dom principale
@@ -138,7 +170,7 @@ onMounted(() => {
 })
 
 const tabulaRasa = () => {
-  console.log('reset scene')
+  //console.log('reset scene')
 }
 
 </script>
@@ -150,21 +182,25 @@ const tabulaRasa = () => {
 
 .slide-in-enter-active,
 .slide-in-leave-active {
+  transform: translateX(0);
   transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-in-enter-from,
 .slide-in-leave-to {
   transform: translateX(100%);
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-up-enter-active,
 .slide-up-leave-active {
+  transform: translateY(0);
   transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
 .slide-up-enter-from,
 .slide-up-leave-to {
   transform: translateY(100px);
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 </style>

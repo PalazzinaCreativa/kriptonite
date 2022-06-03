@@ -1,24 +1,29 @@
 <template>
-  <div tip class="bg-white border-2 border-yellow rounded-lg py-8 px-16 max-w-[500px]">
+  <div tip class="bg-white border-2 border-yellow rounded-lg py-8 px-12 max-w-[300] lg:max-w-[500px]">
     <div tip-content class="flex gap-4 w-full">
-      <Lamp class="text-gray mt-2 w-60" />
-      <div tip-text class="text-black mb-8" v-text="'Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Cras ultricies ligula sed magna dictum porta. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Donec sollicitudin molestie malesuada.'" />
+      <div class="mt-1 w-6 h-auto">
+        <Lamp class="text-dark-gray w-full h-auto" />
+      </div>
+      <div v-if="tip.text" tip-text class="text-black mb-8" v-html="tip.text" />
     </div>
-    <div tip-action class="flex items-center justify-center w-full">
-      <Btn class="bg-yellow w-full rounded-full" label="Ho capito" @click="close" />
+    <div v-if="btnLabel" tip-action class="flex items-center justify-center w-full">
+      <Btn class="bg-yellow rounded-full" :label="btnLabel" @click="close" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
+import { computed, defineProps, defineEmits } from "vue";
 
 import Lamp from '@/components/icons/Lamp.vue'
 import Btn from '@/components/forms/Button.vue'
 
+const props = defineProps(['tip'])
 const emits = defineEmits(['close'])
 
+const btnLabel = computed(() => props.tip.buttonLabel || 'Ho capito')
+
 const close = () => {
-  emits('close')
+  emits('close', props.tip)
 }
 </script>
