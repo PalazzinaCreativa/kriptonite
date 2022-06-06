@@ -1096,7 +1096,7 @@ const setSelectedProduct = (product) => {
 }
 
 const handleGoToConfigurator = () => {
-  const selectedConfig = fastConfigK1 //fastConfigK1 //defaultConfigK2
+  const selectedConfig = fastConfigK1 //defaultConfig //fastConfigK1 //defaultConfigK2
   config.value = selectedConfig
   setSelectedProduct(selectedConfig.product)
   showConfigurator.value = true

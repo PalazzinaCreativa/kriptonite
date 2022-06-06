@@ -204,6 +204,7 @@ export default class Viewer {
       }
       // Hover sull'oggetto
       hoveredElement = this._getInstanceFromMesh(intersects[0].object)
+      //console.log(hoveredElement)
       if (!hoveredElement) return
       this.outlinePass.hover.selectedObjects = [hoveredElement.object]
       document.body.style.cursor = 'pointer'
