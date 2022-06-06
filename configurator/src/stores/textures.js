@@ -166,6 +166,7 @@ export default defineStore({
         texture.label = typeof texture.label !== 'undefined' ? texture.label : texture.name
         return texture
       }) : this.list
+      this.list = [ ...this.list, ...response ]
     },
 
     async getRoomTextures() {

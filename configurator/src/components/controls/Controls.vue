@@ -1,19 +1,21 @@
 <template>
   <div class="border-l border-gray relative duration-400 transform transition-all" :class="isOpen ? 'w-full' : 'w-0 translate-x-full'">
-    <slot />
-    <div class="h-full bg-whiteshadow-md flex flex-col pb-32 relative" v-if="configurator.isReady">
-      <div v-if="controls.length">
-        <ControlsSection v-for="(control, index) in controlsList" :key="index" v-bind="control" @activate="setActive($event)" class="z-1">
-          <component v-if="control.componentInstance" :is="control.componentInstance"></component>
-        </ControlsSection>
+    <div class="h-screen overflow-y-auto pb-12">
+      <slot />
+      <div class="bg-whiteshadow-md flex flex-col relative" v-if="configurator.isReady">
+        <div v-if="controls.length">
+          <ControlsSection v-for="(control, index) in controlsList" :key="index" v-bind="control" @activate="setActive($event)" class="z-1">
+            <component v-if="control.componentInstance" :is="control.componentInstance"></component>
+          </ControlsSection>
+        </div>
       </div>
-    </div>
-    <div controls-actions class="flex fixed bottom-0 left-0 w-full">
-      <!-- <Btn v-if="destroyLabel" class="bg-light-gray w-full" :label="destroyLabel" @click="destroyEverything" /> -->
-      <Btn v-if="getProjectDownloadLabel" class="bg-yellow w-full" :label="getProjectDownloadLabel" @click="downloadProject" />
-    </div>
-    <div sidebar-trigger class="absolute bottom-[64px] border border-gray bg-white cursor-pointer flex h-8 items-center justify-center rounded-full transform -translate-x-1/2 duration-400 transition-all w-8 hover:border-yellow z-5" :class="isOpen ? '' : 'bg-black border-white text-white -rotate-180 -translate-x-[200%]'" @click="toggleSidebar">
-      <Arrow class="text-dark-gray" />
+      <div controls-actions class="flex fixed bottom-0 left-0 w-full z-5">
+        <!-- <Btn v-if="destroyLabel" class="bg-light-gray w-full" :label="destroyLabel" @click="destroyEverything" /> -->
+        <Btn v-if="getProjectDownloadLabel" class="bg-yellow w-full" :label="getProjectDownloadLabel" @click="downloadProject" />
+      </div>
+      <div sidebar-trigger class="absolute bottom-[64px] border border-gray bg-white cursor-pointer flex h-8 items-center justify-center rounded-full transform -translate-x-1/2 duration-400 transition-all w-8 hover:border-yellow z-5" :class="isOpen ? '' : 'bg-black border-white text-white -rotate-180 -translate-x-[200%]'" @click="toggleSidebar">
+        <Arrow class="text-dark-gray" />
+      </div>
     </div>
   </div>
 </template>
