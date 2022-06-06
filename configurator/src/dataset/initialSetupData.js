@@ -1,7 +1,7 @@
 export const initialSetupData = [
   {
     title: 'Benvenuto nel <b>configuratore</b> Kriptonite!',
-    paragraph: 'Con il configuratore dei sistemi KRIPTONITE potrai <b>progettare la tua composizione</b> di libreria o guardaroba.<br/><br/>Ricordiamo che non è un software tecnico, per qualsiasi informazione specifica su tagli a misura, consigli progettuali, e RAL speciali, contattare i nostri esperti a: <a href="mailto:my.kriptonite@kriptonite.com">my.kriptonite@kriptonite.com</a> oppure il <a href="https://www.kriptonite.com/it/store-locator">Rivenditore</a> più vicino a te.<br/><br/><b>Buona progettazione!</b>',
+    paragraph: 'Con il configuratore dei sistemi KRIPTONITE potrai <b>progettare la tua composizione ideale</b>.<br/><br/>Ricordiamo che non è un software tecnico, per qualsiasi informazione specifica su tagli a misura, consigli progettuali, e RAL speciali, contattare i nostri esperti a: <a href="mailto:tecnico@kriptonite.com">tecnico@kriptonite.com</a> oppure il <a href="https://www.kriptonite.com/it/store-locator">Rivenditore</a> più vicino a te.<br/><br/><b>Buona progettazione!</b>',
     key: '',
     super: '',
     options: [
@@ -13,8 +13,8 @@ export const initialSetupData = [
     ]
   },
   {
-    title: '<b>Dove</b> vuoi inserire il prodotto?',
-    paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
+    title: '<b>Dove</b> vuoi inserire il sistema?',
+    paragraph: '',
     key: 'inRoomPosition',
     super: 'product',
     options: [
@@ -25,7 +25,7 @@ export const initialSetupData = [
       },
       {
         component: 'choice',
-        label: 'In mezzo alla stanza',
+        label: 'A centro stanza',
         key: 'standalone'
       }
     ]
@@ -33,7 +33,7 @@ export const initialSetupData = [
   {
     type: 'wall',
     title: 'In che <b>materiale</b> è costruita la parete?',
-    paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
+    paragraph: '',
     key: 'composition',
     super: 'room',
     showIf: {
@@ -61,14 +61,14 @@ export const initialSetupData = [
   {
     type: 'wall',
     title: "<b>Di che tipo</b> è la tua parete?",
-    paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
+    paragraph: '',
     key: 'type',
     super: 'room',
     options: [
       {
         icon: 'WallClassic',
         component: 'choice',
-        label: 'Classica',
+        label: 'Regolare',
         key: 'classic'
       },
       {
@@ -88,7 +88,7 @@ export const initialSetupData = [
   {
     type: 'standalone',
     title: "<b>Di che tipo</b> è la tua stanza?",
-    paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
+    paragraph: '',
     key: 'type',
     super: 'room',
     showIf: {
@@ -99,7 +99,7 @@ export const initialSetupData = [
       {
         icon: 'WallClassic',
         component: 'choice',
-        label: 'Classica',
+        label: 'Regolare',
         key: 'classic'
       },
       {
@@ -112,7 +112,7 @@ export const initialSetupData = [
   },
   {
     title: 'Quali sono le <b>dimensioni</b> della parete?',
-    paragraph: 'Eventuale descrizione/approfondimento adipiscing elit. Sollicitudin eu volutpat risus, in ut pharetra neque, morbi pellentesque. In in adipiscing mollis posuere sed porta.',
+    paragraph: '',
     key: 'dimensions',
     super: 'room',
     showIcon: true,
@@ -217,7 +217,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'K2',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: 'Sistema k2 nella versione cielo terra a pressione o a parete. Si compone di montanti, ripiani e diversi tipi di contenitori che permettono di creare soluzioni d’arredo adatte in ogni ambiente della casa, dalla zona giorno alla zona notte, spazi espositivi come negozi e showroom.',
         image: 'k2.jpeg',
         key: 'k2',
         showIf: {
@@ -228,7 +228,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'K2',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: 'Sistema k2 nella versione cielo terra a pressione o a parete. Si compone di montanti, ripiani e diversi tipi di contenitori che permettono di creare soluzioni d’arredo adatte in ogni ambiente della casa, dalla zona giorno alla zona notte, spazi espositivi come negozi e showroom.',
         image: 'k2.jpeg',
         key: 'k2',
         showIf: {
