@@ -8,7 +8,14 @@
       </div>
     </div>
     <Teleport to="body">
-      <Alert :visible="isAlerting" message="Devi prima posizionare almeno <b>2 montanti</b> per poter aggiungere i ripiani" @confirm="closeModal" @cancel="closeModal"/>
+      <Alert :visible="isAlerting" message="Devi prima posizionare almeno <b>2 montanti</b> per poter aggiungere i ripiani" @confirm="closeModal" @cancel="closeModal">
+        <template #actions>
+          miao
+          <div alert-actions class="flex items-center justify-center gap-8 mt-6 w-full">
+            <Btn class="bg-yellow rounded-full" :label="confirmLabel" @click="closeModal" />
+          </div>
+        </template>
+      </Alert>
     </Teleport>
   </div>
 </template>
@@ -20,6 +27,7 @@ import useProductsStore from '@/stores/products'
 import useShelvesStore from '@/stores/shelves'
 import useTipsStore from '@/stores/tips'
 import Alert from '@/components/Alert.vue'
+import Btn from '@/components/forms/Button.vue'
 
 const configurator = useConfiguratorStore()
 const productsModule = useProductsStore()
@@ -31,6 +39,7 @@ const configuration = computed(() => configurator.options)
 const shelves = computed(() => shelvesModule.index)
 
 const isVisible = ref(false)
+const confirmLabel = 'Ho capito'
 
 const openModal = () => {
   isVisible.value = true

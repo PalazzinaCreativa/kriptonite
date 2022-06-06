@@ -8,6 +8,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@glidejs/glide": "^3.5.2",
+    "click-outside-vue3": "^4.0.1",
     "gsap": "^3.10.4",
     "lodash.get": "^4.4.2",
     "pinia": "^2.0.13",

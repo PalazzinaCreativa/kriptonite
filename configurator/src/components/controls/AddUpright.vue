@@ -7,21 +7,42 @@
         <div class="text-center" v-text="upright.name" />
       </div>
     </div>
+    <Teleport to="body">
+        <Alert :visible="isActive(activeTip)">
+          <Carousel :options="carouselOptions" :dots="true" class="max-w-[600px] px-4 w-full">
+            <div class="w-full">
+              <div alert-text class="text-black text-center" v-html="'<b>Posiziona il primo montante a partire da sinistra</b> e prosegui la tua composizione verso destra'"/>
+            </div>
+            <div class="w-full">
+              <div alert-text class="text-black text-center" v-html="`Se intendi <b>posizionare più montanti uno sotto l'altro</b>, devi farlo <b>prima di aggiungere</b> un montante alla sua destra`"/>
+              <div alert-actions class="flex items-center justify-center gap-8 mt-6 w-full">
+                <Btn class="bg-yellow rounded-full" :label="`Ho capito`" @click="closeAlert" />
+              </div>
+            </div>
+          </Carousel>
+        </Alert>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useProductsStore from '@/stores/products'
 import useUprightsStore from '@/stores/uprights'
 import useTipsStore from '@/stores/tips'
+import Carousel from '@/components/Carousel.vue'
+import Alert from '@/components/Alert.vue'
+import Btn from '@/components/forms/Button.vue'
 
 const configurator = useConfiguratorStore()
 const productsModule = useProductsStore()
 const uprightsModule = useUprightsStore()
 uprightsModule.getUprights(productsModule.selectedProduct.id)
 const tipsModule = useTipsStore()
+const activeTip = computed(() => tipsModule.activeTip)
+
+//const alertIsVisible = ref(true)
 
 const productOptions = computed(() => configurator.options)
 const uprights = computed(() => {
@@ -30,9 +51,22 @@ const uprights = computed(() => {
   })) : []
 })
 
+const closeAlert = () => {
+  //alertIsVisible.value = false
+  tipsModule.closeTip(activeTip.value)
+}
+
+const isActive = (tip) => {
+  return activeTip?.value?.name ? activeTip.value.name === tip.name : false
+}
+
+const carouselOptions = {
+  type: 'carousel'
+}
+
 onMounted(() => {
   tipsModule.setActiveTip('uprights')
-
+  
   // Prova: Se ho un solo montante, apro direttamente le sue varianti per l'aggiunta
   /* if(uprights.value.length === 1) {
     let upright = uprights.value[0]

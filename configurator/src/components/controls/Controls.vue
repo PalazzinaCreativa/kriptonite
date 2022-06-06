@@ -39,7 +39,7 @@ const setActive = (index) => {
 
 const isOpen = ref(true)
 
-const getProjectDownloadLabel = 'Termina'
+const getProjectDownloadLabel = 'Condividi'
 
 const destroyLabel = 'Cancella tutto'
 

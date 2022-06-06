@@ -4,7 +4,7 @@
       <div class="mt-1 w-6 h-auto">
         <Lamp class="text-dark-gray w-full h-auto" />
       </div>
-      <div v-if="tip.text" tip-text class="text-black mb-8" v-html="tip.text" />
+      <div v-if="tip.text" tip-text class="text-black mb-8 w-full" v-html="tip.text" />
     </div>
     <div v-if="btnLabel" tip-action class="flex items-center justify-center w-full">
       <Btn class="bg-yellow rounded-full" :label="btnLabel" @click="close" />

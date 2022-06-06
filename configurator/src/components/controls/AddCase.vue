@@ -8,7 +8,13 @@
       </div>
     </div>
     <Teleport to="body">
-      <Alert :visible="isAlerting" message="Devi prima posizionare almeno <b>2 montanti</b> per poter aggiungere i contenitori" @confirm="closeModal" @cancel="closeModal"/>
+      <Alert :visible="isAlerting" message="Devi prima posizionare almeno <b>2 montanti</b> per poter aggiungere i contenitori" @confirm="closeModal" @cancel="closeModal">
+        <template #actions>
+          <div alert-actions class="flex items-center justify-center gap-8 mt-6 w-full">
+            <Btn class="bg-yellow rounded-full" :label="confirmLabel" @click="closeModal" />
+          </div>
+        </template>
+      </Alert>
     </Teleport>
   </div>
 </template>
@@ -19,7 +25,7 @@ import { useConfiguratorStore } from '@/stores/configurator'
 import useProductsStore from '@/stores/products'
 import useCasesStore from '@/stores/cases'
 import Alert from '@/components/Alert.vue'
-
+import Btn from '@/components/forms/Button.vue'
 
 const configurator = useConfiguratorStore()
 const productsModule = useProductsStore()
@@ -29,6 +35,7 @@ const configuration = computed(() => configurator.options)
 const cases = computed(() => casesModule.index)
 
 const isVisible = ref(false)
+const confirmLabel = 'Ho capito'
 
 const openModal = () => {
   isVisible.value = true

@@ -1,7 +1,7 @@
 <template>
   <div class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full py-8 px-6 z-5">
     <div download-model-header class="bg-light-gray flex fixed top-0 left-0 items-center justify-between py-4 px-6 w-full">
-      <div v-text="'Termina configurazione'" />
+      <div v-text="'Condividi progetto'" />
       <Close class="cursor-pointer" @click="close" />
     </div>
     <div donwload-model-content class="grow my-16 w-full">

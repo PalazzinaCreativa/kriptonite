@@ -2,10 +2,14 @@
   <Transition name="fade-up">
     <div alert-container v-if="visible" class="bg-light-gray bg-opacity-50 fixed top-0 left-0 flex items-center justify-center h-screen w-screen z-50">
       <div alert class="bg-white border-2 border-yellow rounded-lg py-8 px-12">
-        <div alert-text class="text-black text-center" v-html="message"/>
-        <div alert-actions class="flex items-center justify-center gap-8 mt-6 w-full">
-          <Btn class="bg-light-gray rounded-full" :label="cancelLabel" @click="cancel" />
-          <Btn class="bg-yellow rounded-full" :label="confirmLabel" @click="confirm" />
+        <slot v-if="slots.default"/>
+        <div v-else>
+          <div alert-text class="text-black text-center" v-html="message" />
+          <slot v-if="slots.actions" name="actions" />
+          <div v-else alert-actions class="flex items-center justify-center gap-8 mt-6 w-full">
+            <Btn class="bg-light-gray rounded-full" :label="cancelLabel" @click="cancel" />
+            <Btn class="bg-yellow rounded-full" :label="confirmLabel" @click="confirm" />
+          </div>
         </div>
       </div>
     </div>
@@ -13,12 +17,13 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits } from "vue";
+import { computed, defineProps, defineEmits, useSlots } from "vue";
+import Btn from '@/components/forms/Button.vue'
 
 const props = defineProps(['visible', 'message', 'cancelLabel', 'confirmLabel'])
 const emits = defineEmits(['cancel', 'confirm'])
+const slots = useSlots()
 
-import Btn from '@/components/forms/Button.vue'
 
 const cancelLabel = computed(() => props.cancelLabel || 'Annulla')
 const confirmLabel = computed(() => props.confirmLabel || 'OK')

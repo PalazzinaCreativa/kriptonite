@@ -8,21 +8,38 @@ export default defineStore({
     list: [
       {
         name: 'intro',
-        text: 'Ti consigliamo di <b>lasciare una distanza di almeno 3 cm tra le pareti laterali e i montanti</b>, in modo da facilitare il montaggio.',
-        buttonLabel: 'Ho capito',
-        isActive: true,
+        items: [
+          {
+            text: 'Ti consigliamo di <b>lasciare una distanza di almeno 3 cm tra le pareti laterali e i montanti</b>, in modo da facilitare il montaggio.',
+            buttonLabel: 'Ho capito',
+            isActive: true
+          }
+        ]
       },
       {
         name: 'uprights',
-        text: '<b>Posiziona il primo montante a partire da sinistra</b> e prosegui la tua composizione verso destra',
-        buttonLabel: 'Ho capito',
-        isActive: false,
+        items: [
+          {
+            text: '<b>Posiziona il primo montante a partire da sinistra</b> e prosegui la tua composizione verso destra',
+            buttonLabel: '',
+            isActive: false,
+          },
+          {
+            text: "Se intendi <b>posizionare più montanti uno sotto l'altro</b>, devi farlo <b>prima di aggiungere</b> un montante alla sua destra",
+            buttonLabel: 'Ho capito',
+            isActive: false,
+          }
+        ]
       },
       {
         name: 'shelves',
-        text: "<ul><li><b class='block w-full'>18cm</b>consigliato per narrativa, cd e oggetti piccoli</li><li><b class='block w-full'>29cm</b>per faldoni, libri d'arte, fotografia.</li><li><b class='block w-full'>36cm</b>ideale per guardaroba, vinili o per oggetti tech</li></ul>",
-        buttonLabel: 'Ho capito',
-        isActive: false
+        items: [
+          {
+            text: "<ul><li><b class='block w-full'>18cm</b>consigliato per narrativa, cd e oggetti piccoli</li><li><b class='block w-full'>29cm</b>per faldoni, libri d'arte, fotografia.</li><li><b class='block w-full'>36cm</b>ideale per guardaroba, vinili o per oggetti tech</li></ul>",
+            buttonLabel: 'Ho capito',
+            isActive: false
+          }
+        ]
       }
     ],
     currentList: [],

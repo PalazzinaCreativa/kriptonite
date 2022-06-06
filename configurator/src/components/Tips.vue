@@ -2,7 +2,14 @@
   <div tips v-if="tips.length" :key="JSON.stringify(tipCookies)">
     <div tip v-for="tip in tips" :key="tip.name">
       <Transition name="slide-in">
-        <Tip v-if="isActive(tip)" class="fixed bottom-8 left-16 z-5" :tip="tip" @close="closeTip" />
+        <Carousel v-if="tip.items?.length > 1" :dots="true">
+          <template v-for="(item, index) in tip.items" :key="`tip-${index}`">
+            <Tip v-if="isActive(item)" class="fixed bottom-8 left-16 z-5" :tip="item" @close="closeTip" />
+          </template>
+        </Carousel>
+        <template v-else>
+          <Tip v-if="isActive(tip)" class="fixed bottom-8 left-16 z-5" :tip="tip.items[0]" @close="closeTip" />
+        </template>
       </Transition>
     </div>
   </div>
@@ -11,6 +18,7 @@
 <script setup>
 import { computed, defineProps } from "vue";
 import useTipsStore from '@/stores/tips'
+import Carousel from '@/components/Carousel.vue'
 
 import Tip from '@/components/Tip.vue'
 
@@ -24,8 +32,9 @@ const isActive = (tip) => {
   return activeTip?.value?.name ? activeTip.value.name === tip.name : false
 }
 
-const closeTip = (tip) => {
-  tipsModule.closeTip(tip)
+const closeTip = (item) => {
+  let currentTip = tips.value.find((tip) => tip.items.includes(item))
+  tipsModule.closeTip(currentTip)
 }
 </script>
 <style scoped>
