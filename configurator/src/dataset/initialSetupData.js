@@ -275,7 +275,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'Sospesa',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: '',
         image: 'floating.jpeg',
         key: 'wall',
         showIf: {
@@ -286,7 +286,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'A terra',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: '',
         image: 'ground.jpeg',
         key: 'standalone',
         showIf: {
@@ -297,7 +297,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'Terra-cielo',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: '',
         image: 'groundtotop.jpeg',
         key: 'standalone',
         showIf: {
@@ -308,7 +308,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'Parete-terra',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: '',
         image: 'walltoground.jpeg',
         key: 'wall',
         showIf: {
@@ -328,7 +328,7 @@ export const initialSetupData = [
       {
         component: 'card',
         label: 'Terra-cielo',
-        description: 'Eventuale descrizione sit amet, consectetur adipiscing elit. Tellus laoreet et nunc cursus netus.',
+        description: '',
         image: 'groundtotop.jpeg',
         key: 'standalone',
         showIf: {

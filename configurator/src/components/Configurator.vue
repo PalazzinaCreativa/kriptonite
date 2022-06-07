@@ -17,7 +17,7 @@
       </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @download="showDownload = true" @destroy="tabulaRasa">
+    <Controls class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
@@ -62,6 +62,8 @@ import { controlsList } from '@/dataset/controls'
 //import { shelvesData } from '@/dataset/shelvesData'
 
 const configurator = useConfiguratorStore()
+const currentConfiguration = computed(() => configurator.currentConfiguration)
+const productOptions = computed(() => configurator.options)
 
 const props = defineProps(['config'])
 
@@ -120,7 +122,15 @@ const confirm = () => {
   isAlerting.value = false
 }
 
+const shareProject = () => {
+  configurator.updateConfiguration(currentConfiguration.value.code, productOptions.value)
+  showDownload.value = true
+}
+
 onMounted(() => {
+  if(!currentConfiguration.value) {
+    configurator.initConfiguration()
+  }
   configurator.setOptions(props.config.product)
   // Apro il consiglio iniziale
   tipsModule.setActiveTip('intro')
