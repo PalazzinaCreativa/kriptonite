@@ -5,8 +5,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import routes from 'pages-generated';
 import vClickOutside from "click-outside-vue3";
 
-console.log(routes)
-
 import App from "./App.vue";
 import "./assets/index.css"
 
