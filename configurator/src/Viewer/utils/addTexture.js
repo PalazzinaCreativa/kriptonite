@@ -11,7 +11,7 @@ import * as THREE from 'three'
     /textures/{nome_texture}/{nome_texture}_{nome_mappa}.{ext}
 */
 
-export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 0, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', image = null }) => {
+export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 0, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', images = null }) => {
   if (!material) {
     console.error(`Nessun materiale selezionato per la texture ${name}`)
     return
@@ -23,26 +23,32 @@ export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 
 
   const textureLoader = new THREE.TextureLoader()
 
-  let path 
+  let path
   
   return Promise.all(
     maps.map(mapName => {
-      path = image || `/assets/textures/${name}/${name}_${mapName}.${ext}`
+      if(images && Object.keys(images).length) {
+        path = images[mapName]?.url || ''
+      } else {
+        path = `/assets/textures/${name}/${name}_${mapName}.${ext}`
+      }
       return new Promise((resolve, reject) => {
-        textureLoader.load(path, (map) => {
-          map.wrapS = THREE.RepeatWrapping
-          map.wrapT = THREE.RepeatWrapping
-          map.anisotropy = 16
-          map.rotation = rotation
-          if (repeat.length) {
-            map.repeat.set(repeat[0], repeat[1])
-          } else {
-            map.repeat.set(repeat, repeat)
-          }
-          material[mapName] = map
-          material.needsUpdate = true
-          resolve(map)
-        }, undefined, (e) => reject(e))
+        if(path) {
+          textureLoader.load(path, (map) => {
+            map.wrapS = THREE.RepeatWrapping
+            map.wrapT = THREE.RepeatWrapping
+            map.anisotropy = 16
+            map.rotation = rotation
+            if (repeat.length) {
+              map.repeat.set(repeat[0], repeat[1])
+            } else {
+              map.repeat.set(repeat, repeat)
+            }
+            material[mapName] = map
+            material.needsUpdate = true
+            resolve(map)
+          }, undefined, (e) => reject(e))
+        }
       })
     })
   )
