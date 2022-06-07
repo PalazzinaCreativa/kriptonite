@@ -41,8 +41,9 @@ export default class Upright extends Object3D {
 
     const scale = { //ERO QUI
       x: 1,
-      y: 1.5, //dimensions.height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : height / this.product.viewer?.room?.config?.dimensions?.height,
-      z: 1
+      y: this.product.uprightsPosition === 'standalone' && this.product.type === 'k2' && height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : 1,
+      z: 1,
+      //y: 1
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
@@ -53,7 +54,9 @@ export default class Upright extends Object3D {
     const currentGap = this.product?.slot_space || defaultGap
     const gridY = Math.floor(y / currentGap) * currentGap // Calcolo y in base alla distanza tra i buchi per allineare tutti i montanti
     const groundY = this.getSize().height / 2
-    super.setPosition({ x, y: this.product.uprightsPosition === 'ground' ? groundY : gridY, z })
+    const zPos = this.object.attachedToWall ? 0.1 : z
+    //console.log(this.object.attachedToWall, zPos)
+    super.setPosition({ x, y: this.object.grounded ? groundY : gridY, z: zPos })
 
     this._checkPosition({ x, y, z })
   }
