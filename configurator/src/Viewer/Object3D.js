@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
 import { stringToThreeColor } from './utils/stringToThreeColor'
-import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
+import { addTexture } from "./utils/addTexture";
+//import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
     this.config = config
@@ -33,10 +34,10 @@ export default class Object3D {
   }
 
   getSiblings () {
+    if (this.config.type === 'obstacle') return this.room.obstacles
     if (this.config.type === 'upright') return this.product.uprights
     if (this.config.type === 'shelf') return this.product.shelves
     if (this.config.type === 'case') return this.product.cases
-    if (this.config.type === 'obstacle') return this.room.obstacles
   }
 
   setPosition ({ x, y, z }) {
@@ -47,7 +48,7 @@ export default class Object3D {
 
     const normalizeY = !y
       ? this.getPosition().y
-      : RESTING_ON_THE_GROUND.includes(this.id)
+      : this.config.grounded
         ? this.getSize().height / 2
         : y
 
@@ -59,6 +60,7 @@ export default class Object3D {
   }
 
   setSize (dimensions) {
+    //console.log('object3dSetSize')
     const { width, height, depth } = this.getSize()
 
     const scale = {
@@ -68,17 +70,30 @@ export default class Object3D {
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
-    if (RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+    if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
   }
 
-  setMaterial ({ image, color, roughness, opacity, id }) {
+  // Test per vedere se si può modificare
+  updateElement(element) {
+    this.config = element
+    this.variantId = element.variantId
+    this.id = element.id
+    // Riesco a modificarlo, ma non ad aggiornare la scena
+  }
+
+  alert(state) {
+    window.dispatchEvent(new Event('alert'))
+  }
+
+  setMaterial ({ texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id }) {
     if(!this.object) return
+    //console.log('setMaterial', texture, nature, color, roughness, opacity, id)
     this.object.traverse(async child => {
       if (child.material) {
         child.material.transparent = false
         if (opacity) child.material.opacity = opacity
         if (color && child.material.name.indexOf('legno') < 0) { child.material.color = new THREE.Color(stringToThreeColor(color))}
-        if (roughness) child.material.roughness = roughnesszz
+        if (roughness) child.material.roughness = roughness
         // Applico la texture ai legni
         if (texture && child.material.name) {
           texture.rotation = 1.5708 // Pi Greco / 2 per dare 90° in radianti
@@ -93,7 +108,7 @@ export default class Object3D {
       }
     })
 
-    this.config.material = { color, roughness, id, image }
+    this.config.material = { color, roughness, id, texture, nature }
   }
 
   setSiblingsMaterial (material) {
@@ -101,7 +116,7 @@ export default class Object3D {
   }
 
   destroy () {
-    this.object.parent.remove(this.object)
+    this.object.parent?.remove(this.object)
     this.getSiblings().splice(this.getSiblings().indexOf(this), 1)
   }
 }

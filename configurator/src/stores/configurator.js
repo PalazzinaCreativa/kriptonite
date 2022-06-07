@@ -10,27 +10,37 @@ export const useConfiguratorStore = defineStore({
     isPanning: false,
     isShowingMeasures: false,
     isShowingHuman: false,
-    viewerGetter: () => null
+    viewerGetter: () => null,
+    productOptions: null
   }),
   getters: {
+    // La distinta dei prodotti utilizzati non funziona perché a monte sbaglia come mappare le cose!
     productList: (state) => {
       if (!state.viewerGetter()) return []
-      const { uprights, shelves } = state.viewerGetter().config.product
-      return [...uprights, ...shelves]
-        .map(_ => ({
-          name: _.id,
-          scale: _.scale,
-          id: _.id
+      const { uprights, shelves, cases } = state.viewerGetter().config.product
+      return [...uprights, ...shelves, ...cases]
+        .map(item => ({
+          name: item.id,
+          scale: item.scale,
+          id: item.id,
+          item: item
         }))
         .reduce((acc, curr) => ({ ...acc, [curr.id]: { ...curr, quantity: acc && acc[curr.id] ? acc[curr.id].quantity + 1 : 1 }}), {})
     },
     // isPanning: (state) => state.viewerGetter()?._isPanning,
     // isShowingMeasures: (state) => state.viewerGetter()?.product?._visibleMeasures,
     // isShowingHuman: (state) => state.viewerGetter()?.human?.visible
+    options: (state) => state.productOptions
   },
   actions: {
     setWallColor (wallColor) {
       this.viewerGetter().room.changeWallColor(wallColor)
+    },
+    changeFloor (texture) {
+      this.viewerGetter().room.changeFloor(texture)
+    },
+    setOptions (options) {
+      this.productOptions = options || null
     },
     addElement (options, callback) {
       this.viewerGetter().addElement({ ...options }, callback)

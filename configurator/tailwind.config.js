@@ -48,6 +48,7 @@ module.exports = {
       black: '#2B3036',
       'light-gray': '#F6F6F6',
       gray: '#E0E0E0',
+      cyan: '#4AB2FD',
       'dark-gray': '#AEAEAE',
       current: 'currentColor'
     },

@@ -1,8 +1,10 @@
 <template>
   <div class="relative w-full h-screen">
-    <Logo class="fixed m-8"/>
+    <a href="/">
+      <Logo class="fixed m-8"/>
+    </a>
     <template v-for="(question, index) in questions">
-      <Question v-if="isVisible(question, index)" :key="`question-${index}`">
+      <Question v-if="isVisible(question, index)" :key="`question-${index}`" v-show="!question.fastForward" @loaded="checkFastForward(question)">
         <template #progress>
           <div v-if="step > 0">
             <div class="flex items-center relative w-full">
@@ -178,6 +180,12 @@ const handleClick = (option, question) => {
     }, 500)
   }
   return
+}
+
+const checkFastForward = (question) => {
+  if(question.fastForward && question.options.length === 1) {
+    handleClick(question.options[0], question)
+  }
 }
 
 const handleNextStep = (option, question) => {

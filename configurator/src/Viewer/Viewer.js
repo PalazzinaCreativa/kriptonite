@@ -20,14 +20,19 @@ import Case from './Case'
 import { loadObject } from './utils/loadObject'
 import { placeObject } from './utils/placeObject'
 import { isTouchDevice } from './utils/isTouchDevice'
+import { STANDALONE_Z } from '../dataset/defaultConfiguratorValues'
 export default class Viewer {
   constructor (domEl, { room, product }, callback) {
     this.domEl = domEl
 
+    
+    // Lista di dati da salvare per il cliente e per ripopolare il viewer
     this.config = {
       room,
       product
-    } // Lista di dati da salvare per il cliente e per ripopolare il viewer
+    }
+
+    //console.log('si', this.config)
 
     this.selectedObject = null // Elemento selezionato
     this.objectToPlace = null // Oggetto da inserire
@@ -41,13 +46,13 @@ export default class Viewer {
     this._history = []
     this._historyPosition = 0
 
-    // Normalize dimensions
+    // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer
     Object.entries(this.config.room.dimensions)
       .forEach(([key, value]) => {
         this.config.room.dimensions[key] = value * 100
-      }) // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer
+      })
 
-    // Se la stanza è mansardata setta come altezza l'altezz massima
+    // Se la stanza è mansardata setta come altezza l'altezza massima possibile
     if (this.config.room.type === 'attic') {
       this.config.room.dimensions.height = Math.max(this.config.room.dimensions.leftHeight, this.config.room.dimensions.rightHeight)
     }
@@ -61,7 +66,9 @@ export default class Viewer {
     this.camera = setupCamera(dimensions, this.domEl)
 
     this.room = new Room(this, { type, dimensions })
-    await this.room.init() // Aspetto che carichi tutte le texture di pavimento e stanza
+    
+    // Aspetto che carichi tutte le texture di pavimento e stanza
+    await this.room.init()
 
     this.product = new Product(this, { inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
     this.obstacles = []
@@ -246,14 +253,16 @@ export default class Viewer {
         if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
         if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
 
-
         const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
 
         this.objectToPlace = null
         checkpointPosition = null
         this.updateConfig()
-        this._isAddingNewElement = true // abilita / disabilita la funzione che permette di aggiungere l'elemento scelto in maniera consecutiva
-        if (newConfig.type !== 'obstacle' && this._isAddingNewElement) this.addElement(newConfig)
+        this._isAddingNewElement = false // abilita / disabilita la funzione che permette di aggiungere l'elemento scelto in maniera consecutiva
+        if (newConfig.type !== 'obstacle') {
+          this.addElement(newConfig)
+          this._isAddingNewElement = true
+        }
         return
       }
       // Se non sono in hover su nessun elemento, elimino eventuali selezioni
@@ -279,18 +288,21 @@ export default class Viewer {
     })
 
     window.addEventListener('resize',() => {
+      this.zoomOnTarget({ z: 400 }, 0.4)
       this.camera.aspect = this.domEl.offsetWidth / this.domEl.offsetHeight
       this.camera.updateProjectionMatrix()
       this.renderer.setSize(this.domEl.offsetWidth, this.domEl.offsetHeight)
       this._animate()
+      this.zoomOnTarget()
     })
   }
 
   _selectElement (element) {
+    element.isEdit = true
     this.outlinePass.hover.selectedObjects = []
     this.outlinePass.select.selectedObjects = [element.object]
     this.selectedElement = element
-    this.zoomOnTarget({ ...element.getPosition(), z:300 })
+    this.zoomOnTarget({ ...element.getPosition(), z: 300 })
     this.doHook('selectElement', element)
     document.body.style.cursor = 'auto'
   }
@@ -331,28 +343,35 @@ export default class Viewer {
 
   async addElement (config) {
     this._isAddingNewElement = true
-    if (isTouchDevice()) this.controls.enabled = false // Se è un dispositivo touch disabilito i movimenti di camera al touch
-    // resetto eventuali imppostazioni di un precedente inserimento
+
+    // Se è un dispositivo touch disabilito i movimenti di camera al touch
+    if (isTouchDevice()) this.controls.enabled = false
+
+    // resetto eventuali impostazioni di un precedente inserimento
     if (this.objectToPlace) {
       this.scene.remove(this.objectToPlace.object)
       this.objectToPlace = null
       this.product.removeWireframes()
     }
+
     // Inizializzo un nuovo elemento
     let element
     if (config.type === 'obstacle') element = new Obstacle(config, this.room)
-    if (config.type === 'upright') element = new Upright(config, this.product)
-    if (config.type === 'shelf') element = new Shelf(config, this.product)
-    if (config.type === 'case') element = new Case(config, this.product)
+    if (config.type === 'upright') element = new Upright(config, {...this.product, type: this.config.product?.type })
+    if (config.type === 'shelf') element = new Shelf(config, {...this.product, type: this.config.product?.type })
+    if (config.type === 'case') element = new Case(config, {...this.product, type: this.config.product?.type })
 
-    console.log(config)
     await element.init()
 
+    // Creo le linee guida
     if (config.type === 'upright') element._generateSiblingWireframe(this.config.room.dimensions.width, this.config.room.dimensions.height)
 
     this.objectToPlace = element
     if(!this.objectToPlace.object) return
-    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, -50) // Posizione inziiale
+
+    // Se è un elemento ripetibile la posizione di default è dietro il muro (-50) altrimenti se è a parete lo posiziono contro il muro
+    let initialZ = this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 1
+    this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, initialZ)
 
     this.doHook('selectElement', this.objectToPlace)
 
@@ -437,7 +456,7 @@ export default class Viewer {
 
   // Metodo che mi ritorna un'istanza del configuratore a partire da una mesh (utile per esempio nel raycaster che torna solo mesh)
   _getInstanceFromMesh (mesh) {
-    return [...this.room.obstacles, ...this.product.uprights, ...this.product.shelves]
+    return [...this.room.obstacles, ...this.product.uprights, ...this.product.shelves, ...this.product.cases]
       .find(instance => {
         let hasMesh = false
         instance.object.traverse(child => {

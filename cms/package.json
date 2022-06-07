@@ -16,7 +16,8 @@
     "@strapi/strapi": "4.1.7",
     "better-sqlite3": "7.4.6",
     "pg": "^8.7.3",
-    "strapi-plugin-transformer": "^2.0.1"
+    "strapi-plugin-transformer": "^2.0.1",
+    "uuid": "^8.3.2"
   },
   "author": {
     "name": "A Strapi developer"

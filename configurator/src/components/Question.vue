@@ -21,12 +21,20 @@
     </div>
   </div>
 </template>
-<style>
-[question] b {
-  @apply font-semi-bold;
-}
+<script setup>
+import { onBeforeMount, defineEmits } from 'vue'
+const emits = defineEmits(['loaded'])
 
+onBeforeMount(() => {
+  emits('loaded', true)
+})
+</script>
+<style>
 [question] a {
   @apply underline;
+}
+
+[question] b {
+  @apply font-semi-bold;
 }
 </style>

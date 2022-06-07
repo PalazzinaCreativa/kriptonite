@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { setupRoom } from './setup/setupRoom'
 import { setupFloor } from './setup/setupFloor'
+import { addTexture } from "./utils/addTexture";
 import { setupBaseboard } from './setup/setupBaseboard'
 import Obstacle from './Obstacle'
 import { stringToThreeColor } from './utils/stringToThreeColor'
@@ -45,7 +46,7 @@ export default class Room {
   }
 
   async changeFloor (texture) {
-    await addTexture(this.floor.material, texture) // texture dovrà essere un oggetto tipo { name: 'parquet', repeat: 4, ext: 'jpg', maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'] }
+    await addTexture(this.main.children.find(c => c.name === 'floor').material, texture)
   }
 
   addObstacle (obstacle) {

@@ -1,9 +1,11 @@
 import * as THREE from 'three'
-import { STANDALONE_Z, GUTTER } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
+import { createText } from "./utils/createText"
 
-const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da popolare in base al montante
+// Distanza tra i montanti
+const defaultGap = 6.4
 
 const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // TODO: Da popolare con le distanze dei montanti per tipo di prodotto
 
@@ -16,19 +18,28 @@ export default class Upright extends Object3D {
     this.config.type = 'upright'
     if (typeof config.index !== 'undefined') this.index = config.index
     if (typeof config.realIndex !== 'undefined') this.realIndex = config.realIndex
+
+    window.addEventListener('confirmModal', (event) => {
+      this.confirmDestroy()
+    })
   }
 
 
   async init () {
     await super.init()
+    //console.log(this.config, this.product)
+    this.setSize()
     super.setMaterial(this.config.material || { color: '#4a4a4a' }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   // test per non stretchare l'oggetto su asse x e z
   setSize (dimensions) {
+
     const { width, height, depth } = this.getSize()
 
-    const scale = {
+    //console.log('montante K2', this.product, this.config, this.product.viewer?.room, this.product.viewer?.room?.config?.dimensions?.height, height)
+
+    const scale = { //ERO QUI
       x: 1,
       y: this.product.uprightsPosition === 'standalone' && this.product.type === 'k2' && height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : 1,
       z: 1,
@@ -36,10 +47,11 @@ export default class Upright extends Object3D {
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
-    //if (RESTING_ON_THE_GROUND && RESTING_ON_THE_GROUND.includes(this.id)) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+    if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
   }
 
   setPosition ({ x, y, z }) {
+    const currentGap = this.product?.slot_space || defaultGap
     const gridY = Math.floor(y / currentGap) * currentGap // Calcolo y in base alla distanza tra i buchi per allineare tutti i montanti
     const groundY = this.getSize().height / 2
     const zPos = this.object.attachedToWall ? 0.1 : z
@@ -50,13 +62,14 @@ export default class Upright extends Object3D {
   }
 
   _setIndex () {
+    this.isPlaced = true
     if (!this.product.uprights.length) {
       this.index = 0
       this.realIndex = 0
       return
     }
 
-    // Imposto l'indice basandomi sul monmtante più a destra. Se l'asse x è lo stesso, allora avranno lo stesso indice
+    // Imposto l'indice basandomi sul montante più a destra. Se l'asse x è lo stesso, allora avranno lo stesso indice
     const latestUpright = this.product.uprights.reduce((prev, current) => (prev.index > current.index) ? prev : current)
     this.index = latestUpright.getPosition().x === this.getPosition().x
       ? latestUpright.index
@@ -111,10 +124,11 @@ export default class Upright extends Object3D {
         "983a1035-22ed-44de-a3b4-f0d995d7c3cd",
         "8dbee752-dc2c-4ef1-8437-8701bc065cae"
       ]
+
       // Se è un montante terra-cielo, adatto l'altezza del montante all'altezza della stanza
       if(this.config.variantId === 'upright_s_tele') {
         this.product?.object?.children[0].children[0].children.length ? this.product.object.children[0].children[0].children.map((node) => {
-            console.log(node, node.uuid)
+            //console.log(node, node.uuid)
             /* if(topExtensibleNodes.includes(node.uuid)) {
               node.position.y = -50
             } */
@@ -144,45 +158,59 @@ export default class Upright extends Object3D {
     // Creo guide per ogni possibile distanza
 
     currentProductUprightsDistance
-      .forEach(x => {
+      .forEach(async x => {
         // Controllo che il wireframe ci stia all'interno della stanza
         if (latestUpright.object.position.x + x > roomWidth) return
 
         // Mesh della guida
         const wireframe = new THREE.Mesh(
           new THREE.BoxGeometry(this.getSize().width + 2, roomHeight, this.getSize().depth + 2),
-          new THREE.MeshStandardMaterial({ color: 0x707070, transparent: true, opacity: 0.2, roughness: 0 })
+          new THREE.MeshStandardMaterial({ color: 0x707070, transparent: true, opacity: 0.2, roughness: 0 }),
         )
 
+        // AGGIUNGO LE DISTANZE
+        /* const distance = new THREE.Mesh(
+          await createText(`${Math.round(this.getSize().width)}`, { size: 8 }),
+          new THREE.MeshStandardMaterial({ color: 0x0000ff, transparent: false, opacity: 1, roughness: 0 })
+        ) */
+          
         wireframe.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
         wireframe.position.y = roomHeight / 2
         wireframe.position.x = latestUpright.object.position.x + x
-
         wireframes.add(wireframe)
+
+        /* distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
+        distance.position.y = roomHeight / 2
+        distance.position.x = latestUpright.object.position.x + x
+        wireframes.add(distance) */
       })
   }
 
-  async destroy () {
+  destroy () {
     // Se non è l'ultimo montante cancello tutti i montanti più a destra e tutti gli scaffali
     if (this.getSiblings().find(s => s.index > this.index) && !this.product._isDestroying) {
-      if (!window.confirm('ocio che cancelli tutto')) return
-      this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
-      const index = this.index - 1
-      for (const upright of this.product.uprights.filter(u => u.index > index)) {
-        await upright.destroy()
-      }
-
-      const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1)
-      // TODO: Non funziona il cancella tutto se nearest upright non esiste
-      const shelvesToDelete = nearestUpright ? this.product.shelves.filter(s => s.getPosition().x >= nearestUpright.getPosition().x) : this.product.shelves
-
-      for (const shelf of shelvesToDelete) {
-        await shelf.destroy()
-      }
-
-      this.product._isDestroying = false
-      return
+      super.alert()
+    } else {
+      super.destroy()
     }
-    super.destroy()
+  }
+
+  async confirmDestroy() {
+    this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
+    const index = this.index - 1
+    for (const upright of this.product.uprights.filter(u => u.index > index)) {
+      await upright.destroy()
+    }
+
+    const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1)
+    // TODO: Non funziona il cancella tutto se nearest upright non esiste
+    const shelvesToDelete = nearestUpright ? this.product.shelves.filter(s => s.getPosition().x >= nearestUpright.getPosition().x) : this.product.shelves
+
+    for (const shelf of shelvesToDelete) {
+      await shelf.destroy()
+    }
+
+    this.product._isDestroying = false
+    return
   }
 }
