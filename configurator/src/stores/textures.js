@@ -9,7 +9,7 @@ export default defineStore({
   id: "textures",
   state: () => ({
     list: [
-      {
+      /* {
         id: 3,
         name: "wood-light",
         label: 'Rovere',
@@ -74,7 +74,7 @@ export default defineStore({
         ],
         repeat: 2,
         thumb:'/assets/textures/wood-dark/wood-dark_map.jpg'
-      }
+      } */
     ],
     roomList: [],
     roomTextures: [
@@ -99,6 +99,7 @@ export default defineStore({
         thumb: '/assets/textures/bamboo/bamboo_map.jpg',
         repeat: [7, 9],
         ext: 'jpg',
+        images:[],
         maps: [
           'map',
           'aoMap',
@@ -129,6 +130,7 @@ export default defineStore({
         thumb: '/assets/textures/tiles/tiles_map.jpg',
         repeat: [1, 2],
         ext: 'jpg',
+        images: [],
         maps: [
           'map',
           'aoMap',
@@ -159,14 +161,20 @@ export default defineStore({
   actions: {
     async getTextures() {
       let response = await c.getTextures()
-      //var completeList = [ ...this.list, ...response ]
-      // Tolgo momentaneamente le texture caricate
-      var completeList = this.list
-      this.list = completeList.length ? completeList.map((texture) => {
+      this.list = response.length ? response.map((texture) => {
+        texture.thumb = texture.map?.url || ''
         texture.label = typeof texture.label !== 'undefined' ? texture.label : texture.name
+        texture.images = []
+        texture.images.map = texture.map
+        texture.images.aoMap = texture.aoMap
+        texture.images.normalMap = texture.normalMap
+        texture.images.metalnessMap = texture.metalnessMap
+        texture.images.roughnessMap = texture.roughnessMap
+        texture.images.bumpMap = texture.bumpMap
+        texture.ext = 'jpg'
+        texture.repeat = []
         return texture
-      }) : this.list
-      this.list = [ ...this.list, ...response ]
+      }).sort((a, b) => a.id - b.id) : this.list
     },
 
     async getRoomTextures() {

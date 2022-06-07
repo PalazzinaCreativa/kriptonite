@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from 'vue-router'
-//import { routes } from 'vue-auto-routes'
 import routes from 'pages-generated';
 import vClickOutside from "click-outside-vue3";
 
