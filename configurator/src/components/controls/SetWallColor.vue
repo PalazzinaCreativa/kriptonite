@@ -67,6 +67,7 @@ const handleChangeColor = ({ hex }) => {
 
 [room-color] .colors {
   display: flex;
+  flex-flow: row wrap;
   gap: 1rem;
   margin-bottom: 2rem;
 }

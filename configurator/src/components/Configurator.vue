@@ -17,9 +17,9 @@
       </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="transition-all w-[320px] lg:w-[450px] xl:w-[500px] z-2" :controls="controlsList" @download="showDownload = true" @destroy="tabulaRasa">
+    <Controls class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @download="showDownload = true" @destroy="tabulaRasa">
       <Transition name="slide-in">
-        <RoomSettings v-if="isEditingRoom" class="relative z-5" :element="config.room" @close="closeRoomSettings" />
+        <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
       <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
       <ProductList v-if="showList" @close="showList = false" />

@@ -9,7 +9,7 @@
           </ControlsSection>
         </div>
       </div>
-      <div controls-actions class="flex fixed bottom-0 left-0 w-full z-5">
+      <div controls-actions class="flex fixed bottom-0 left-0 w-full z-4">
         <!-- <Btn v-if="destroyLabel" class="bg-light-gray w-full" :label="destroyLabel" @click="destroyEverything" /> -->
         <Btn v-if="getProjectDownloadLabel" class="bg-yellow w-full" :label="getProjectDownloadLabel" @click="downloadProject" />
       </div>

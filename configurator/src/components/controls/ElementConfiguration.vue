@@ -14,6 +14,10 @@
           <div class="flex flex-wrap my-4 w-full">
             <component :is="elementSettingsInstance" :element="element" :key="JSON.stringify(element.config)" @update="updateElement" @input="updateDimensions"></component>
           </div>
+          <!-- <div v-for="material of materials" :key="material.id" class="m-4 cursor-pointer group"  @click="setMaterial(material)">
+            <div class="w-12 h-12 shadow-lg group-hover:shadow-xl" :class="{ 'shadow-xl': element.config.material.id === material.id }" :style="{ backgroundColor: material.color }"></div>
+            <div class="mt-2">{{ material.name }}</div>
+          </div> -->
         </div>
         <Textures v-if="element.config.variantId && textures.length && element.config.texture" :key="`texture-${JSON.stringify(element.config?.material?.texture)}`" :element="element" @setTexture="setMaterial"/>
         <Colors v-if="element.config.variantId && colors.length" :element="element" :key="`color-${JSON.stringify(element.config?.material?.id)}`" @setColor="setMaterial" />
@@ -99,6 +103,13 @@ const setMaterial = (material) => {
 const updateElement = (element) => {
   props.element.updateElement(element)
   configurator.updateConfig()
+}
+
+if(props.element.config.texture && textures.length) {
+  let startingTexture = textures.find((texture) => {
+    return props.element.config.texture === texture.id
+  })
+  setMaterial(startingTexture)
 }
 
 const addToAll = () => {

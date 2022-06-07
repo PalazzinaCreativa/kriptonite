@@ -78,7 +78,7 @@ export default defineStore({
     ],
     roomList: [],
     roomTextures: [
-      {
+      /* {
         id: 1,
         name: 'parquet',
         thumb: '/assets/textures/parquet/parquet_map.jpg',
@@ -86,13 +86,13 @@ export default defineStore({
         ext: 'jpg',
         maps: [
           'map',
-          //'aoMap',
-          //'normalMap',
-          //'bumpMap',
-          //'roughnessMap',
+          'aoMap',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
           'metalnessMap'
         ]
-      },
+      }, */
       {
         id: 2,
         name: 'bamboo',
