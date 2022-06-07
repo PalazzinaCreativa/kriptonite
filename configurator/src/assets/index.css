@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply text-black;
+
+  font-family: 'din-2014', sans-serif;
+}
+
+strong, b {
+  @apply font-semi-bold;
+}

@@ -73,7 +73,7 @@ export default class Object3D {
 
   setMaterial ({ image, color, roughness, opacity, id }) {
     if(!this.object) return
-    this.object.traverse(child => {
+    this.object.traverse(async child => {
       if (child.material) {
         child.material.transparent = false
         if (opacity) child.material.opacity = opacity
