@@ -41,7 +41,7 @@ export default defineStore({
 
     async getStandardShelves(id) {
       let response = id ? await c.getShelvesByProduct(id) : []
-      this.standardList = response.length ? response.map((shelf) => {
+      let completeList = response.length ? response.map((shelf) => {
         if(shelf.variants?.length) {
           shelf.variants.map((variant) => {
             variant.type = 'shelf'
@@ -51,11 +51,25 @@ export default defineStore({
         }
         return shelf
       }) : []
+
+      // Merge variants of models with the same name and unique by it.
+      if(completeList.length) {
+        completeList.reduce((oldList, newList) => {
+          if(oldList.name && (oldList.name === newList.name)) {
+            oldList.variants = [ ...oldList.variants, ...newList.variants]
+          }
+          return oldList
+        })
+      }
+
+      this.standardList = completeList.filter((list, i, self) => {
+        return self.findIndex(item => item.name === list.name) === i
+      })
     },
 
     async getWoodenShelves(id) {
       let response = id ? await c.getWoodShelvesByProduct(id) : []
-      this.woodenList = response.length ? response.map((shelf) => {
+      let completeList = response.length ? response.map((shelf) => {
         if(shelf.variants?.length) {
           shelf.variants.map((variant) => {
             variant.type = 'shelf'
@@ -65,6 +79,20 @@ export default defineStore({
         }
         return shelf
       }) : []
+
+      // Merge variants of models with the same name and unique by it.
+      if(completeList.length) {
+        completeList.reduce((oldList, newList) => {
+          if(oldList.name && (oldList.name === newList.name)) {
+            oldList.variants = [ ...oldList.variants, ...newList.variants]
+          }
+          return oldList
+        })
+      }
+
+      this.woodenList = completeList.filter((list, i, self) => {
+        return self.findIndex(item => item.name === list.name) === i
+      })
     },
 
     getVariants(id) {
