@@ -1,4 +1,9 @@
 import { defineStore } from "pinia"
+import Client from '../utils/client';
+
+const c = new Client({
+  baseURL: 'https://kriptonite-cms-i6snh.ondigitalocean.app'
+})
 
 export const useConfiguratorStore = defineStore({
   id: "configurator",
@@ -11,7 +16,9 @@ export const useConfiguratorStore = defineStore({
     isShowingMeasures: false,
     isShowingHuman: false,
     viewerGetter: () => null,
-    productOptions: null
+    productOptions: null,
+    id: null,
+    configuration: null
   }),
   getters: {
     // La distinta dei prodotti utilizzati non funziona perché a monte sbaglia come mappare le cose!
@@ -30,6 +37,7 @@ export const useConfiguratorStore = defineStore({
     // isPanning: (state) => state.viewerGetter()?._isPanning,
     // isShowingMeasures: (state) => state.viewerGetter()?.product?._visibleMeasures,
     // isShowingHuman: (state) => state.viewerGetter()?.human?.visible
+    currentConfiguration: (state) => state.configuration,
     options: (state) => state.productOptions
   },
   actions: {
@@ -75,6 +83,21 @@ export const useConfiguratorStore = defineStore({
     },
     centerCam () {
       this.viewerGetter().zoomOnTarget()
+    },
+
+    async initConfiguration() {
+      let response = await c.initConfiguration()
+      this.configuration = response
+    },
+
+    async getConfiguration(id) {
+      let response = id ? await c.getConfiguration(id) : []
+      this.configuration = response
+    },
+
+    async updateConfiguration(id, payload) {
+      let response = id ? await c.updateConfiguration(id, payload) : []
+      this.configuration = response
     }
-  },
+  }
 });

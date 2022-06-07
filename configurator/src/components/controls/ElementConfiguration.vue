@@ -6,7 +6,7 @@
     </div>
     <div configuration-content class="grow my-16 w-full">
       <div class="py-4 px-6">
-        <div class="py-8">
+        <div v-if="mainElement" class="py-8">
           <img v-if="mainElement.image" :src="mainElement.image.url" :width="mainElement.image.width" :height="mainElement.image.height" :alt="mainElement.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
           <img v-else src="https://placehold.jp/150x150.png" width="100" height="100" alt="" class="bg-light-gray w-32 h-32 object-cover mx-auto"/>
         </div>
@@ -74,7 +74,9 @@ const data = {
 // Ricavo e stampo il nome del componente e non della variante
 const mainElement = computed(() => {
   return data[props.element.config.type].length ? data[props.element.config.type].find((item) => {
-    return item.variants.some((variant) => variant.id === props.element.config.variantId)
+    return props.element.config.type !== 'obstacle' && item.variants?.length ?
+      item.variants.some((variant) => variant.id === props.element.config.variantId) :
+      props.element.config.id === item.id
   }) : null
 })
 
