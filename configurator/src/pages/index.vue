@@ -2,7 +2,7 @@
   <div>
     <Survey v-if="!showConfigurator" @start="start"/>
     <Configurator v-else :config="config" />
-    <div v-if="!showConfigurator" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
+    <div v-if="!showConfigurator && devMode" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
     Go to configurator
     </div>
   </div>
@@ -19,6 +19,9 @@ productsModule.getProducts()
 
 const config = ref(null)
 const showConfigurator = ref(false)
+const env = ref(import.meta.env)
+
+const devMode = ref(import.meta.env.MODE === 'dev')
 
 const defaultConfig = {
   step: 4,
