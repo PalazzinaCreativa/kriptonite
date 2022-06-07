@@ -21,7 +21,7 @@ const config = ref(null)
 const showConfigurator = ref(false)
 const env = ref(import.meta.env)
 
-const devMode = ref(import.meta.env.MODE === 'dev')
+const devMode = ref(import.meta.env.DEV)
 
 const defaultConfig = {
   step: 4,
