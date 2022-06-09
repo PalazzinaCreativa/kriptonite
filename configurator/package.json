@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@glidejs/glide": "^3.5.2",
+    "@gtm-support/vue-gtm": "^1.6.0",
     "click-outside-vue3": "^4.0.1",
     "gsap": "^3.10.4",
     "lodash.get": "^4.4.2",
