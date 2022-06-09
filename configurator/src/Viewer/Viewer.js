@@ -219,7 +219,7 @@ export default class Viewer {
         return
       }
       // Hover sull'oggetto
-      hoveredElement = this._getInstanceFromMesh(intersects[0].object)
+      hoveredElement = !this.config.shared && this._getInstanceFromMesh(intersects[0].object)
       //console.log(hoveredElement)
       if (!hoveredElement) return
       this.outlinePass.hover.selectedObjects = [hoveredElement.object]
@@ -236,7 +236,7 @@ export default class Viewer {
     })
 
     this.domEl.addEventListener('pointerdown', (e) => {
-      if (hoveredElement) isDragging = true
+      if (hoveredElement && !this.config.shared) isDragging = true
     })
 
     this.domEl.addEventListener('pointerup', (e) => { // Click
@@ -309,13 +309,15 @@ export default class Viewer {
 
   _selectElement (element) {
     //console.log(element)
-    element.isEdit = true
-    this.outlinePass.hover.selectedObjects = []
-    this.outlinePass.select.selectedObjects = [element.object]
-    this.selectedElement = element
-    this.zoomOnTarget({ ...element.getPosition(), z: 300 })
-    this.doHook('selectElement', element)
-    document.body.style.cursor = 'auto'
+    if(!this.config.shared) {
+      element.isEdit = true
+      this.outlinePass.hover.selectedObjects = []
+      this.outlinePass.select.selectedObjects = [element.object]
+      this.selectedElement = element
+      this.zoomOnTarget({ ...element.getPosition(), z: 300 })
+      this.doHook('selectElement', element)
+      document.body.style.cursor = 'auto'
+    }
   }
 
   _unselectAll (repositionCamera) {
