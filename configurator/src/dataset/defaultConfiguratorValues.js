@@ -1,4 +1,4 @@
-export const FLOOR_DEPTH = 800 // Profondità del pavimento
+export const FLOOR_DEPTH = 600 // Profondità del pavimento
 
 export const STANDALONE_Z = 200 // In che punto z posizionare gli elementi in mezzo alla stanza
 

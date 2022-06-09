@@ -53,8 +53,8 @@ export default class Room {
   }
 
   async changeFloor (texture) {
-    await addTexture(this.main.children.find(c => c.name === 'floor').material, texture)
     this.config.floorType = texture
+    await addTexture(this.main.children.find(c => c.name === 'floor').material, texture)
   }
 
   addObstacle (obstacle) {

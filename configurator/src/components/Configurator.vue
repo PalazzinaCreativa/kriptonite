@@ -2,7 +2,7 @@
   <div class="flex h-screen overflow-hidden w-full">
     <Loader :visible="loading" />
     <div class="relative w-full">
-      <Header class="absolute" />
+      <Header class="absolute" :config="config" />
       <div canvas-wrapper class="h-full w-full" ref="canvasWrapper" />
       <Transition name="slide-up">
         <Btn v-if="selectedElement" @click="closeElementSettings" class="absolute bg-light-gray overflow-hidden bottom-16 left-1/2 -translate-x-1/2 transform rounded-full">
@@ -17,13 +17,13 @@
       </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
+    <Controls v-if="!config.shared" class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
       <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
       <ProductList v-if="showList" @close="showList = false" />
-      <DownloadModel v-if="showDownload" @close="showDownload = false" :share-link="`${baseURL}/share/${configurationId}`" :key="configurationId"/>
+      <DownloadModel v-if="showDownload" :config="config" @close="showDownload = false" />
     </Controls>
   </div>
 </template>
@@ -58,15 +58,7 @@ import useTipsStore from '@/stores/tips'
 
 import { controlsList } from '@/dataset/controls'
 
-//import { obstaclesData } from '@/dataset/obstaclesData'
-//import { uprightsData } from '@/dataset/uprightsData'
-//import { shelvesData } from '@/dataset/shelvesData'
-
-const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : ref(import.meta.env.VITE_PROD_URL)
-
 const configurator = useConfiguratorStore()
-const currentConfiguration = computed(() => configurator.currentConfiguration)
-const configurationId = computed(() => currentConfiguration.value?.code || '')
 
 const props = defineProps(['config'])
 
@@ -135,14 +127,6 @@ const confirm = () => {
 }
 
 const shareProject = async () => {
-  // Se non ho già inizializzato una configurazione la inizializzo
-  if(!currentConfiguration.value) {
-    await configurator.initConfiguration()
-  }
-  // Se ho già inizializzato una configurazione la aggiorno
-  if(configurationId.value) {
-    configurator.updateConfiguration(configurationId.value, { ...props.config, shared: true })
-  }
   showDownload.value = true
 }
 
@@ -160,6 +144,7 @@ onMounted(() => {
         viewerGetter: () => viewer,
         isReady: true
       })
+      configurator.$patch({ canShare: !props.config.shared })
       loading.value = false
     }
   )

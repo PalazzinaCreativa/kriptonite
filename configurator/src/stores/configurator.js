@@ -12,6 +12,7 @@ export const useConfiguratorStore = defineStore({
     isReady: false,
     canUndo: false,
     canRedo: false,
+    canShare: true,
     isPanning: false,
     isShowingMeasures: false,
     isShowingHuman: false,
