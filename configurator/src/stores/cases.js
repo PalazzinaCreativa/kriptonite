@@ -74,7 +74,7 @@ export default defineStore({
           item.variants.map((variant) => {
             variant.type = 'case'
             variant.nature = 'legno'
-            variant.path = variant.model // || 'https://kriptonite.s3.eu-central-1.amazonaws.com/K1_75_battente_fdbc078e64.gltf'
+            variant.path = variant.model
           })
         }
         return item
@@ -95,16 +95,17 @@ export default defineStore({
       })
     },
 
-    getVariants(id, filters = {}) {
-      let variants = (this.list.length && id) ? this.list.filter((item) => {
+    getVariants(id, hasTexture = false, filters = {}) {
+      let list = hasTexture ? this.woodenList : this.standardList
+      let variants = (list.length && id) ? list.find((item) => {
         return item.id === id
-      })[0].variants : []
+      }).variants : []
 
       
       variants = Object.keys(filters).length && variants ? variants.filter((item) => {
-        return Object.entries(filters).map(([ filter, value ]) => {
+        return Object.entries(filters).find(([ filter, value ]) => {
           return item[filter] === value
-        })[0]
+        })
       }) : variants
       
       // Unique by depth

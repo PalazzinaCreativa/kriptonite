@@ -2,7 +2,7 @@
   <div class="flex h-screen overflow-hidden w-full">
     <Loader :visible="loading" />
     <div class="relative w-full">
-      <Header class="absolute" />
+      <Header class="absolute" :config="config" />
       <div canvas-wrapper class="h-full w-full" ref="canvasWrapper" />
       <Transition name="slide-up">
         <Btn v-if="selectedElement" @click="closeElementSettings" class="absolute bg-light-gray overflow-hidden bottom-16 left-1/2 -translate-x-1/2 transform rounded-full">
@@ -17,13 +17,13 @@
       </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
+    <Controls v-if="!config.shared" class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
       <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
       <ProductList v-if="showList" @close="showList = false" />
-      <DownloadModel v-if="showDownload" @close="showDownload = false" :share-link="`${baseURL}/share/${configurationId}`" :key="configurationId"/>
+      <DownloadModel v-if="showDownload" :config="config" @close="showDownload = false" />
     </Controls>
   </div>
 </template>
@@ -47,6 +47,7 @@ import Alert from '@/components/Alert.vue'
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useOptionsStore from '@/stores/options'
+import useProductsStore from '@/stores/products'
 import useEncumbrancesStore from '@/stores/encumbrances'
 import useUprightsStore from '@/stores/uprights'
 import useShelvesStore from '@/stores/shelves'
@@ -57,18 +58,7 @@ import useTipsStore from '@/stores/tips'
 
 import { controlsList } from '@/dataset/controls'
 
-//import { obstaclesData } from '@/dataset/obstaclesData'
-//import { uprightsData } from '@/dataset/uprightsData'
-//import { shelvesData } from '@/dataset/shelvesData'
-
-console.log(import.meta.env)
-
-const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : ref(import.meta.env.VITE_PROD_URL)
-
 const configurator = useConfiguratorStore()
-const currentConfiguration = computed(() => configurator.currentConfiguration)
-const configurationId = computed(() => currentConfiguration.value?.code || '')
-const productOptions = computed(() => configurator.options)
 
 const props = defineProps(['config'])
 
@@ -83,12 +73,21 @@ controlsList.map((item) => {
   item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
 })
 const optionsModule = useOptionsStore()
+const productsModule = useProductsStore()
+const selectedProduct = computed(() => productsModule.selectedProduct)
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()
 
+//console.log(selectedProduct)
 const uprightsModule = useUprightsStore()
+uprightsModule.getUprights(1)
+
 const shelvesModule = useShelvesStore()
+shelvesModule.getShelves(1)
+
 const casesModule = useCasesStore()
+casesModule.getCases(1)
+
 const colorsModule = useColorsStore()
 colorsModule.getColors()
 const texturesModule = useTexturesStore()
@@ -128,14 +127,6 @@ const confirm = () => {
 }
 
 const shareProject = async () => {
-  // Se non ho già inizializzato una configurazione la inizializzo
-  if(!currentConfiguration.value) {
-    await configurator.initConfiguration()
-  }
-  // Se ho già inizializzato una configurazione la aggiorno
-  if(configurationId.value) {
-    configurator.updateConfiguration(configurationId.value, productOptions.value)
-  }
   showDownload.value = true
 }
 
@@ -153,9 +144,12 @@ onMounted(() => {
         viewerGetter: () => viewer,
         isReady: true
       })
+      configurator.$patch({ canShare: !props.config.shared })
       loading.value = false
     }
   )
+
+  //console.log('viewer', viewer)
 
 // Passo i dati al viewer per popolare il configuratore
   viewer.setHook('getData', ({ type, id, variantId }) => {
@@ -165,11 +159,19 @@ onMounted(() => {
       shelf: computed(() => shelvesModule.index),
       case: computed(() => casesModule.index)
     }
-    //console.log(data[type].value)
+    //console.log('data hook', data)
+
+    // Ricavo la variante corretta
     if(data[type].value.length) {
-      const el = data[type].value.find(p => p.id === id)
+      // Ricavo gli elementi con quell'ID
+      let elements = data[type].value.filter(p => p.id === id)
+      // Se più di un elemento ha lo stesso ID, cerco quelli che hanno una variante con lo stesso ID
+      const el = elements.length > 1 ? elements.find((product) => {
+        return product.variants.some(variant => variant.id === variantId)
+      }) : elements[0]
+      // Se non ho nessuna variante ritorno l'elemento stesso
       if (!variantId) return el
-      //location.reload()
+      // Altrimenti carico la variante con quell'ID
       return { ...el.variants.find(v => v.id === variantId), id, variantId }
     }
   })

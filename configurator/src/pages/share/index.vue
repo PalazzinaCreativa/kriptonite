@@ -10,6 +10,6 @@ const route = useRoute()
 const configurator = useConfiguratorStore()
 
 onMounted(() => {
-    console.log(route)
+    //console.log(route)
 })
 </script>

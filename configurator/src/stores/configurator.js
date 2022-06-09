@@ -12,6 +12,7 @@ export const useConfiguratorStore = defineStore({
     isReady: false,
     canUndo: false,
     canRedo: false,
+    canShare: true,
     isPanning: false,
     isShowingMeasures: false,
     isShowingHuman: false,
@@ -48,7 +49,7 @@ export const useConfiguratorStore = defineStore({
       this.viewerGetter().room.changeFloor(texture)
     },
     setOptions (options) {
-      this.productOptions = options || null
+      this.productOptions = options
     },
     addElement (options, callback) {
       this.viewerGetter().addElement({ ...options }, callback)

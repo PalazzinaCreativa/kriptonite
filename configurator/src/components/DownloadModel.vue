@@ -8,8 +8,8 @@
       <div class="text-l text-center w-full" v-text="'Link di condivisione'" />
       <div class="my-8 text-center w-full" v-text="`Copia il link qui sotto per condividere o riprendere la configurazione da dove l'hai lasciata`" />
       <div class="flex items-center gap-4 w-full">
-        <TextField v-if="props.shareLink" ref="projectLink" v-model="props.shareLink" readonly class="text-cyan"/>
-        <Btn v-if="props.shareLink" class="bg-light-gray w-full" label="Copia" @click="copyLink" />
+        <TextField v-if="shareLink" ref="projectLink" v-model="shareLink" readonly class="text-cyan"/>
+        <Btn v-if="shareLink" class="bg-light-gray w-full" label="Copia" @click="copyLink" />
       </div>
       <Transition name="fade-up">
         <div v-if="linkWasCopied" class="border-2 border-yellow rounded-lg text-s text-center p-4 my-4 w-full" v-text="`Link copiato`"></div>
@@ -22,18 +22,37 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, computed, onMounted, defineProps, defineEmits } from 'vue';
+import { useConfiguratorStore } from '@/stores/configurator'
 import TextField from '@/components/forms/TextField.vue'
 import Btn from '@/components/forms/Button.vue'
 import Close from '@/components/icons/Close.vue'
 
-const props = defineProps(['share-link'])
+const props = defineProps(['config'])
 const emits = defineEmits(['close'])
 
+const configurator = useConfiguratorStore()
+const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : ref(import.meta.env.VITE_PROD_URL)
+const currentConfiguration = computed(() => configurator.currentConfiguration)
+const configurationId = computed(() => currentConfiguration.value?.code || '')
+const shareLink = ref('')
 const projectLink = ref(null)
 const linkWasCopied = ref(false)
 
 const requestQuoteLabel = '' //'Richiedi preventivo'
+
+onMounted(async () => {
+  // Se non ho già inizializzato una configurazione la inizializzo
+  if(!currentConfiguration.value) {
+    await configurator.initConfiguration()
+  }
+  // Se ho già inizializzato una configurazione la aggiorno
+  if(configurationId.value) {
+    configurator.updateConfiguration(configurationId.value, { ...props.config, shared: true })
+  }
+
+  shareLink.value = `${baseURL.value}/share/${configurationId.value}`
+})
 
 const requestQuote = () => {
   //console.log('Richiedi preventivo')
@@ -42,7 +61,7 @@ const requestQuote = () => {
 const copyLink = () => {
   if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
     linkWasCopied.value = true
-    navigator.clipboard.writeText(props.shareLink);
+    navigator.clipboard.writeText(shareLink.value);
   } else {
     linkWasCopied.value = true
     projectLink.value.focus();

@@ -3,10 +3,13 @@
     <a href="/">
       <LogoCompact/>
     </a>
-    <OptionsList/>
+    <OptionsList v-if="!config.shared"/>
   </div>
 </template>
 <script setup>
+import { defineProps } from 'vue'
 import LogoCompact from '@/components/LogoCompact.vue'
 import OptionsList from '@/components/OptionsList.vue'
+
+const props = defineProps(['config'])
 </script>
