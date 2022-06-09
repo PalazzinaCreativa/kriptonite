@@ -19,7 +19,6 @@ productsModule.getProducts()
 
 const config = ref(null)
 const showConfigurator = ref(false)
-const env = ref(import.meta.env)
 
 const devMode = ref(import.meta.env.DEV)
 

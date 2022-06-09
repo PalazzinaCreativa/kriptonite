@@ -23,7 +23,7 @@
       </Transition>
       <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
       <ProductList v-if="showList" @close="showList = false" />
-      <DownloadModel v-if="showDownload" @close="showDownload = false" />
+      <DownloadModel v-if="showDownload" @close="showDownload = false" :share-link="`${baseURL}/share/${configurationId}`" :key="configurationId"/>
     </Controls>
   </div>
 </template>
@@ -61,8 +61,13 @@ import { controlsList } from '@/dataset/controls'
 //import { uprightsData } from '@/dataset/uprightsData'
 //import { shelvesData } from '@/dataset/shelvesData'
 
+console.log(import.meta.env)
+
+const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : ref(import.meta.env.VITE_PROD_URL)
+
 const configurator = useConfiguratorStore()
 const currentConfiguration = computed(() => configurator.currentConfiguration)
+const configurationId = computed(() => currentConfiguration.value?.code || '')
 const productOptions = computed(() => configurator.options)
 
 const props = defineProps(['config'])
@@ -122,15 +127,19 @@ const confirm = () => {
   isAlerting.value = false
 }
 
-const shareProject = () => {
-  configurator.updateConfiguration(currentConfiguration.value.code, productOptions.value)
+const shareProject = async () => {
+  // Se non ho già inizializzato una configurazione la inizializzo
+  if(!currentConfiguration.value) {
+    await configurator.initConfiguration()
+  }
+  // Se ho già inizializzato una configurazione la aggiorno
+  if(configurationId.value) {
+    configurator.updateConfiguration(configurationId.value, productOptions.value)
+  }
   showDownload.value = true
 }
 
 onMounted(() => {
-  if(!currentConfiguration.value) {
-    configurator.initConfiguration()
-  }
   configurator.setOptions(props.config.product)
   // Apro il consiglio iniziale
   tipsModule.setActiveTip('intro')

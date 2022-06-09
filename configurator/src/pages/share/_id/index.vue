@@ -1,5 +1,5 @@
 <template>
-    <div>share</div>
+    <div v-if="route?.params?.id" v-text="route.params.id" />
 </template>
 <script setup>
 import { onMounted } from 'vue'
