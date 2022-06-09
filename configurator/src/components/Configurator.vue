@@ -47,6 +47,7 @@ import Alert from '@/components/Alert.vue'
 import Viewer from '@/Viewer/Viewer'
 import { useConfiguratorStore } from '@/stores/configurator'
 import useOptionsStore from '@/stores/options'
+import useProductsStore from '@/stores/products'
 import useEncumbrancesStore from '@/stores/encumbrances'
 import useUprightsStore from '@/stores/uprights'
 import useShelvesStore from '@/stores/shelves'
@@ -61,14 +62,11 @@ import { controlsList } from '@/dataset/controls'
 //import { uprightsData } from '@/dataset/uprightsData'
 //import { shelvesData } from '@/dataset/shelvesData'
 
-console.log(import.meta.env)
-
 const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : ref(import.meta.env.VITE_PROD_URL)
 
 const configurator = useConfiguratorStore()
 const currentConfiguration = computed(() => configurator.currentConfiguration)
 const configurationId = computed(() => currentConfiguration.value?.code || '')
-const productOptions = computed(() => configurator.options)
 
 const props = defineProps(['config'])
 
@@ -83,12 +81,21 @@ controlsList.map((item) => {
   item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
 })
 const optionsModule = useOptionsStore()
+const productsModule = useProductsStore()
+const selectedProduct = computed(() => productsModule.selectedProduct)
 const encumbrancesModule = useEncumbrancesStore()
 encumbrancesModule.getEncumbrances()
 
+//console.log(selectedProduct)
 const uprightsModule = useUprightsStore()
+uprightsModule.getUprights(1)
+
 const shelvesModule = useShelvesStore()
+shelvesModule.getShelves(1)
+
 const casesModule = useCasesStore()
+casesModule.getCases(1)
+
 const colorsModule = useColorsStore()
 colorsModule.getColors()
 const texturesModule = useTexturesStore()
@@ -134,7 +141,7 @@ const shareProject = async () => {
   }
   // Se ho già inizializzato una configurazione la aggiorno
   if(configurationId.value) {
-    configurator.updateConfiguration(configurationId.value, productOptions.value)
+    configurator.updateConfiguration(configurationId.value, { ...props.config, shared: true })
   }
   showDownload.value = true
 }
@@ -157,6 +164,8 @@ onMounted(() => {
     }
   )
 
+  //console.log('viewer', viewer)
+
 // Passo i dati al viewer per popolare il configuratore
   viewer.setHook('getData', ({ type, id, variantId }) => {
     const data = {
@@ -165,11 +174,19 @@ onMounted(() => {
       shelf: computed(() => shelvesModule.index),
       case: computed(() => casesModule.index)
     }
-    //console.log(data[type].value)
+    //console.log('data hook', data)
+
+    // Ricavo la variante corretta
     if(data[type].value.length) {
-      const el = data[type].value.find(p => p.id === id)
+      // Ricavo gli elementi con quell'ID
+      let elements = data[type].value.filter(p => p.id === id)
+      // Se più di un elemento ha lo stesso ID, cerco quelli che hanno una variante con lo stesso ID
+      const el = elements.length > 1 ? elements.find((product) => {
+        return product.variants.some(variant => variant.id === variantId)
+      }) : elements[0]
+      // Se non ho nessuna variante ritorno l'elemento stesso
       if (!variantId) return el
-      //location.reload()
+      // Altrimenti carico la variante con quell'ID
       return { ...el.variants.find(v => v.id === variantId), id, variantId }
     }
   })

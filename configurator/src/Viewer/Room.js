@@ -12,7 +12,14 @@ export default class Room {
       type,
       dimensions,
       wallColor: '#ffffff',
-      floor: 'parquet'
+      floor: 'parquet',
+      floorType: {
+        name: 'bamboo',
+        repeat: 4,
+        isStatic: true,
+        ext: 'jpg',
+        maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
+      }
     }
     this.obstacles = []
     this.viewer = viewer
@@ -47,6 +54,7 @@ export default class Room {
 
   async changeFloor (texture) {
     await addTexture(this.main.children.find(c => c.name === 'floor').material, texture)
+    this.config.floorType = texture
   }
 
   addObstacle (obstacle) {

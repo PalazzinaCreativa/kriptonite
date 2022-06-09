@@ -13,7 +13,7 @@ const router = createRouter({
     routes,
 })
 
-console.log(routes)
+//console.log(routes)
 
 const app = createApp(App);
 

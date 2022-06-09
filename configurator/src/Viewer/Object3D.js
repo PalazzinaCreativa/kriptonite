@@ -5,12 +5,14 @@ import { addTexture } from "./utils/addTexture";
 //import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
+    //console.log('config', config)
     this.config = config
     this.id = config.id
     this.variantId = config.variantId
   }
 
   async init () {
+    //console.log('object3d init', this.config)
     if(!this.config.path) return
     this.object = await loadObject(this.config.path)
     this.object.name = this.config.id || this.config.type
@@ -86,6 +88,7 @@ export default class Object3D {
   }
 
   setMaterial ({ texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id }) {
+    //console.log('setMaterial', this.object)
     if(!this.object) return
     //console.log('setMaterial', texture, nature, color, roughness, opacity, id)
     this.object.traverse(async child => {

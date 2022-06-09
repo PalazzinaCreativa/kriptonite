@@ -22,14 +22,14 @@ import { placeObject } from './utils/placeObject'
 import { isTouchDevice } from './utils/isTouchDevice'
 import { STANDALONE_Z } from '../dataset/defaultConfiguratorValues'
 export default class Viewer {
-  constructor (domEl, { room, product }, callback) {
+  constructor (domEl, { room, product, shared = false }, callback) {
     this.domEl = domEl
 
-    
     // Lista di dati da salvare per il cliente e per ripopolare il viewer
     this.config = {
       room,
-      product
+      product,
+      shared
     }
 
     //console.log('si', this.config)
@@ -46,16 +46,20 @@ export default class Viewer {
     this._history = []
     this._historyPosition = 0
 
-    // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer
-    Object.entries(this.config.room.dimensions)
-      .forEach(([key, value]) => {
+    // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer se non è una configurazione condivisa
+    // console.log(this.config)
+    if(!this.config.shared) {
+      Object.entries(this.config.room.dimensions).forEach(([key, value]) => {
         this.config.room.dimensions[key] = value * 100
       })
+    }
 
     // Se la stanza è mansardata setta come altezza l'altezza massima possibile
     if (this.config.room.type === 'attic') {
       this.config.room.dimensions.height = Math.max(this.config.room.dimensions.leftHeight, this.config.room.dimensions.rightHeight)
     }
+
+    //console.log('room', this.config.room)
 
     this._init(callback)
   }
@@ -131,17 +135,22 @@ export default class Viewer {
     if (config.room && config.room.obstacles) objects.push(config.room.obstacles.map(o => Object.assign(o, { type: 'obstacle' }, {})))
     if (config.product && config.product.uprights) objects.push(config.product.uprights.map(u => Object.assign(u, { type: 'upright' }, {})))
     if (config.product && config.product.shelves) objects.push(config.product.shelves.map(s => Object.assign(s, { type: 'shelf' }, {})))
+    if (config.product && config.product.cases) objects.push(config.product.cases.map(c => Object.assign(c, { type: 'case' }, {})))
+    
+    //console.log('feed', objects.flat())
 
     for (const o of objects.flat()) { // For per mantenere il ciclo asincrono
       const data = this.doHook('getData', o)
+      //console.log('data', data)
       let object
       if (o.type === 'obstacle') object = new Obstacle(data, this.room)
       if (o.type === 'upright') object = new Upright({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
       if (o.type === 'shelf') object = new Shelf({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
       if (o.type === 'case') object = new Case({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
 
-
+      //console.log('oggetto caricato', object)
       await object.init()
+      //console.log('scaling', object)
       object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
       object.object.position.set(o.position.x, o.position.y, o.position.z)
 
@@ -248,6 +257,7 @@ export default class Viewer {
         if (typeof this.objectToPlace._setIndex === 'function') this.objectToPlace._setIndex()
         this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà reinserito nella riga seguente
 
+
         if (this.objectToPlace.config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
         if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
         if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
@@ -298,6 +308,7 @@ export default class Viewer {
   }
 
   _selectElement (element) {
+    //console.log(element)
     element.isEdit = true
     this.outlinePass.hover.selectedObjects = []
     this.outlinePass.select.selectedObjects = [element.object]
@@ -375,6 +386,7 @@ export default class Viewer {
 
     this.doHook('selectElement', this.objectToPlace)
 
+    // Aggiunge l'elemento alla scena
     this.scene.add(this.objectToPlace.object)
   }
 

@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-  import { computed, watch, defineProps } from 'vue';
+  import { computed, defineProps } from 'vue';
   import { useConfiguratorStore } from '@/stores/configurator'
   import useTexturesStore from '@/stores/textures';
   import useCasesStore from '@/stores/cases'

@@ -13,6 +13,7 @@ export default defineStore({
         name: 'Altro',
         type: 'obstacle',
         id: 'generic',
+        grounded: true,
         path: '/assets/objects/obstacles/generic/generic.gltf',
         image: {
           url: '/assets/objects/obstacles/generic/generic.png',

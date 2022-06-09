@@ -11,6 +11,7 @@ export const setupFloor = async ({ width, roomType, type}) => {
     parquet: {
       name: 'bamboo',
       repeat: 4,
+      isStatic: true,
       ext: 'jpg',
       maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
     }

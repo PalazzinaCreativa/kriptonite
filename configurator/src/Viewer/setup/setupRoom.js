@@ -14,8 +14,9 @@ export const setupRoom = async ({ type, dimensions, color }) => {
   await addTexture(wallMaterial,
     {
       name: 'plaster',
+      isStatic: true,
       repeat: 16,
-      maps: ['map', 'aoMap', 'bumpMap', 'alphaMap', 'normalMap']
+      maps: ['map', 'aoMap', 'bumpMap', 'alphaMap', 'normalMap', 'metalnessMap']
     }
   )
 

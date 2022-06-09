@@ -95,13 +95,20 @@ export default defineStore({
       })
     },
 
-    getVariants(id) {
-      let fullVariantsList = (this.list.length && id) ? this.list.filter((shelf) => {
+    getVariants(id, hasTexture = false, filters = {}) {
+      let list = hasTexture ? this.woodenList : this.standardList
+      let variants = (list.length && id) ? list.find((shelf) => {
         return shelf.id === id
-      })[0].variants : []
+      }).variants : []
+
+      variants = Object.keys(filters).length && variants ? variants.filter((shelf) => {
+        return Object.entries(filters).find(([ filter, value ]) => {
+          return shelf[filter] === value
+        })
+      }) : variants
 
       // Unique by depth
-      this.variantsList = fullVariantsList.length ? fullVariantsList.filter((variant, i, self) => {
+      this.variantsList = variants.length ? variants.filter((variant, i, self) => {
         return self.findIndex(item => item.depth === variant.depth) === i
       }) : []
     }

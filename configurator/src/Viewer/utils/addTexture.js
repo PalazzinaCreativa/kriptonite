@@ -11,7 +11,10 @@ import * as THREE from 'three'
     /textures/{nome_texture}/{nome_texture}_{nome_mappa}.{ext}
 */
 
-export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 0, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', images = null }) => {
+export const addTexture = (material, texture) => {
+  // Setting defaults
+  let { name = 'texture', repeat = 4, rotation = 0, maps = ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap'], ext = 'png', isStatic = false } = texture
+
   if (!material) {
     console.error(`Nessun materiale selezionato per la texture ${name}`)
     return
@@ -24,16 +27,18 @@ export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 
   const textureLoader = new THREE.TextureLoader()
 
   let path
+
+  //console.log('Loading texture', texture)
   
   return Promise.all(
     maps.map(mapName => {
-      if(images && Object.keys(images).length) {
-        path = images[mapName]?.url || ''
-      } else {
+      if(texture.isStatic) {
         path = `/assets/textures/${name}/${name}_${mapName}.${ext}`
+      } else {
+        path = texture[mapName]?.url || ''
       }
-      return new Promise((resolve, reject) => {
-        if(path) {
+      if(path) {
+        return new Promise((resolve, reject) => {
           textureLoader.load(path, (map) => {
             map.wrapS = THREE.RepeatWrapping
             map.wrapT = THREE.RepeatWrapping
@@ -48,8 +53,9 @@ export const addTexture = (material, { name = 'texture', repeat = 4, rotation = 
             material.needsUpdate = true
             resolve(map)
           }, undefined, (e) => reject(e))
-        }
-      })
+        })
+      }
+      return
     })
   )
 }
