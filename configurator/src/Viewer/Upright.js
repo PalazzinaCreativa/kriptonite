@@ -3,6 +3,14 @@ import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND } from '@/dataset/defaultCo
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 import { createText } from "./utils/createText"
+import Client from '../utils/client';
+
+const c = new Client({
+  baseURL: 'https://kriptonite-cms-i6snh.ondigitalocean.app'
+})
+
+// Ricavo le finiture dal Database
+const colors = await c.getColors()
 
 // Distanza tra i montanti
 const defaultGap = 6.4
@@ -10,26 +18,34 @@ const defaultGap = 6.4
 const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // TODO: Da popolare con le distanze dei montanti per tipo di prodotto
 
 export default class Upright extends Object3D {
+
   constructor (config, product) {
     super(config)
-
     this.product = product
     this._cantBePositioned = false
     this.config.type = 'upright'
+
+    // "index" è il numero delle colonne dei montanti sull'asse X, se ci sono 2 montanti uno sotto l'altro avranno lo stesso "index", ma diversi "realIndex"
     if (typeof config.index !== 'undefined') this.index = config.index
+    // "realIndex" è l'indice di immissione, ovvero il numero del montante in ordine di inserimento
     if (typeof config.realIndex !== 'undefined') this.realIndex = config.realIndex
-
-    window.addEventListener('confirmModal', (event) => {
-      this.confirmDestroy()
-    })
   }
-
 
   async init () {
     await super.init()
-    //console.log(this.config, this.product)
     this.setSize()
-    super.setMaterial(this.config.material || { color: '#4a4a4a' }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
+    // Settaggio della prima finitura dell'elemento in fase di inserimento:
+    // Verrà scelta la finitura impostata dall'utente oppure il primo risultato proveniente dal Database.
+    let firstColor = colors.length ? colors[0] : { color: '#000000' }
+    super.setMaterial(this.config.material || { firstColor, color: firstColor.code }, false)
+  }
+
+  multipleDeletionAlert(state) {
+    window.dispatchEvent(new Event('alert'))
+    // Ascolto dell'evento di conferma per l'alert per l'eliminazione di più elementi relativi al montante in fase di eliminazione
+    window.addEventListener('confirmModal', (event) => {
+      this.confirmDestroy()
+    })
   }
 
   // test per non stretchare l'oggetto su asse x e z
@@ -62,19 +78,18 @@ export default class Upright extends Object3D {
   }
 
   _setIndex () {
+    // Indicazione del montante come "in fase di inserimento"
     this.isPlaced = true
+    // Se è il primo montante in fase di inserimento setto gli indici a 0
     if (!this.product.uprights.length) {
       this.index = 0
       this.realIndex = 0
       return
     }
-
-    // Imposto l'indice basandomi sul montante più a destra. Se l'asse x è lo stesso, allora avranno lo stesso indice
+    // Impostazione dell'indice dei montanti in base al montante più a destra.
+    // Se ci sono più montanti in colonna avranno lo stesso "index"
     const latestUpright = this.product.uprights.reduce((prev, current) => (prev.index > current.index) ? prev : current)
-    this.index = latestUpright.getPosition().x === this.getPosition().x
-      ? latestUpright.index
-      : latestUpright.index + 1
-
+    this.index = latestUpright.getPosition().x === this.getPosition().x ? latestUpright.index : latestUpright.index + 1
     this.realIndex = this.product.uprights.length
   }
 
@@ -186,31 +201,45 @@ export default class Upright extends Object3D {
       })
   }
 
-  destroy () {
-    // Se non è l'ultimo montante cancello tutti i montanti più a destra e tutti gli scaffali
-    if (this.getSiblings().find(s => s.index > this.index) && !this.product._isDestroying) {
-      super.alert()
+  destroy(isDestroying = false) {
+    // Cancello tutti i montanti alla sua destra e tutti i ripiani ad esso collegati
+    if (this.getSiblings().some(sibling => sibling.index > this.index) && !isDestroying) {
+      // Se ci sono montanti alla sua destra, viene sollevato un evento di alert per avvisare l'utente dell'eliminazione multipla
+      this.multipleDeletionAlert()
     } else {
+      // Elimino l'elemento
       super.destroy()
     }
   }
 
   async confirmDestroy() {
-    this.product._isDestroying = true //Mi serve per evitare maximuum call stack exceeded se distruggo altri elementi
-    const index = this.index - 1
-    for (const upright of this.product.uprights.filter(u => u.index > index)) {
-      await upright.destroy()
+    // Variabile per evitare "Maximuum call stack exceeded" nella funzione ricorsiva, se si stanno eliminando altri elementi
+    // this.product._isDestroying = true
+    
+    // Chiamata alla funzione ricorsiva di eliminazione
+    const uprightsToDelete = this.product.uprights.filter(u => u.index >= this.index && u.realIndex >= this.realIndex)
+    
+    if(uprightsToDelete.length) {
+      uprightsToDelete.map(async (upright) => {
+        await upright.destroy(true)
+      })
     }
 
-    const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1)
-    // TODO: Non funziona il cancella tutto se nearest upright non esiste
-    const shelvesToDelete = nearestUpright ? this.product.shelves.filter(s => s.getPosition().x >= nearestUpright.getPosition().x) : this.product.shelves
+    // Eliminazione dei ripiani e dei contenitori associati
+    // Partenza dal montante alla sinistra di quello in fase di eliminazione per verificare che ci siano ripiani o contenitori attaccati a quest'ultimo
+    const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1) || null
 
-    for (const shelf of shelvesToDelete) {
-      await shelf.destroy()
+    // Eliminazione di eventuali elementi attaccati ai ripiani in fase di eliminazione
+    const elementsOnTheRoom = [...this.product.shelves, ...this.product.cases]
+
+    const elementsToDelete = nearestUpright ? elementsOnTheRoom.filter((item) => {
+      return item.getPosition().x >= nearestUpright.getPosition().x
+    }) : elementsOnTheRoom
+
+    if(elementsToDelete.length) {
+      elementsToDelete.map(async (element) =>  await element.destroy())
     }
-
-    this.product._isDestroying = false
+    //this.product._isDestroying = false
     return
   }
 }
