@@ -99,7 +99,7 @@ const selectedOption = computed(() => optionsModule.selected)
 const isEditingRoom = computed(() => selectedOption.value.id === 2)
 
 const canEdit = computed(() => {
-  return !props.config.shared || props.config.shared && import.meta.env.DEV
+  return !props.config.shared || (props.config.shared && import.meta.env.DEV)
 })
 
 const closeRoomSettings = () => {

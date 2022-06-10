@@ -228,7 +228,7 @@ export default class Viewer {
         return
       }
       // Hover sull'oggetto
-      hoveredElement = !this.config.shared || (this.config.shared && import.meta.env.DEV) && this._getInstanceFromMesh(intersects[0].object)
+      hoveredElement = (!this.config.shared || (this.config.shared && import.meta.env.DEV)) && this._getInstanceFromMesh(intersects[0].object)
       //console.log(hoveredElement)
       if (!hoveredElement) return
       this.outlinePass.hover.selectedObjects = [hoveredElement.object]
