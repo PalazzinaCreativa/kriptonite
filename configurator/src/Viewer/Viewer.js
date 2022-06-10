@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+
 // Setup
 import { setupScene } from './setup/setupScene'
 import { setupCamera } from './setup/setupCamera'
@@ -21,6 +22,7 @@ import { loadObject } from './utils/loadObject'
 import { placeObject } from './utils/placeObject'
 import { isTouchDevice } from './utils/isTouchDevice'
 import { STANDALONE_Z } from '../dataset/defaultConfiguratorValues'
+
 export default class Viewer {
   constructor (domEl, { room, product, shared = false }, callback) {
     this.domEl = domEl
@@ -32,46 +34,53 @@ export default class Viewer {
       shared
     }
 
-    //console.log('si', this.config)
+    // Elemento selezionato
+    this.selectedObject = null
 
-    this.selectedObject = null // Elemento selezionato
-    this.objectToPlace = null // Oggetto da inserire
-    this.cantBePositioned = null // selectedObject se in una posizione dove non può essere inserito
+    // L'elemento in fase di inserimento
+    this.objectToPlace = null
+
+    // Descrive se "selectedObject" è in una posizione dove può essere inserito o meno
+    this.cantBePositioned = null
 
     this.hooks = {
       objectSelected: null,
       getData: null
     }
 
+    // Storia del progetto
     this._history = []
     this._historyPosition = 0
 
     // Converte le dimensioni inserite dall'utente per utilizzarle nel viewer se non è una configurazione condivisa
-    // console.log(this.config)
     if(!this.config.shared) {
       Object.entries(this.config.room.dimensions).forEach(([key, value]) => {
         this.config.room.dimensions[key] = value * 100
       })
     }
 
-    // Se la stanza è mansardata setta come altezza l'altezza massima possibile
+    // Se la stanza è mansardata setta come altezza il valore massimo possibile
     if (this.config.room.type === 'attic') {
       this.config.room.dimensions.height = Math.max(this.config.room.dimensions.leftHeight, this.config.room.dimensions.rightHeight)
     }
 
-    //console.log('room', this.config.room)
-
+    // Il Viewer viene inizializzato
     this._init(callback)
   }
 
   async _init (callback) {
     const { type, dimensions } = this.config.room
+
+    // Crea la scena
     this.scene = setupScene()
+
+    // Posiziona la camera
     this.camera = setupCamera(dimensions, this.domEl)
 
+    // Crea la stanza
     this.room = new Room(this, { type, dimensions })
     
-    // Aspetto che carichi tutte le texture di pavimento e stanza
+    // Carica le impostazioni della stanza, comprese le texture di pavimento e pareti
     await this.room.init()
 
     this.product = new Product(this, { inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
@@ -219,7 +228,7 @@ export default class Viewer {
         return
       }
       // Hover sull'oggetto
-      hoveredElement = !this.config.shared && this._getInstanceFromMesh(intersects[0].object)
+      hoveredElement = !this.config.shared || (this.config.shared && import.meta.env.DEV) && this._getInstanceFromMesh(intersects[0].object)
       //console.log(hoveredElement)
       if (!hoveredElement) return
       this.outlinePass.hover.selectedObjects = [hoveredElement.object]
@@ -236,10 +245,13 @@ export default class Viewer {
     })
 
     this.domEl.addEventListener('pointerdown', (e) => {
-      if (hoveredElement && !this.config.shared) isDragging = true
+      if (hoveredElement && (!this.config.shared || (this.config.shared && import.meta.env.DEV)))  {
+        isDragging = true
+      }
     })
 
-    this.domEl.addEventListener('pointerup', (e) => { // Click
+    // Evento al click sul singolo elemento
+    this.domEl.addEventListener('pointerup', (e) => {
       isDragging = false
       this.controls.enabled = true
       // Se sto posizionando un elemento
@@ -254,9 +266,13 @@ export default class Viewer {
           checkpointPosition = null
           return
         }
-        if (typeof this.objectToPlace._setIndex === 'function') this.objectToPlace._setIndex()
-        this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà reinserito nella riga seguente
 
+        // Aggiungo l'indice all'elemento in base alla sua posizione nello spazio, in modo da poterlo cercare facilmente.
+        if (typeof this.objectToPlace._setIndex === 'function') {
+          this.objectToPlace._setIndex()
+        }
+
+        this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà reinserito nella riga seguente
 
         if (this.objectToPlace.config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
         if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
@@ -309,7 +325,7 @@ export default class Viewer {
 
   _selectElement (element) {
     //console.log(element)
-    if(!this.config.shared) {
+    if(!this.config.shared || (this.config.shared && import.meta.env.DEV)) {
       element.isEdit = true
       this.outlinePass.hover.selectedObjects = []
       this.outlinePass.select.selectedObjects = [element.object]

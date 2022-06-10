@@ -10,7 +10,6 @@
     <Teleport to="body">
       <Alert :visible="isAlerting" message="Devi prima posizionare almeno <b>2 montanti</b> per poter aggiungere i ripiani" @confirm="closeModal" @cancel="closeModal">
         <template #actions>
-          miao
           <div alert-actions class="flex items-center justify-center gap-8 mt-6 w-full">
             <Btn class="bg-yellow rounded-full" :label="confirmLabel" @click="closeModal" />
           </div>

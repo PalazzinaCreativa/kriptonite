@@ -17,7 +17,7 @@
       </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
-    <Controls v-if="!config.shared" class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
+    <Controls v-if="canEdit" class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
@@ -97,6 +97,10 @@ tipsModule.getCookies()
 
 const selectedOption = computed(() => optionsModule.selected)
 const isEditingRoom = computed(() => selectedOption.value.id === 2)
+
+const canEdit = computed(() => {
+  return !props.config.shared || props.config.shared && import.meta.env.DEV
+})
 
 const closeRoomSettings = () => {
   optionsModule.resetSelectedOption()
