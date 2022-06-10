@@ -10,7 +10,7 @@ const c = new Client({
 })
 
 // Ricavo le finiture dal Database
-const colors = await c.getColors()
+const colors = async() => await c.getColors()
 
 // Distanza tra i montanti
 const defaultGap = 6.4

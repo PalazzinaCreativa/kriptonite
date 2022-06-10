@@ -13,7 +13,7 @@
       </Transition>
       <Tips />
       <Teleport to="body">
-        <Alert :visible="isAlerting" message="Eliminando questo montante eliminerai tutti quelli alla sua destra e i ripiani ad essi collegati.<br/><br/>Vuoi continuare?" @confirm="confirm" @cancel="closeModal"/>
+        <Alert :visible="isAlerting" message="Eliminando questo montante <b>eliminerai tutti i montanti alla sua destra ed i prodotti ad essi collegati</b>.<br/><br/>Vuoi continuare?" @confirm="confirm" @cancel="closeModal"/>
       </Teleport>
     </div>
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
