@@ -56,9 +56,10 @@ export default defineStore({
     },
 
     getVariants(id) {
-      let fullVariantsList = (this.list.length && id) ? this.list.filter((upright) => {
+      let item = (this.list.length && id) ? this.list.find((upright) => {
         return upright.id === id
-      })[0].variants : []
+      }) : []
+      let fullVariantsList = item.variants ?? []
 
       // Unique by height
       // Se i montanti hanno delle varianti "Sinistra Centro Destra", prendo le varianti di centro
