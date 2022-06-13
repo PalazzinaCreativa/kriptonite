@@ -98,6 +98,7 @@ class Client {
         }
       },
       populate: [
+        'image',
         'variants',
         'variants.model',
       ],
