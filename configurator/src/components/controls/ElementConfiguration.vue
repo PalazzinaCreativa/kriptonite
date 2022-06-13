@@ -7,16 +7,16 @@
     <div configuration-content class="grow my-16 w-full">
       <div class="py-4 px-6">
         <div v-if="mainElement" class="py-8">
-          <img v-if="mainElement.image" :src="mainElement.image.url" :width="mainElement.image.width" :height="mainElement.image.height" :alt="mainElement.image.alternativeText" class="w-[200px] h-full object-cover m-auto my-4" />
+          <img v-if="mainElement.image" :src="mainElement.image.url" :width="mainElement.image.width" :height="mainElement.image.height" :alt="mainElement.image.alternativeText" class="w-[200px] h-full max-h-[180px] object-contain mx-auto my-4" />
           <img v-else src="https://placehold.jp/150x150.png" width="100" height="100" alt="" class="bg-light-gray w-32 h-32 object-cover mx-auto"/>
         </div>
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
-            <component :is="elementSettingsInstance" :element="element" :key="JSON.stringify(element.config)" @update="updateElement" @input="updateDimensions"></component>
+            <component :is="elementSettingsInstance" :element="element" :key="`${JSON.stringify(element.config)}`" @update="updateElement" @input="updateDimensions"></component>
           </div>
         </div>
-        <Textures v-if="element.config.variantId && textures.length && element.config.texture" :key="`texture-${JSON.stringify(element.config?.material?.texture)}`" :element="element" @setTexture="setMaterial"/>
-        <Colors v-if="element.config.variantId && colors.length" :element="element" :key="`color-${JSON.stringify(element.config?.material?.id)}`" @setColor="setMaterial" />
+        <Textures v-if="element.config.variantId && textures.length && element.config.texture" :key="`${JSON.stringify(element.config)}`" :element="element" @setTexture="setMaterial"/>
+        <Colors v-if="element.config.variantId && colors.length" :element="element" :key="`${JSON.stringify(element.config)}`" @setColor="setMaterial" />
       </div>
       <div class="flex items-center justify-center">
         <span v-if="element.config.variantId" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
@@ -98,19 +98,18 @@ const setMaterial = (material) => {
 }
 
 const updateElement = (element) => {
-  props.element.updateElement(element)
-  configurator.updateConfig()
+  /* props.element.updateElement(element)
+  configurator.updateConfig() */
 }
 
-if(props.element.config.texture && textures.length) {
+/* if(props.element.config.texture && textures.length) {
   let startingTexture = textures.find((texture) => {
     return props.element.config.texture === texture.id
   })
   setMaterial(startingTexture)
-}
+} */
 
 const addToAll = () => {
-  //const material = materials.value.find(m => m.id === props.element.config.material.id)
   props.element.setSiblingsMaterial(selectedMaterial.value)
   configurator.updateConfig()
 }
