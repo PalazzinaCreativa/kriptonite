@@ -97,9 +97,10 @@ export default defineStore({
 
     getVariants(id, hasTexture = false, filters = {}) {
       let list = hasTexture ? this.woodenList : this.standardList
-      let variants = (list.length && id) ? list.find((shelf) => {
+      let item = (list.length && id) ? list.find((shelf) => {
         return shelf.id === id
-      }).variants : []
+      }) : {}
+      let variants = item?.variants ?? []
 
       variants = Object.keys(filters).length && variants ? variants.filter((shelf) => {
         return Object.entries(filters).find(([ filter, value ]) => {

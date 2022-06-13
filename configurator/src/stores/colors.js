@@ -25,7 +25,7 @@ export default defineStore({
   actions: {
     async getColors() {
       let response = await c.getColors()
-      this.list = response
+      this.list = response.length ? response.sort((a, b) => a.id - b.id) : this.list
     },
 
     setSelectedColor(color) {

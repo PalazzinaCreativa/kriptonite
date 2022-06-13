@@ -34,6 +34,8 @@ export default class Viewer {
       shared
     }
 
+    this.copy = 0
+
     // Elemento selezionato
     this.selectedObject = null
 
@@ -112,7 +114,7 @@ export default class Viewer {
     this.human = await loadObject('/assets/objects/human/human.gltf')
     this.scene.add(this.human)
 
-    this.human.position.set(50, 0, 60)
+    this.human.position.set(50, 0, 130)
     this.human.visible = false
     this.human.traverse(child => {
       if (child.material?.name === 'text_material') child.material.color = new THREE.Color(0x9b9b9b)
@@ -279,7 +281,7 @@ export default class Viewer {
         if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
         if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
 
-        const newConfig = this.objectToPlace.config // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
+        const newConfig = { ...this.objectToPlace.config, copy: this.copy++ } // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
 
         this.objectToPlace = null
         checkpointPosition = null

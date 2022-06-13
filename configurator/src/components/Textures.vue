@@ -25,21 +25,23 @@ const title = computed(() => props.title || 'Essenza')
 
 const setMaterial = (texture) => {
   texturesModule.setSelectedTexture(texture)
-  let material = props.element.config?.nature ? { ...texture, texture: texture, nature: props.element.config.nature } : texture
+  let material = { ...props.element.config.material, texture: texture, nature: props.element.config.nature ?? 'metallo' }
   emits('setTexture', material)
 }
 
-// Se non ho già impostato una texture
-if(!props.element.config?.material?.texture) {
-  // imposto la texture di default del modello a database
-    //console.log('non ho texture applicate', props.element.config?.texture, textures.value)
-  if(props.element.config?.texture && textures.value && textures.value.length) {
-    let startingTexture = textures.value.find((texture) => props.element.config.texture === texture.id)
-    setMaterial(startingTexture)
+if(textures.value && textures.value.length) {
+  // Se non ho già impostato una texture
+  if(!props.element.config?.material?.texture) {
+    // Se ho già dato una texture ad un altro elemento in precedenza
+    if(Object.keys(selectedTexture.value).length) {
+      setMaterial(selectedTexture.value)
+    } else {
+      // imposto la texture definita a database
+      if(props.element.config?.texture) {
+        let startingTexture = textures.value.find((texture) => props.element.config.texture === texture.id)
+        setMaterial(startingTexture)
+      }
+    }
   }
-} else {
-  //console.log('texture già applicata al modello', props.element.config.material.texture)
-  // altrimenti imposto quella assegnata al modello in precedenza
-  texturesModule.setSelectedTexture(props.element.config.material.texture)
 }
 </script>

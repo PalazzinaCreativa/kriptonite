@@ -141,7 +141,7 @@ export default defineStore({
         ]
       }
     ],
-    selectedTexture: null
+    selectedTexture: {}
   }),
 
   getters: {

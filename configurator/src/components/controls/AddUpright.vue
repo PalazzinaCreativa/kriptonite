@@ -42,8 +42,6 @@ uprightsModule.getUprights(productsModule.selectedProduct.id)
 const tipsModule = useTipsStore()
 const activeTip = computed(() => tipsModule.activeTip)
 
-//const alertIsVisible = ref(true)
-
 const productOptions = computed(() => configurator.options)
 const uprights = computed(() => {
   return uprightsModule.index.length ? uprightsModule.index.filter((upright => {
@@ -52,7 +50,6 @@ const uprights = computed(() => {
 })
 
 const closeAlert = () => {
-  //alertIsVisible.value = false
   tipsModule.closeTip(activeTip.value)
 }
 
@@ -66,11 +63,5 @@ const carouselOptions = {
 
 onMounted(() => {
   tipsModule.setActiveTip('uprights')
-  
-  // Prova: Se ho un solo montante, apro direttamente le sue varianti per l'aggiunta
-  /* if(uprights.value.length === 1) {
-    let upright = uprights.value[0]
-    configurator.addElement({ ...upright.variants[0], id: upright.id, variantId: upright.variants[0].id })
-  } */
 })
 </script>

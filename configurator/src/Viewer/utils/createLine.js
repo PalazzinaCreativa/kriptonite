@@ -3,7 +3,7 @@ import { Line2 } from 'three/examples/jsm/lines/Line2.js'
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 
-export const createLine = ({ from, to, color = 0x4a4a4a, linewidth = 1 }) => {
+export const createLine = ({ from, to, color = 0xa1a1a0, linewidth = 1 }) => {
   const points = [...from, ...to]
   const geometry = new LineGeometry()
   geometry.setPositions(points)

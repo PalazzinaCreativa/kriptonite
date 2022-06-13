@@ -15,7 +15,7 @@ export default class Shelf extends Object3D {
 
   async init () {
     await super.init()
-    super.setMaterial(this.config.material || { color: '#4a4a4a', opacity: 1 }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
+    super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
   setPosition ({ x, y, z }) {

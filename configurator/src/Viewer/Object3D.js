@@ -87,7 +87,8 @@ export default class Object3D {
     window.dispatchEvent(new Event('alert'))
   }
 
-  setMaterial ({ texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id }) {
+  setMaterial (material) {
+    const { texture = null, nature = 'metallo', color = "#FFFFFF", roughness = 0.5, opacity = 1, id } = material
     //console.log('setMaterial', this.object)
     if(!this.object) return
     //console.log('setMaterial', texture, nature, color, roughness, opacity, id)
@@ -111,7 +112,7 @@ export default class Object3D {
       }
     })
 
-    this.config.material = { color, roughness, id, texture, nature }
+    this.config.material = material
   }
 
   setSiblingsMaterial (material) {
