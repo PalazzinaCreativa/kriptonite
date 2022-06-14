@@ -7,18 +7,20 @@
     </div>
     <div v-if="arrows" class="glide__arrows" data-glide-el="controls">
       <slot v-if="slots.arrows" name="arrows" />
-      <div v-else class="absolute flex justify-between top-1/2 left-0 w-full transform -translate-y-1/2">
-        <button class="glide__arrow glide__arrow--left text-gray transform -rotate-180" @click="moveTo('<')">
-          <svg class="w-3 h-auto" width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1L6.5 6.5L1 12" stroke="currentColor"/>
-          </svg>
-        </button>
-        <button class="glide__arrow glide__arrow--right text-gray" @click="moveTo('>')">
-          <svg class="w-3 h-auto" width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1L6.5 6.5L1 12" stroke="currentColor"/>
-          </svg>
-        </button>
-      </div>
+      <template v-else>
+        <div class="absolute flex justify-between top-1/2 left-0 w-full transform -translate-y-1/2">
+          <button class="glide__arrow glide__arrow--left text-gray transform -rotate-180" @click="moveTo('<')">
+            <svg class="w-3 h-auto" width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L6.5 6.5L1 12" stroke="currentColor"/>
+            </svg>
+          </button>
+          <button class="glide__arrow glide__arrow--right text-gray" @click="moveTo('>')">
+            <svg class="w-3 h-auto" width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L6.5 6.5L1 12" stroke="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </template>
     </div>
     <div v-if="dots" class="glide__bullets flex gap-1 items-center justify-center mt-8 w-full" data-glide-el="controls[nav]">
       <slot v-if="slots.dots" name="dots" />

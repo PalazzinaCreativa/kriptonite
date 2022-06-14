@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full h-screen">
+  <div class="relative w-full h-screen" :key="JSON.stringify(questions)">
     <a href="/">
       <Logo class="fixed m-8"/>
     </a>
@@ -43,7 +43,7 @@
   </div>
 </template>
 <script setup>
-import { computed, ref, reactive, defineEmits, defineAsyncComponent } from 'vue'
+import { computed, ref, onMounted, defineEmits, defineAsyncComponent } from 'vue'
 import lget from 'lodash.get'
 import { capitalize } from '../utils/capitalize'
 import { zeroPad } from '../utils/zeroPad'
@@ -56,8 +56,9 @@ import QuestionChoice from '@/components/QuestionChoice.vue'
 import QuestionInput from '@/components/QuestionInput.vue'
 import QuestionButton from '@/components/QuestionButton.vue'
 import QuestionCard from '@/components/QuestionCard.vue'
-import { set } from 'pinia/node_modules/vue-demi'
-import { getBaseTransformPreset } from '@vue/compiler-core'
+import useProductsStore from '@/stores/products'
+
+const productsModule = useProductsStore()
 
 const components = {
   choice: QuestionChoice,
@@ -69,12 +70,25 @@ const components = {
 const emit = defineEmits(['start'])
 const step = ref(0)
 let questions = ref(initialSetupData)
-const current = computed(() => questions[step.value]) // Dati per lo step corrente
+// Dati per lo step corrente
+const current = computed(() => questions[step.value])
+const products = productsModule.index
 const target = ref({ option: {}, isAnimating: false })
-const config = ref({ room: { dimensions: { width: 400, height: 250, depth: 60, leftHeight: 60, rightHeight: 60 } }, product: {}})
+const config = ref({ room: { dimensions: { width: 400, height: 270, depth: 60, leftHeight: 60, rightHeight: 60 } }, product: {}})
 
 const iconType = ref(config)
 const icon = computed(() => iconType.value.room?.type ? defineAsyncComponent(() => import(`./icons/Wall${capitalize(iconType.value.room.type)}.vue`)) : null)
+
+onMounted(() => {
+  // Inserimento contenuti dal CMS
+  let productChoiceQuestion = questions.value.length ? questions.value.find(question => (question.key === 'type' && question.super === 'product')) : null
+  if(products.length && productChoiceQuestion?.options?.length) {
+    productChoiceQuestion.options.map((option) => {
+      let product = products.find(product => product.sku === option.key)
+      option.image = product?.image?.url || option.image
+    })
+  }
+})
 
 const handleClick = (option, question) => {
   if (question.super && question.key && option.key) config.value[question.super][question.key] = option.key

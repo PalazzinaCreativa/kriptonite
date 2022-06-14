@@ -4,7 +4,7 @@
       <div v-if="mainElement" v-text="mainElement.name" />
       <Close class="cursor-pointer" @click="close" />
     </div>
-    <div configuration-content class="grow my-16 w-full">
+    <div v-if="elementIsMounted" configuration-content class="grow my-16 w-full">
       <div class="py-4 px-6">
         <div v-if="mainElement" class="py-8">
           <img v-if="mainElement.image" :src="mainElement.image.url" :width="mainElement.image.width" :height="mainElement.image.height" :alt="mainElement.image.alternativeText" class="w-[200px] h-full max-h-[180px] object-contain mx-auto my-4" />
@@ -12,7 +12,7 @@
         </div>
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
-            <component :is="elementSettingsInstance" :element="element" :key="`${JSON.stringify(element.config)}`" @update="updateElement" @input="updateDimensions"></component>
+            <component :is="elementSettingsInstance" :element="element" @input="updateDimensions"></component>
           </div>
         </div>
         <Textures v-if="element.config.variantId && textures.length && element.config.texture" :key="`${JSON.stringify(element.config)}`" :element="element" @setTexture="setMaterial"/>
@@ -71,20 +71,22 @@ const data = {
   case: cases
 }
 
+const elementIsMounted = ref(false)
+
+const elementConfig = ref(props.element.config)
+
 // Ricavo e stampo il nome del componente e non della variante
 const mainElement = computed(() => {
-  return data[props.element.config.type].length ? data[props.element.config.type].find((item) => {
-    return props.element.config.type !== 'obstacle' && item.variants?.length ?
-      item.variants.some((variant) => variant.id === props.element.config.variantId) :
-      props.element.config.id === item.id
+  return data[elementConfig.value.type].length ? data[elementConfig.value.type].find((item) => {
+    return elementConfig.value.type !== 'obstacle' && item.variants?.length ?
+      item.variants.some((variant) => variant.id === elementConfig.value.variantId && variant.sku === elementConfig.value.sku) :
+      elementConfig.value.id === item.id
   }) : null
 })
 
 const selectedMaterial = computed(() => {
   return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: props.element.config.nature }
 })
-
-var elementConfig = ref(props.element.config)
 
 const obstacleDimensions = ref({
   width: props.element.getSize().width,
@@ -96,6 +98,10 @@ const setMaterial = (material) => {
   props.element.setMaterial({ ...props.element.config?.material, ...material })
   configurator.updateConfig()
 }
+
+onMounted(() => {
+  elementIsMounted.value = true
+})
 
 const updateElement = (element) => {
   /* props.element.updateElement(element)
