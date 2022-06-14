@@ -54,7 +54,8 @@
   }
 
   const addElement = (variant) => {
-    configurator.addElement({ ...variant, id: props.element.id, material: { ...props.element.config.material, texture: { id: props.element.config.material.texture.id } }, variantId: variant.id })
+    let material = props.element.config.texture ? { ...props.element.config.material, texture: { id: props.element.config.material.texture.id } } : props.element.config.material
+    configurator.addElement({ ...variant, id: props.element.id, material, variantId: variant.id })
   }
 
   getVariants()
