@@ -207,7 +207,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'K1',
         description: 'Sistema a parete modulabile, composto da montanti a cremagliera, ripiani e contenitori.',
-        image: 'k1.jpeg',
+        image: 'assets/images/k1.jpeg',
         key: 'k1',
         showIf: {
           entity: 'product.inRoomPosition',
@@ -218,7 +218,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'K2',
         description: 'Sistema k2 nella versione cielo terra a pressione o a parete. Si compone di montanti, ripiani e diversi tipi di contenitori che permettono di creare soluzioni d’arredo adatte in ogni ambiente della casa, dalla zona giorno alla zona notte, spazi espositivi come negozi e showroom.',
-        image: 'k2.jpeg',
+        image: 'assets/images/k2.jpeg',
         key: 'k2',
         showIf: {
           entity: 'product.inRoomPosition',
@@ -229,7 +229,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'K2',
         description: 'Sistema k2 nella versione cielo terra a pressione o a parete. Si compone di montanti, ripiani e diversi tipi di contenitori che permettono di creare soluzioni d’arredo adatte in ogni ambiente della casa, dalla zona giorno alla zona notte, spazi espositivi come negozi e showroom.',
-        image: 'k2.jpeg',
+        image: 'assets/images/k2.jpeg',
         key: 'k2',
         showIf: {
           entity: 'product.inRoomPosition',
@@ -276,7 +276,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Sospesa',
         description: '',
-        image: 'floating.jpeg',
+        image: 'assets/images/floating.jpeg',
         key: 'wall',
         showIf: {
           entity: 'product.type',
@@ -287,7 +287,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'A terra',
         description: '',
-        image: 'ground.jpeg',
+        image: 'assets/images/ground.jpeg',
         key: 'standalone',
         showIf: {
           entity: 'product.type',
@@ -298,7 +298,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Terra-cielo',
         description: '',
-        image: 'groundtotop.jpeg',
+        image: 'assets/images/groundtotop.jpeg',
         key: 'standalone',
         showIf: {
           entity: 'product.type',
@@ -309,7 +309,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Parete-terra',
         description: '',
-        image: 'walltoground.jpeg',
+        image: 'assets/images/walltoground.jpeg',
         key: 'wall',
         showIf: {
           entity: 'product.type',
@@ -329,7 +329,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Terra-cielo',
         description: '',
-        image: 'groundtotop.jpeg',
+        image: 'assets/images/groundtotop.jpeg',
         key: 'standalone',
         showIf: {
           entity: 'product.type',

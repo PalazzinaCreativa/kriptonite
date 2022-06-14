@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Survey v-if="!showConfigurator" @start="start"/>
-    <Configurator v-else :config="config" />
+    <Survey v-if="!showConfigurator && products.length" @start="start"/>
+    <Configurator v-if="showConfigurator" :config="config" />
     <div v-if="!showConfigurator && devMode" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
     Go to configurator
     </div>

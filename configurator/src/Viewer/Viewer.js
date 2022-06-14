@@ -252,16 +252,23 @@ export default class Viewer {
       }
     })
 
-    // Evento al click sul singolo elemento
+    // Evento al rilascio del mouse
     this.domEl.addEventListener('pointerup', (e) => {
+      // L'evento di trascinamento è completato
       isDragging = false
       this.controls.enabled = true
-      // Se sto posizionando un elemento
+      
+      // Se si sta posizionando un elemento
+      // console.log('isAdding:', this._isAddingNewElement, 'object:', this.objectToPlace)
       if (this.objectToPlace) {
-        // Se l'oggetto è in una posizione non idonea
+        // Se l'elemento è in una posizione non idonea
         if (this._positioningBlocked || this.objectToPlace._cantBePositioned) {
-          if (this._isAddingNewElement) return // Se sto aggiungendo un nuovo elemento non faccio nulla
-          if (checkpointPosition) this.objectToPlace.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z) // Se ho una posizione di backup torno in quel punto
+          // Se si sta aggiungendo un nuovo elemento non faccio nulla
+          if (this._isAddingNewElement) return
+          // Se ho una posizione di backup torno in quel punto
+          if (checkpointPosition) {
+            this.objectToPlace.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z)
+          }
           this.objectToPlace.setMaterial({ opacity: 1 })
           this.objectToPlace = null
           this.selectedElement = null
@@ -274,23 +281,27 @@ export default class Viewer {
           this.objectToPlace._setIndex()
         }
 
-        this.scene.remove(this.objectToPlace.object) // Rimuovo elmento dalla scena perchè verrà reinserito nella riga seguente
-
-        if (this.objectToPlace.config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
-        if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
-        if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
-        if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
+        // Rimuovo elmento dalla scena perchè verrà reinserito nella riga seguente
+        this.scene.remove(this.objectToPlace.object)
+        
+        if (this._isAddingNewElement) {
+          if (this.objectToPlace.config.type === 'obstacle') this.room.addObstacle(this.objectToPlace)
+          if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
+          if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
+          if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
+        }
 
         const newConfig = { ...this.objectToPlace.config, copy: this.copy++ } // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
 
         this.objectToPlace = null
         checkpointPosition = null
         this.updateConfig()
-        this._isAddingNewElement = false // abilita / disabilita la funzione che permette di aggiungere l'elemento scelto in maniera consecutiva
-        if (newConfig.type !== 'obstacle') {
+        // Se l'elemento è abilitato per l'inserimento a ripetizione e si sta aggiungendo un nuovo elemento alla scena
+        if (this._isAddingNewElement && newConfig.type !== 'obstacle') {
           this.addElement(newConfig)
-          this._isAddingNewElement = true
+          return
         }
+        this._isAddingNewElement = false
         return
       }
       // Se non sono in hover su nessun elemento, elimino eventuali selezioni
@@ -373,6 +384,7 @@ export default class Viewer {
   }
 
   async addElement (config) {
+    // console.log('aggiungo', config)
     this._isAddingNewElement = true
 
     // Se è un dispositivo touch disabilito i movimenti di camera al touch

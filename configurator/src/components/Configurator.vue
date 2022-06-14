@@ -21,7 +21,7 @@
       <Transition name="slide-in">
         <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
       </Transition>
-      <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
+      <ElementConfiguration v-if="selectedElement" :element="selectedElement" :key="`${JSON.stringify(selectedElement.config)}`" @close="closeElementSettings" />
       <ProductList v-if="showList" @close="showList = false" />
       <DownloadModel v-if="showDownload" :config="config" @close="showDownload = false" />
     </Controls>

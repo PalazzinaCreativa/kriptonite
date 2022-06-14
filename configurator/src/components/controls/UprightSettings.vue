@@ -3,7 +3,7 @@
     <div variants>
       <div class="uppercase text-center mb-6 w-full">Altezza (cm)</div>
       <div v-if="isVisible" class="flex flex-wrap justify-center gap-6">
-        <div v-for="(variant, index) in variants" :key="`variant-${index}`" @click="chooseVariant(variant)">
+        <div v-for="(variant, index) in variants" :key="`variant-${index}`" @click="addElement(variant)">
           <div class="border border-light-gray cursor-pointer px-4 py-6 min-w-[90px] text-center hover:border-yellow transform transition-all duration-400" :class="isSelected(variant.id) ? 'bg-yellow' : 'bg-white'">
             <div v-text="variant.height" />
           </div>
@@ -36,15 +36,7 @@
 
   const isSelected = (variantId) => props.element.variantId === variantId
 
-  const chooseVariant = (variant) => {
-    // Se sto modificando un elemento già inserito
-    //if(props.element.hasOwnProperty('index')) {
-      //configurator.addElement({ ...variant, id: props.element.id, variantId: variant.id })
-
-      //emits('update', { ...variant, id: props.element.id, variantId: variant.id })
-    //} else {
-      // Se sto inserendo un nuovo elemento
-      configurator.addElement({ ...variant, id: props.element.id, variantId: variant.id })
-    //}
+  const addElement = (variant) => {
+    configurator.addElement({ ...variant, id: props.element.id, variantId: variant.id })
   }
 </script>
