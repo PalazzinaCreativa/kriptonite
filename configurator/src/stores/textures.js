@@ -128,7 +128,7 @@ export default defineStore({
         id: 4,
         name: 'tiles',
         thumb: '/assets/textures/tiles/tiles_map.jpg',
-        repeat: [1, 2],
+        repeat: [2, 3.5],
         ext: 'jpg',
         isStatic: true,
         maps: [

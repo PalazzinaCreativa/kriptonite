@@ -3,7 +3,7 @@
     <div class="uppercase text-center w-full" v-text="title" />
     <div class="flex flex-wrap justify-center gap-12 my-8">
       <div v-for="texture in textures" :key="`texture-${texture.id}`" class="flex flex-col items-center justify-center cursor-pointer max-w-[150px]" @click="setMaterial(texture)">
-        <div class="border-2 w-14 h-14 rounded-full" :class="props.element.config.material?.texture?.id === texture.id ? 'border-2 border-yellow' : 'border-dark-gray'" :style="`background: url('${texture.thumb}') center center / cover`"></div>
+        <div class="border-2 w-14 h-14 rounded-full" :class="props.element.config?.material?.texture?.id === texture.id ? 'border-2 border-yellow' : 'border-dark-gray'" :style="`background: url('${texture.thumb}') center center / cover`"></div>
         <div class="text-center mt-3 w-full" v-text="texture.label" />
       </div>
     </div>
@@ -25,7 +25,7 @@ const title = computed(() => props.title || 'Essenza')
 
 const setMaterial = (texture) => {
   texturesModule.setSelectedTexture(texture)
-  let material = { ...props.element.config.material, texture: texture, nature: props.element.config.nature ?? 'metallo' }
+  let material = props.entity === 'room' ? texture : { ...props.element.config.material, texture: texture, nature: props.element.config.nature ?? 'metallo' }
   emits('setTexture', material)
 }
 
