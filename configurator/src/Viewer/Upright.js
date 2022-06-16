@@ -10,7 +10,9 @@ const c = new Client({
 })
 
 // Ricavo le finiture dal Database
-const colors = async() => await c.getColors()
+const getColors = async() => await c.getColors()
+var colors = await getColors()
+colors = colors.length ? colors.sort((a, b) => a.id - b.id) : colors
 
 // Distanza tra i montanti
 const defaultGap = 6.4
@@ -37,7 +39,7 @@ export default class Upright extends Object3D {
     // Settaggio della prima finitura dell'elemento in fase di inserimento:
     // Verrà scelta la finitura impostata dall'utente oppure il primo risultato proveniente dal Database.
     let firstColor = colors.length ? colors[0] : { color: '#a1a1a1' }
-    super.setMaterial(this.config.material || { firstColor, color: firstColor.code }, false)
+    super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false)
   }
 
   multipleDeletionAlert(state) {

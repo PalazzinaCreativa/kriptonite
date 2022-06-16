@@ -7,7 +7,7 @@
       Go to configurator
       </div>
     </div>
-    <DeviceNotAllowedAlert v-show="!canConfigure" />
+    <DeviceNotAllowedAlert v-if="!canConfigure" />
   </div>
 </template>
 

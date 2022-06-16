@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-5">
+  <div class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full">
     <div configuration-header class="bg-light-gray flex items-center justify-between py-4 px-6 w-full">
       <div v-text="title" />
       <Close class="cursor-pointer" @click="close" />

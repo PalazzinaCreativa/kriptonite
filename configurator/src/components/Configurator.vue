@@ -19,7 +19,7 @@
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls v-if="canEdit" class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
       <Transition name="slide-in">
-        <RoomSettings v-if="isEditingRoom" class="absolute z-5" :element="config.room" @close="closeRoomSettings" />
+        <RoomSettings v-if="isEditingRoom" class="absolute z-6" :element="config.room" @close="closeRoomSettings" />
       </Transition>
       <Transition name="slide-in">
         <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
@@ -188,6 +188,7 @@ onMounted(() => {
 
   viewer.setHook('selectElement', (element) => {
     selectedElement.value = element
+    optionsModule.resetSelectedOption()
   })
 
   viewer.setHook('removeSelectedElement', () => {

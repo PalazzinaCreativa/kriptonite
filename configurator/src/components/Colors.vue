@@ -48,6 +48,9 @@ if(colors.value && colors.value.length) {
         }
       }
     }
+  } else {
+    // altrimenti imposto quello già assegnato al modello in precedenza
+    setMaterial(materialColor.value)
   }
 } 
 </script>
