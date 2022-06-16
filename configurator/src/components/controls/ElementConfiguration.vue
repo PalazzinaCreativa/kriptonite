@@ -1,10 +1,10 @@
 <template>
-  <div v-if="element.config" class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-5">
+  <div class="absolute bg-white flex-col flex h-screen overflow-y-auto w-full z-5">
     <div configuration-header class="bg-light-gray flex fixed top-0 left-0 items-center justify-between py-4 px-6 w-full">
       <div v-if="mainElement" v-text="mainElement.name" />
       <Close class="cursor-pointer" @click="close" />
     </div>
-    <div v-if="elementIsMounted" configuration-content class="grow my-16 w-full">
+    <div configuration-content class="grow my-16 w-full">
       <div class="py-4 px-6">
         <div v-if="mainElement" class="py-8">
           <img v-if="mainElement.image" :src="mainElement.image.url" :width="mainElement.image.width" :height="mainElement.image.height" :alt="mainElement.image.alternativeText" class="w-[200px] h-full max-h-[180px] object-contain mx-auto my-4" />
@@ -12,14 +12,18 @@
         </div>
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
-            <component :is="elementSettingsInstance" :element="element" @input="updateDimensions"></component>
+            <component :is="elementSettingsInstance" :key="JSON.stringify(currentElement.config)" :element="currentElement" @input="updateDimensions"></component>
           </div>
         </div>
-        <Textures v-if="element.config.variantId && textures.length && element.config.texture" :key="`${JSON.stringify(element.config)}`" :element="element" @setTexture="setMaterial"/>
-        <Colors v-if="element.config.variantId && colors.length" :element="element" :key="`${JSON.stringify(element.config)}`" @setColor="setMaterial" />
+        <Transition name="fade">
+          <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="JSON.stringify(currentElement.config)" :element="currentElement" @setTexture="setMaterial"/>
+        </Transition>
+        <Transition name="fade">
+          <Colors v-if="currentElement.config.variantId && colors.length" :key="JSON.stringify(currentElement.config)" :element="currentElement" @setColor="setMaterial" />
+        </Transition>
       </div>
       <div class="flex items-center justify-center">
-        <span v-if="element.config.variantId" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
+        <span v-if="currentElement.config.variantId" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
       </div>
     </div>
     <div configuration-actions class="flex fixed bottom-0 left-0 w-full">
@@ -55,7 +59,7 @@ const casesModule = useCasesStore()
 const colorsModule = useColorsStore()
 const texturesModule = useTexturesStore()
 
-const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(/* @vite-ignore */`./${capitalize(props.element.config.type)}Settings.vue`))))
+const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(/* @vite-ignore */`./${capitalize(currentElement.value.config.type)}Settings.vue`))))
 
 const encumbrances = encumbrancesModule.index
 const uprights = uprightsModule.index
@@ -71,52 +75,52 @@ const data = {
   case: cases
 }
 
-const elementIsMounted = ref(false)
+//const elementIsMounted = ref(false)
 
-const elementConfig = ref(props.element.config)
+const currentElement = computed(() => props.element)
+//const currentElement.config = computed(() => currentElement.value.config)
 
 // Ricavo e stampo il nome del componente e non della variante
 const mainElement = computed(() => {
-  return data[elementConfig.value.type].length ? data[elementConfig.value.type].find((item) => {
-    return elementConfig.value.type !== 'obstacle' && item.variants?.length ?
-      item.variants.some((variant) => variant.id === elementConfig.value.variantId && variant.sku === elementConfig.value.sku) :
-      elementConfig.value.id === item.id
+  return data[currentElement.value.config.type].length ? data[currentElement.value.config.type].find((item) => {
+    return currentElement.value.config.type !== 'obstacle' && item.variants?.length ?
+      item.variants.some((variant) => variant.id === currentElement.value.config.variantId && variant.sku === currentElement.value.config.sku) :
+      currentElement.value.config.id === item.id
   }) : null
 })
 
 const selectedMaterial = computed(() => {
-  return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: props.element.config.nature }
+  return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: currentElement.value.config.nature }
 })
 
 const obstacleDimensions = ref({
-  width: props.element.getSize().width,
-  height: props.element.getSize().height,
-  depth: props.element.getSize().depth
+  width: currentElement.value.getSize().width,
+  height: currentElement.value.getSize().height,
+  depth: currentElement.value.getSize().depth
 })
 
 const setMaterial = (material) => {
-  props.element.setMaterial({ ...props.element.config?.material, ...material })
+  currentElement.value.setMaterial({ ...currentElement.value.config?.material, ...material })
   configurator.updateConfig()
 }
-
-onMounted(() => {
+/* onMounted(() => {
   elementIsMounted.value = true
-})
+}) */
 
 const updateElement = (element) => {
-  /* props.element.updateElement(element)
+  /* currentElement.value.updateElement(element)
   configurator.updateConfig() */
 }
 
-/* if(props.element.config.texture && textures.length) {
+/* if(currentElement.value.config.texture && textures.length) {
   let startingTexture = textures.find((texture) => {
-    return props.element.config.texture === texture.id
+    return currentElement.value.config.texture === texture.id
   })
   setMaterial(startingTexture)
 } */
 
 const addToAll = () => {
-  props.element.setSiblingsMaterial(selectedMaterial.value)
+  currentElement.value.setSiblingsMaterial(selectedMaterial.value)
   configurator.updateConfig()
 }
 
@@ -126,27 +130,40 @@ const close = () => {
 }
 
 const updateDimensions = (dimensions) => {
-  elementConfig.value = dimensions
-  props.element.setSize(elementConfig.value)
+  currentElement.value.config = dimensions
+  currentElement.value.setSize(currentElement.value.config)
 }
 
-const addLabel = props.element.isEdit ? '' : 'Aggiungi'
+const addLabel = currentElement.value.isEdit ? '' : 'Aggiungi'
 
-const destroyLabel = props.element.isEdit ? 'Elimina elemento' : 'Termina inserimento'
+const destroyLabel = currentElement.value.isEdit ? 'Elimina elemento' : 'Termina inserimento'
 
 const addElement = () => {
-  updateDimensions(elementConfig.value)
+  updateDimensions(currentElement.value.config)
   close()
 }
 
 const handleCancel = () => {
-  if(props.element.isEdit) {
+  if(currentElement.value.isEdit) {
     destroy()
   }
   close()
 }
 
 const destroy = () => {
-  props.element.destroy()
+  currentElement.value.destroy()
 }
 </script>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  opacity: 1;
+  transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transition: all 0.1s cubic-bezier(1, 0.5, 0.8, 1);
+}
+</style>

@@ -5,10 +5,10 @@
       <Close class="cursor-pointer" @click="close" />
     </div>
     <div configuration-content class="grow w-full">
+      <Textures class="mt-8" title="Pavimento" :key="`${JSON.stringify(element)}`" :element="element" entity="room" @setTexture="setMaterial"/>
       <div class="mt-8 px-6">
         <SetWallColor @changeColor="color => $emit('changeColor', color)" />
       </div>
-      <Textures title="Pavimento" :element="element" entity="room" @setTexture="setMaterial"/>
       <!-- <div class="flex items-center justify-center">
         <span v-if="element.config.material" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
       </div> -->

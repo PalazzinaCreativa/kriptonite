@@ -96,7 +96,9 @@ export default class Object3D {
       if (child.material) {
         child.material.transparent = false
         if (opacity) child.material.opacity = opacity
-        if (color && child.material.name.indexOf('legno') < 0) { child.material.color = new THREE.Color(stringToThreeColor(color))}
+        if (child.material.name.indexOf('legno') < 0) {
+          child.material.color = new THREE.Color(stringToThreeColor(color))
+        }
         if (roughness) child.material.roughness = roughness
         // Applico la texture ai legni
         if (texture && child.material.name) {
@@ -104,7 +106,7 @@ export default class Object3D {
           if(child.material.name.indexOf('legno_v') >= 0) {
             texture.rotation = 0
           }
-          if (child.material.name.indexOf(nature) >= 0) {
+          if (child.material.name.indexOf('legno') >= 0) {
             texture.repeat = [4, 4]
             await addTexture(child.material, texture)
           }
