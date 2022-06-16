@@ -11,7 +11,7 @@ const c = new Client({
 
 // Ricavo le finiture dal Database
 const getColors = async() => await c.getColors()
-var colors = await getColors()
+var colors = getColors()
 colors = colors.length ? colors.sort((a, b) => a.id - b.id) : colors
 
 // Distanza tra i montanti
