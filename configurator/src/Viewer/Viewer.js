@@ -197,6 +197,7 @@ export default class Viewer {
 
       // Se c'è un oggetto da posizionare
       if (this.objectToPlace) {
+        // console.log('sto draggando un elemento')
         const intersects = raycaster.intersectObjects([this.room.main]) // Controllo i punti di intersezione con la stanza
         const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
         if (!roomIntersection) return
@@ -269,7 +270,7 @@ export default class Viewer {
           if (checkpointPosition) {
             this.objectToPlace.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z)
           }
-          this.objectToPlace.setMaterial({ opacity: 1 })
+          //this.objectToPlace.setMaterial({ opacity: 1 })
           this.objectToPlace = null
           this.selectedElement = null
           checkpointPosition = null
@@ -289,6 +290,8 @@ export default class Viewer {
           if (this.objectToPlace.config.type === 'upright') this.product.addUpright(this.objectToPlace)
           if (this.objectToPlace.config.type === 'shelf') this.product.addShelf(this.objectToPlace)
           if (this.objectToPlace.config.type === 'case') this.product.addCase(this.objectToPlace)
+        } else {
+          this.objectToPlace.setMaterial(this.objectToPlace.config?.material || { opacity: 1 })
         }
 
         const newConfig = { ...this.objectToPlace.config, copy: this.copy++ } // Mi salvo la configurazione dell'oggetto corrente per utilizzarla nel prodotto da inserire in seguito
@@ -329,7 +332,7 @@ export default class Viewer {
     window.addEventListener('resize',() => {
       this.zoomOnTarget({ z: 400 }, 0.4)
       this.camera.aspect = this.domEl.offsetWidth / this.domEl.offsetHeight
-      if(this.camera) this.camera.updateProjectionMatrix()
+      this.camera.updateProjectionMatrix()
       this.renderer.setSize(this.domEl.offsetWidth, this.domEl.offsetHeight)
       this._animate()
       this.zoomOnTarget()
