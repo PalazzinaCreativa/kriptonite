@@ -28,7 +28,7 @@ const viewportWidth = ref(window.innerWidth)
 const orientation = ref(window.screen.orientation.type)
 const userAgent = ref(false)
 const canConfigure = computed(() => {
-  return orientation.value === 'landscape-primary' && window.innerWidth >= 900
+  return orientation.value === 'landscape-primary' && viewportWidth.value >= 900
 })
 
 const checkDeviceSpecs = () => {
