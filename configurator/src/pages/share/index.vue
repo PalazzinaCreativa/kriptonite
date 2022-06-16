@@ -1,15 +1,10 @@
 <template>
-    <div>share</div>
+    <div></div>
 </template>
-<script setup>
-import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useConfiguratorStore } from '@/stores/configurator'
-
-const route = useRoute()
-const configurator = useConfiguratorStore()
-
-onMounted(() => {
-    //console.log(route)
-})
+<script>
+export default {
+  beforeRouteEnter (to, from, next) {
+    if(to.name === 'share') { next({ path: '/' }) }
+  }
+}
 </script>

@@ -1,26 +1,44 @@
 <template>
   <div>
-    <Survey v-if="!showConfigurator && products.length" @start="start"/>
-    <Configurator v-if="showConfigurator" :config="config" />
-    <div v-if="!showConfigurator && devMode" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
-    Go to configurator
+    <div v-show="canConfigure">
+      <Survey v-if="!showConfigurator && products.length" @start="start"/>
+      <Configurator v-if="showConfigurator && config" :config="config" />
+      <div v-if="!showConfigurator && devMode" class="fixed right-12 bottom-12 underline text-black cursor-pointer z-3" @click="handleGoToConfigurator">
+      Go to configurator
+      </div>
     </div>
+    <DeviceNotAllowedAlert v-show="!canConfigure" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import useProductsStore from '@/stores/products'
 import Survey from '@/components/Survey.vue'
 import Configurator from '@/components/Configurator.vue'
+import DeviceNotAllowedAlert from '@/components/DeviceNotAllowedAlert.vue'
 
 const productsModule = useProductsStore()
 productsModule.getProducts()
 
 const config = ref(null)
 const showConfigurator = ref(false)
-
 const devMode = ref(import.meta.env.DEV)
+const viewportWidth = ref(window.innerWidth)
+const orientation = ref(window.screen.orientation.type)
+const userAgent = ref(false)
+const canConfigure = computed(() => {
+  return orientation.value === 'landscape-primary' && window.innerWidth >= 900
+})
+
+const checkDeviceSpecs = () => {
+  orientation.value = window.screen.orientation.type
+  viewportWidth.value = window.innerWidth
+}
+
+onMounted(() => {
+  window.addEventListener("resize", checkDeviceSpecs);
+})
 
 const defaultConfig = {
   step: 4,
