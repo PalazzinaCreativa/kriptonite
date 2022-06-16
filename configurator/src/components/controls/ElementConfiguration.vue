@@ -15,12 +15,8 @@
             <component :is="elementSettingsInstance" :key="JSON.stringify(currentElement.config)" :element="currentElement" @input="updateDimensions"></component>
           </div>
         </div>
-        <Transition name="fade">
           <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="JSON.stringify(currentElement.config)" :element="currentElement" @setTexture="setMaterial"/>
-        </Transition>
-        <Transition name="fade">
           <Colors v-if="currentElement.config.variantId && colors.length" :key="JSON.stringify(currentElement.config)" :element="currentElement" @setColor="setMaterial" />
-        </Transition>
       </div>
       <div class="flex items-center justify-center">
         <span v-if="currentElement.config.variantId" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
