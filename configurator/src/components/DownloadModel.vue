@@ -12,7 +12,7 @@
         <Btn v-if="shareLink" class="bg-light-gray w-full" label="Copia" @click="copyLink" />
       </div>
       <Transition name="fade-up">
-        <div v-if="linkWasCopied" class="border-2 border-yellow rounded-lg text-s text-center p-4 my-4 w-full" v-text="`Link copiato`"></div>
+        <div v-if="linkWasCopied" class="bg-black rounded-md text-white text-s text-center py-2 px-4 my-4 w-full" v-text="`Link copiato negli appunti`"></div>
       </Transition>
     </div>
     <div v-if="requestQuoteLabel" configuration-actions class="flex fixed bottom-0 left-0 w-full">
