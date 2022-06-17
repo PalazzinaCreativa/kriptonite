@@ -32,7 +32,7 @@ const props = defineProps(['config'])
 const emits = defineEmits(['close'])
 
 const configurator = useConfiguratorStore()
-const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : 'https://configurator.kriptonite.com'// ref(import.meta.env.VITE_PROD_URL)
+const baseURL = import.meta.env.DEV ? ref(import.meta.env.VITE_LOCAL_URL) : ref('https://configurator.kriptonite.com')// ref(import.meta.env.VITE_PROD_URL)
 const currentConfiguration = computed(() => configurator.currentConfiguration)
 const configurationId = computed(() => currentConfiguration.value?.code || '')
 const shareLink = ref('')
