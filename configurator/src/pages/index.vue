@@ -488,6 +488,7 @@ const fastConfigK1 = {
       ]
     },
     product: {
+      id: 1,
       type: "k1",
       inRoomPosition: "wall",
       uprightsPosition: "wall",
@@ -818,6 +819,7 @@ const defaultConfigK2 = {
       ]
     },
     product: {
+      id: 2,
       type: "k2",
       inRoomPosition: "standalone",
       uprightsPosition: "standalone",
@@ -1112,6 +1114,7 @@ const setSelectedProduct = (product) => {
   const selectedProduct = product.type ? products.value.find((item) => {
     return item.sku === product.type
   }) : products.value[0]
+  config.value.product.id = selectedProduct.id
   productsModule.setSelectedProduct(selectedProduct)
 }
 
@@ -1123,8 +1126,8 @@ const handleGoToConfigurator = () => {
 }
 
 const start = (payload) => {
-  setSelectedProduct(payload.product)
   config.value = payload
+  setSelectedProduct(payload.product)
   showConfigurator.value = true
 }
 </script>
