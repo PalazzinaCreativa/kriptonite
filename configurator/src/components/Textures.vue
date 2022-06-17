@@ -27,8 +27,10 @@ const title = computed(() => props.title || 'Essenza')
 const materialTexture = computed(() => props.element?.config?.material?.texture)
 
 const setMaterial = (texture) => {
-  texturesModule.setSelectedTexture(texture)
-  let material = props.entity === 'room' ? texture : { ...props.element.config.material, texture: texture, nature: props.element.config.nature ?? 'metallo' }
+  if(props.entity !== 'room') {
+    texturesModule.setSelectedTexture(texture)
+  }
+  let material = props.entity === 'room' ? texture : { ...props.element.config.material, texture: texture, nature: props.element.config.nature || 'metallo' }
   emits('setTexture', material)
 }
 
@@ -37,16 +39,18 @@ const isActive = (texture) => {
 }
 
 if(textures.value && textures.value.length) {
-  // Se non ho già impostato una texture
-  if(!materialTexture.value) {
-    // Se ho già dato una texture ad un altro elemento in precedenza
-    if(Object.keys(selectedTexture.value).length) {
-      setMaterial(selectedTexture.value)
-    } else {
-      // imposto la texture definita a database
-      if(props.element.config?.texture) {
-        let startingTexture = textures.value.find((texture) => props.element.config.texture === texture.id)
-        setMaterial(startingTexture)
+  if(props.entity !== 'room') {
+    // Se non ho già impostato una texture
+    if(!materialTexture.value) {
+      // Se ho già dato una texture ad un altro elemento in precedenza
+      if(Object.keys(selectedTexture.value).length) {
+        setMaterial(selectedTexture.value)
+      } else {
+        // imposto la texture definita a database
+        if(props.element.config?.texture) {
+          let startingTexture = textures.value.find((texture) => props.element.config.texture === texture.id)
+          setMaterial(startingTexture)
+        }
       }
     }
   }
