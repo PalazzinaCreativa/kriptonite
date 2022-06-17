@@ -194,13 +194,16 @@ export default class Viewer {
       )
       raycaster.setFromCamera(pointer, this.camera) // Aggiorna il raycaster con le coordinate del mouse per verificare le intersezioni
 
-
       // Se c'è un oggetto da posizionare
       if (this.objectToPlace) {
-        // console.log('sto draggando un elemento')
         const intersects = raycaster.intersectObjects([this.room.main]) // Controllo i punti di intersezione con la stanza
         const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
         if (!roomIntersection) return
+        
+        // Se è un montante K2 cielo-terra
+        if(this.room.config.type === 'attic' && this.objectToPlace.product.type === 'k2' && this.objectToPlace.product.inRoomPosition === 'standalone') {
+          this.objectToPlace.setSize()
+        }
 
         const objectPlaced = placeObject({
           point: roomIntersection.point,

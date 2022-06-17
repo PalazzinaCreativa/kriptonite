@@ -55,17 +55,44 @@ export default class Upright extends Object3D {
 
     const { width, height, depth } = this.getSize()
 
-    //console.log('montante K2', this.product, this.config, this.product.viewer?.room, this.product.viewer?.room?.config?.dimensions?.height, height)
+    /* console.log(
+      'dimensioni:', dimensions,
+      'object:', this.object,
+      'montante K2:', this.config,
+      'stanza:', this.product.viewer?.room,
+      'altezza stanza:', this.product.viewer?.room?.config?.dimensions?.height,
+      'altezza montante:', height
+    ) */
+    // Se il prodotto è un montante K2 cielo-terra, la sua altezza dev'essere pari a quella della stanza
+    var roomHeightScale = 1
+    var roomHeight
+    if(this.product.uprightsPosition === 'standalone' && this.product.type === 'k2') {
+      if(this.product.viewer?.room?.config?.type === 'attic') {
+        const sideWidth = this.product.viewer.config.room.leftHeight > this.product.viewer.config.room.rightHeight // Larghezza del cateto inferiore
+        ? this.product.viewer.config.room.width - this.getPosition().x
+        : this.getPosition().x
+        
+        const unknownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
+        
+        // Altezza della mansarda alla posizione del mouse
+        roomHeight = (unknownSideWidth - Math.max(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight)) * -1
+      } else {
+        roomHeight = this.product.viewer?.room?.config?.dimensions?.height
+      }
+      roomHeightScale = roomHeight / height
+      console.log(roomHeightScale)
+    }
 
-    const scale = { //ERO QUI
-      x: 1,
-      y: this.product.uprightsPosition === 'standalone' && this.product.type === 'k2' && height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : 1,
-      z: 1,
-      //y: 1
+    const scale = {
+      x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
+      y: roomHeightScale,
+      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1,
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
-    if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+    
+    // L'elemento viene posizionato appoggiato a terra
+    if (this.config.grounded) this.setPosition(this.getPosition())
   }
 
   setPosition ({ x, y, z }) {
@@ -114,9 +141,8 @@ export default class Upright extends Object3D {
         ? this.product.viewer.config.room.width - x
         : x
 
-      const unkownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
-      const availableYSpace = unkownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) // Altezza della mansarda al punto x richiesto
-
+      const unknownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
+      const availableYSpace = unknownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) // Altezza della mansarda al punto x richiesto
       cantBePositioned = (y + this.getSize().height / 2) > (availableYSpace - GUTTER)
     }
 
