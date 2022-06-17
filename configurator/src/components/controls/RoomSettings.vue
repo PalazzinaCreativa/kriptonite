@@ -5,7 +5,7 @@
       <Close class="cursor-pointer" @click="close" />
     </div>
     <div configuration-content class="grow w-full">
-      <Textures class="mt-8" title="Pavimento" :key="`${JSON.stringify(element)}`" :element="element" entity="room" @setTexture="setMaterial"/>
+      <Textures class="mt-8" title="Pavimento" :element="element" entity="room" @setTexture="setMaterial"/>
       <div class="mt-8 px-6">
         <SetWallColor @changeColor="color => $emit('changeColor', color)" />
       </div>
