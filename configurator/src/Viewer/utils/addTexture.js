@@ -25,7 +25,8 @@ export const addTexture = (material, texture) => {
   }
 
   const textureLoader = new THREE.TextureLoader()
-
+  textureLoader.setCrossOrigin("anonymous")
+  
   let path
 
   //console.log('Loading texture', texture)
@@ -35,7 +36,7 @@ export const addTexture = (material, texture) => {
       if(texture.isStatic) {
         path = `/assets/textures/${name}/${name}_${mapName}.${ext}`
       } else {
-        path = texture[mapName]?.url || ''
+        path = texture[mapName]?.url ? `${texture[mapName]?.url}?cacheblock=true` : ''
       }
       if(path) {
         return new Promise((resolve, reject) => {
