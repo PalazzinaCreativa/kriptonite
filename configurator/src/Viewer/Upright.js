@@ -17,7 +17,10 @@ colors = colors.length ? colors.sort((a, b) => a.id - b.id) : colors
 // Distanza tra i montanti
 const defaultGap = 6.4
 
-const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // TODO: Da popolare con le distanze dei montanti per tipo di prodotto
+const currentProductUprightsDistance = {
+  k1: [0, 40, 60, 75, 90, 120, 151, 180],
+  k2: [60, 90, 120]
+}
 
 export default class Upright extends Object3D {
 
@@ -55,17 +58,44 @@ export default class Upright extends Object3D {
 
     const { width, height, depth } = this.getSize()
 
-    //console.log('montante K2', this.product, this.config, this.product.viewer?.room, this.product.viewer?.room?.config?.dimensions?.height, height)
+    /* console.log(
+      'dimensioni:', dimensions,
+      'object:', this.object,
+      'montante K2:', this.config,
+      'stanza:', this.product.viewer?.room,
+      'altezza stanza:', this.product.viewer?.room?.config?.dimensions?.height,
+      'altezza montante:', height
+    ) */
+    // Se il prodotto è un montante K2 cielo-terra, la sua altezza dev'essere pari a quella della stanza
+    var roomHeightScale = 1
+    var roomHeight
+    if(this.product.uprightsPosition === 'standalone' && this.product.type === 'k2') {
+      if(this.product.viewer?.room?.config?.type === 'attic') {
+        const sideWidth = this.product.viewer.config.room.leftHeight > this.product.viewer.config.room.rightHeight // Larghezza del cateto inferiore
+        ? this.product.viewer.config.room.width - this.getPosition().x
+        : this.getPosition().x
+        
+        const unknownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
+        
+        // Altezza della mansarda alla posizione del mouse
+        roomHeight = (unknownSideWidth - Math.max(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight)) * -1
+      } else {
+        roomHeight = this.product.viewer?.room?.config?.dimensions?.height
+      }
+      roomHeightScale = roomHeight / height
+      console.log(roomHeightScale)
+    }
 
-    const scale = { //ERO QUI
-      x: 1,
-      y: this.product.uprightsPosition === 'standalone' && this.product.type === 'k2' && height > this.product.viewer?.room?.config?.dimensions?.height ? this.product.viewer?.room?.config?.dimensions?.height / height : 1,
-      z: 1,
-      //y: 1
+    const scale = {
+      x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
+      y: roomHeightScale,
+      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1,
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
-    if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
+    
+    // L'elemento viene posizionato appoggiato a terra
+    if (this.config.grounded) this.setPosition(this.getPosition())
   }
 
   setPosition ({ x, y, z }) {
@@ -114,9 +144,8 @@ export default class Upright extends Object3D {
         ? this.product.viewer.config.room.width - x
         : x
 
-      const unkownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
-      const availableYSpace = unkownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) // Altezza della mansarda al punto x richiesto
-
+      const unknownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
+      const availableYSpace = unknownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) // Altezza della mansarda al punto x richiesto
       cantBePositioned = (y + this.getSize().height / 2) > (availableYSpace - GUTTER)
     }
 
@@ -172,10 +201,10 @@ export default class Upright extends Object3D {
     const wireframes = new THREE.Group()
     wireframes.name = 'uprights_wireframe'
     this.product.object.add(wireframes)
-    // Creo guide per ogni possibile distanza
 
-    currentProductUprightsDistance
-      .forEach(async x => {
+    // Creazione delle guide per ogni possibile distanza
+    currentProductUprightsDistance[this.product.type]
+      .forEach(async (x) => {
         // Controllo che il wireframe ci stia all'interno della stanza
         if (latestUpright.object.position.x + x > roomWidth) return
 
@@ -185,21 +214,24 @@ export default class Upright extends Object3D {
           new THREE.MeshStandardMaterial({ color: 0x707070, transparent: true, opacity: 0.2, roughness: 0 }),
         )
 
-        // AGGIUNGO LE DISTANZE
-        /* const distance = new THREE.Mesh(
-          await createText(`${Math.round(this.getSize().width)}`, { size: 8 }),
-          new THREE.MeshStandardMaterial({ color: 0x0000ff, transparent: false, opacity: 1, roughness: 0 })
-        ) */
-          
         wireframe.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
         wireframe.position.y = roomHeight / 2
         wireframe.position.x = latestUpright.object.position.x + x
         wireframes.add(wireframe)
 
-        /* distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
-        distance.position.y = roomHeight / 2
-        distance.position.x = latestUpright.object.position.x + x
-        wireframes.add(distance) */
+        // Distanze tra i montanti
+        const distance = x ? new THREE.Mesh(
+          await createText(`${x} cm`, { size: 3, amount: 0.1 }),
+          new THREE.MeshLambertMaterial({ color: 0x000000, transparent: false, opacity: 1 })
+        ) : 0
+
+        if(distance) {
+          distance.geometry.center()
+          distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
+          distance.position.y = roomHeight / 2
+          distance.position.x = latestUpright.object.position.x + x
+          wireframes.add(distance)
+        }
       })
   }
 

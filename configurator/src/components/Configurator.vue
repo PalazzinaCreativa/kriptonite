@@ -62,9 +62,8 @@ import useTexturesStore from '@/stores/textures'
 import useColorsStore from '@/stores/colors'
 import useTipsStore from '@/stores/tips'
 
+// Menu degli "Elementi"
 import { controlsList } from '@/dataset/controls'
-
-const configurator = useConfiguratorStore()
 
 const props = defineProps(['config'])
 
@@ -78,30 +77,49 @@ const tip = ref({})
 controlsList.map((item) => {
   item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
 })
+// Caricamento dello store "Configuratore"
+const configurator = useConfiguratorStore()
+// Caricamento dello store "Opzioni della stanza"
 const optionsModule = useOptionsStore()
+// Caricamento dello store "Prodotti"
 const productsModule = useProductsStore()
-const selectedProduct = computed(() => productsModule.selectedProduct)
+// Caricamento dello store "Ostacoli"
 const encumbrancesModule = useEncumbrancesStore()
+// Caricamento dello store "Montanti"
+const uprightsModule = useUprightsStore()
+// Caricamento dello store "Ripiani"
+const shelvesModule = useShelvesStore()
+// Caricamento dello store "Contenitori"
+const casesModule = useCasesStore()
+// Caricamento dello store "Colori"
+const colorsModule = useColorsStore()
+// Caricamento dello store "Textures"
+const texturesModule = useTexturesStore()
+// Caricamento dello store "Consigli"
+const tipsModule = useTipsStore()
+
+// Chiamata per ricavare gli "Ostacoli"
 encumbrancesModule.getEncumbrances()
 
-//console.log(selectedProduct)
-const uprightsModule = useUprightsStore()
-uprightsModule.getUprights(1)
-
-const shelvesModule = useShelvesStore()
-shelvesModule.getShelves(1)
-
-const casesModule = useCasesStore()
-casesModule.getCases(1)
-
-const colorsModule = useColorsStore()
+if(props.config?.product?.id) {
+  // Chiamata per ricavare i "Montanti"
+  uprightsModule.getUprights(props.config.product.id)
+  // Chiamata per ricavare i "Ripiani"
+  shelvesModule.getShelves(props.config.product.id)
+  // Chiamata per ricavare i "Contenitori"
+  casesModule.getCases(props.config.product.id)
+}
+// Chiamata per ricavare i "Colori"
 colorsModule.getColors()
-const texturesModule = useTexturesStore()
+// Chiamata per ricavare le "Texture"
 texturesModule.getTextures()
-const tipsModule = useTipsStore()
+// Chiamata per ricavare i "Consigli" già letti
 tipsModule.getCookies()
 
+const selectedProduct = computed(() => productsModule.selectedProduct)
+
 const selectedOption = computed(() => optionsModule.selected)
+
 const isEditingRoom = computed(() => selectedOption.value.id === 2)
 
 const canEdit = computed(() => {
@@ -141,27 +159,27 @@ const shareProject = async () => {
 }
 
 onMounted(() => {
+  // Set del prodotto selezionato in fase iniziale
   configurator.setOptions(props.config.product)
-  // Apro il consiglio iniziale
+  // Apertura del consiglio iniziale
   tipsModule.setActiveTip('intro')
-
+  // Inizializzazione del loader
   loading.value = true
+  // Inizializzazione della scena
   const viewer = new Viewer(
-    canvasWrapper.value, // Elemento del dom principale
+    canvasWrapper.value,
     props.config,
-    () => { // Callback
+    () => {
       configurator.$patch({
         viewerGetter: () => viewer,
-        isReady: true
+        isReady: true,
+        canShare: !props.config.shared
       })
-      configurator.$patch({ canShare: !props.config.shared })
       loading.value = false
     }
   )
 
-  //console.log('viewer', viewer)
-
-// Passo i dati al viewer per popolare il configuratore
+  // Feed del configuratore
   viewer.setHook('getData', ({ type, id, variantId }) => {
     const data = {
       obstacle: computed(() => encumbrancesModule.index),
@@ -169,10 +187,10 @@ onMounted(() => {
       shelf: computed(() => shelvesModule.index),
       case: computed(() => casesModule.index)
     }
-    //console.log('data hook', data)
 
-    // Ricavo la variante corretta
+    // Caricamento della variante corretta dell'elemento inserito
     if(data[type].value.length) {
+      // Potrebbe non funzionare con i prodotti in legno (da verificare)
       // Ricavo gli elementi con quell'ID
       let elements = data[type].value.filter(p => p.id === id)
       // Se più di un elemento ha lo stesso ID, cerco quelli che hanno una variante con lo stesso ID
@@ -200,6 +218,7 @@ onMounted(() => {
   })
 })
 
+// Funzione per svuotare la stanza
 const tabulaRasa = () => {
   //console.log('reset scene')
 }
