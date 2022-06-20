@@ -17,7 +17,10 @@ colors = colors.length ? colors.sort((a, b) => a.id - b.id) : colors
 // Distanza tra i montanti
 const defaultGap = 6.4
 
-const currentProductUprightsDistance = [ 0, 40, 60, 75.5, 90 ] // TODO: Da popolare con le distanze dei montanti per tipo di prodotto
+const currentProductUprightsDistance = {
+  k1: [0, 40, 60, 75, 90, 120, 151, 180],
+  k2: [60, 90, 120]
+}
 
 export default class Upright extends Object3D {
 
@@ -198,10 +201,10 @@ export default class Upright extends Object3D {
     const wireframes = new THREE.Group()
     wireframes.name = 'uprights_wireframe'
     this.product.object.add(wireframes)
-    // Creo guide per ogni possibile distanza
 
-    currentProductUprightsDistance
-      .forEach(async x => {
+    // Creazione delle guide per ogni possibile distanza
+    currentProductUprightsDistance[this.product.type]
+      .forEach(async (x) => {
         // Controllo che il wireframe ci stia all'interno della stanza
         if (latestUpright.object.position.x + x > roomWidth) return
 
@@ -211,21 +214,24 @@ export default class Upright extends Object3D {
           new THREE.MeshStandardMaterial({ color: 0x707070, transparent: true, opacity: 0.2, roughness: 0 }),
         )
 
-        // AGGIUNGO LE DISTANZE
-        /* const distance = new THREE.Mesh(
-          await createText(`${Math.round(this.getSize().width)}`, { size: 8 }),
-          new THREE.MeshStandardMaterial({ color: 0x0000ff, transparent: false, opacity: 1, roughness: 0 })
-        ) */
-          
         wireframe.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
         wireframe.position.y = roomHeight / 2
         wireframe.position.x = latestUpright.object.position.x + x
         wireframes.add(wireframe)
 
-        /* distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
-        distance.position.y = roomHeight / 2
-        distance.position.x = latestUpright.object.position.x + x
-        wireframes.add(distance) */
+        // Distanze tra i montanti
+        const distance = x ? new THREE.Mesh(
+          await createText(`${x} cm`, { size: 3, amount: 0.1 }),
+          new THREE.MeshLambertMaterial({ color: 0x000000, transparent: false, opacity: 1 })
+        ) : 0
+
+        if(distance) {
+          distance.geometry.center()
+          distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
+          distance.position.y = roomHeight / 2
+          distance.position.x = latestUpright.object.position.x + x
+          wireframes.add(distance)
+        }
       })
   }
 
