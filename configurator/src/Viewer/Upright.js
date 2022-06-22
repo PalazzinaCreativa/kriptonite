@@ -29,6 +29,9 @@ export default class Upright extends Object3D {
     this.product = product
     this._cantBePositioned = false
     this.config.type = 'upright'
+    this.bases = [
+      { id: 5, childName: 'object_6', center: { x: 48.5, y: 0, z: 12 }, rotationAxis: { x: 0, y: 1, z: 0 }}
+    ]
 
     // "index" è il numero delle colonne dei montanti sull'asse X, se ci sono 2 montanti uno sotto l'altro avranno lo stesso "index", ma diversi "realIndex"
     if (typeof config.index !== 'undefined') this.index = config.index
@@ -43,6 +46,21 @@ export default class Upright extends Object3D {
     // Verrà scelta la finitura impostata dall'utente oppure il primo risultato proveniente dal Database.
     let firstColor = colors.length ? colors[0] : { color: '#a1a1a1' }
     super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false)
+    this.setBases()
+  }
+
+  setBases () {
+    // Rotazione dei piedini
+    if(this.bases.some(base => base.id === this.config.id)) {
+      var atticOrientationFactor = this.product.viewer.config.room.dimensions.leftHeight > this.product.viewer.config.room.dimensions.rightHeight ? -1 : 1
+      this.object.traverse(child => {
+        var translateData = this.bases.find(base => base.id === this.config.id)
+        if (child.userData?.name === translateData.childName) {
+          child.geometry.applyMatrix4(new THREE.Matrix4().makeTranslation(translateData.center.x * atticOrientationFactor, translateData.center.y, translateData.center.z))
+          child.rotateOnAxis(new THREE.Vector3(translateData.rotationAxis.x, translateData.rotationAxis.y, translateData.rotationAxis.z), this.product.viewer.config.room.atticAngle * atticOrientationFactor)
+        }
+      })
+    }
   }
 
   multipleDeletionAlert(state) {
@@ -55,57 +73,44 @@ export default class Upright extends Object3D {
 
   // test per non stretchare l'oggetto su asse x e z
   setSize (dimensions) {
-
     const { width, height, depth } = this.getSize()
+    const { x, y, z } = this.getPosition()
 
-    /* console.log(
-      'dimensioni:', dimensions,
-      'object:', this.object,
-      'montante K2:', this.config,
-      'stanza:', this.product.viewer?.room,
-      'altezza stanza:', this.product.viewer?.room?.config?.dimensions?.height,
-      'altezza montante:', height
-    ) */
     // Se il prodotto è un montante K2 cielo-terra, la sua altezza dev'essere pari a quella della stanza
-    var roomHeightScale = 1
-    var roomHeight
     if(this.product.uprightsPosition === 'standalone' && this.product.type === 'k2') {
+      var currentRoomHeight = this.product.viewer.config.room.dimensions.height
+      var roomHeightScaleFactor = 1
+
       if(this.product.viewer?.room?.config?.type === 'attic') {
-        const sideWidth = this.product.viewer.config.room.leftHeight > this.product.viewer.config.room.rightHeight // Larghezza del cateto inferiore
-        ? this.product.viewer.config.room.width - this.getPosition().x
+        // Calcolo della base del triangolo dello spazio rimanente
+        const triangleBase = this.product.viewer.config.room.dimensions.leftHeight > this.product.viewer.config.room.dimensions.rightHeight
+        ? this.product.viewer.config.room.dimensions.width - this.getPosition().x
         : this.getPosition().x
-        
-        const unknownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
+
+        // Calcolo dell'altezza della stanza alla posizione del mouse
+        currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) - GUTTER
         
         // Altezza della mansarda alla posizione del mouse
-        roomHeight = (unknownSideWidth - Math.max(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight)) * -1
-      } else {
-        roomHeight = this.product.viewer?.room?.config?.dimensions?.height
+        roomHeightScaleFactor = currentRoomHeight / this.config.height
       }
-      roomHeightScale = roomHeight / height
-      console.log(roomHeightScale)
+      
+      const scale = {
+        x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
+        y: roomHeightScaleFactor,
+        z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1,
+      }
+  
+      this.object.scale.set(scale.x, scale.y, scale.z)
     }
-
-    const scale = {
-      x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
-      y: roomHeightScale,
-      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1,
-    }
-
-    this.object.scale.set(scale.x, scale.y, scale.z)
-    
-    // L'elemento viene posizionato appoggiato a terra
-    if (this.config.grounded) this.setPosition(this.getPosition())
   }
 
   setPosition ({ x, y, z }) {
-    const currentGap = this.product?.slot_space || defaultGap
-    const gridY = Math.floor(y / currentGap) * currentGap // Calcolo y in base alla distanza tra i buchi per allineare tutti i montanti
+    // Calcolo dell'altezza in base alla distanza tra i fori dei montanti per allineare questi ultimi
+    const currentGap = this.config.slot_space || defaultGap
+    const gridY = Math.floor(y / currentGap) * currentGap
     const groundY = this.getSize().height / 2
-    const zPos = this.object.attachedToWall ? 0.1 : z
-    //console.log(this.object.attachedToWall, zPos)
-    super.setPosition({ x, y: this.object.grounded ? groundY : gridY, z: zPos })
-
+    const zPos = this.config.attachedToWall ? 0.1 : z
+    super.setPosition({ x, y: this.config.grounded ? groundY : gridY, z: zPos })
     this._checkPosition({ x, y, z })
   }
 
@@ -138,15 +143,19 @@ export default class Upright extends Object3D {
       })
     }
 
+    const isGroundToCeilingUpright = this.product.uprightsPosition === 'standalone' && this.product.type === 'k2'
+
     if (this.product.viewer.config.room.type === 'attic' && !cantBePositioned) {
       // Controllo la posizione e altezza del montante rispetto all'altezza della parete. Per farlo uso la formula per calcolare la dimensione di un cateto dati un cateto e un angolo del triangolo rettangolo.
-      const sideWidth = this.product.viewer.config.room.leftHeight > this.product.viewer.config.room.rightHeight // Larghezza del cateto inferiore
-        ? this.product.viewer.config.room.width - x
+      const sideWidth = this.product.viewer.config.room.dimensions.leftHeight > this.product.viewer.config.room.dimensions.rightHeight // Larghezza del cateto inferiore
+        ? this.product.viewer.config.room.dimensions.width - x
         : x
 
       const unknownSideWidth = sideWidth * Math.tan(this.product.viewer.config.room.atticAngle)
-      const availableYSpace = unknownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) // Altezza della mansarda al punto x richiesto
-      cantBePositioned = (y + this.getSize().height / 2) > (availableYSpace - GUTTER)
+
+      // Altezza della mansarda al punto x richiesto
+      const availableYSpace = unknownSideWidth + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight)
+      cantBePositioned = isGroundToCeilingUpright ? false : (y + this.getSize().height / 2) > (availableYSpace - GUTTER)
     }
 
     this._cantBePositioned = cantBePositioned
@@ -221,14 +230,14 @@ export default class Upright extends Object3D {
 
         // Distanze tra i montanti
         const distance = x ? new THREE.Mesh(
-          await createText(`${x} cm`, { size: 3, amount: 0.1 }),
+          await createText(`${x} cm`, { size: 4, amount: 0.1 }),
           new THREE.MeshLambertMaterial({ color: 0x000000, transparent: false, opacity: 1 })
         ) : 0
 
         if(distance) {
           distance.geometry.center()
           distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
-          distance.position.y = roomHeight / 2
+          distance.position.y = 50
           distance.position.x = latestUpright.object.position.x + x
           wireframes.add(distance)
         }

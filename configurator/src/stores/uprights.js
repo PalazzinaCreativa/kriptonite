@@ -31,6 +31,7 @@ export default defineStore({
           upright.variants.map((variant) => {
             variant.grounded = upright.grounded
             variant.attachedToWall = upright.type === 'wall'
+            variant.slot_space = upright.slot_space || null
             variant.type = 'upright'
             variant.path = variant.model || ''
           })
@@ -62,7 +63,7 @@ export default defineStore({
       let fullVariantsList = item.variants ?? []
 
       // Unique by height
-      // Se i montanti hanno delle varianti "Sinistra Centro Destra", prendo le varianti di centro
+      // Se i montanti hanno delle varianti "Sinistra Centro Destra", verranno utilizzate le varianti di centro
       if(fullVariantsList.length) {
         if(fullVariantsList.some((variant) => variant.sku?.slice(-1) === 'C')) {
           this.variantsList = fullVariantsList.filter((variant, i) => {

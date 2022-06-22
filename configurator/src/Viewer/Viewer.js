@@ -90,8 +90,10 @@ export default class Viewer {
 
     this.renderer = setupRenderer(this.domEl)
 
+    // console.log(this.lights, this.room)
+
     this.lights = setupLights(dimensions)
-    this.lights.forEach(light => {
+    this.lights[this.room.config.type].forEach(light => {
       this.scene.add(light)
       if (light.target) this.scene.add(light.target)
     })
@@ -201,7 +203,7 @@ export default class Viewer {
         if (!roomIntersection) return
         
         // Se è un montante K2 cielo-terra
-        if(this.room.config.type === 'attic' && this.objectToPlace.product.type === 'k2' && this.objectToPlace.product.inRoomPosition === 'standalone') {
+        if(this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.inRoomPosition === 'standalone') {
           this.objectToPlace.setSize()
         }
 

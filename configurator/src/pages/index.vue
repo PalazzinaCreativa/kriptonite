@@ -781,13 +781,13 @@ const defaultConfigK2 = {
   step: 4,
     room: {
       composition: "brick",
-      type: "classic",
+      type: "attic",
       dimensions: {
-        height: 2.8,
+        height: 2.7,
         width: 3,
         depth: 1,
-        leftHeight: 1.2,
-        rightHeight: 2.8
+        leftHeight: 2.5,
+        rightHeight: 1
       },
       obstacles: [
         // {
@@ -1119,7 +1119,7 @@ const setSelectedProduct = (product) => {
 }
 
 const handleGoToConfigurator = () => {
-  const selectedConfig = fastConfigK1 //defaultConfig //fastConfigK1 //defaultConfigK2
+  const selectedConfig = defaultConfigK2 //defaultConfig //fastConfigK1 //defaultConfigK2
   config.value = selectedConfig
   setSelectedProduct(selectedConfig.product)
   showConfigurator.value = true

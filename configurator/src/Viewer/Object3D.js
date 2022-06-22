@@ -12,7 +12,7 @@ export default class Object3D {
   }
 
   async init () {
-    //console.log('object3d init', this.config)
+    // console.log('object3d init', this.config)
     if(!this.config.path) return
     this.object = await loadObject(this.config.path)
     this.object.name = this.config.id || this.config.type
@@ -23,6 +23,7 @@ export default class Object3D {
   }
 
   getSize () {
+    // console.log(this.object)
     const boundingBox = new THREE.Box3().setFromObject(this.object)
     return {
       width: boundingBox.max.x - boundingBox.min.x,
@@ -58,17 +59,17 @@ export default class Object3D {
       ? this.getPosition().z
       : z
 
-    this.object.position.set(normalizeX, normalizeY, normalizeZ)
+    // 0.75 è la distanza tra il pavimento effettivo e la texture dello stesso, serve per evitare che gli elementi non si intersechino con il pavimento della stanza
+    this.object.position.set(normalizeX, normalizeY + 0.75, normalizeZ)
   }
 
   setSize (dimensions) {
-    //console.log('object3dSetSize')
     const { width, height, depth } = this.getSize()
 
     const scale = {
-      x: dimensions.width ? dimensions.width / (width / this.object.scale.x) : 1,
-      y: dimensions.height ? dimensions.height / (height / this.object.scale.y) : 1,
-      z: dimensions.depth ? dimensions.depth / (depth / this.object.scale.z) : 1
+      x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
+      y: dimensions?.height ? dimensions.height / (height / this.object.scale.y) : 1,
+      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1
     }
 
     this.object.scale.set(scale.x, scale.y, scale.z)
