@@ -30,7 +30,7 @@ export default class Upright extends Object3D {
     this._cantBePositioned = false
     this.config.type = 'upright'
     this.bases = [
-      { id: 5, childName: 'object_6', center: { x: 48.5, y: 0, z: 12 }, rotationAxis: { x: 0, y: 1, z: 0 }}
+      { id: 5, childName: 'object_6', center: { x: this.product.viewer.config.room.dimensions.width / 6.22 , y: 0, z: 12.5 }, rotationAxis: { x: 0, y: 1, z: 0 }}
     ]
 
     // "index" è il numero delle colonne dei montanti sull'asse X, se ci sono 2 montanti uno sotto l'altro avranno lo stesso "index", ma diversi "realIndex"
@@ -46,7 +46,7 @@ export default class Upright extends Object3D {
     // Verrà scelta la finitura impostata dall'utente oppure il primo risultato proveniente dal Database.
     let firstColor = colors.length ? colors[0] : { color: '#a1a1a1' }
     super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false)
-    this.setBases()
+    //this.setBases()
   }
 
   setBases () {
