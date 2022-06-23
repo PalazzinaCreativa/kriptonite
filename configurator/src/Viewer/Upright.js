@@ -22,6 +22,11 @@ const currentProductUprightsDistance = {
   k2: [60, 90, 120]
 }
 
+const distancesFromWall = [
+  { type: 'k1', uprightsPosition: 'wall', distance: 0.1 },
+  { type: 'k2', uprightsPosition: 'standalone', distance: 25 }
+]
+
 export default class Upright extends Object3D {
 
   constructor (config, product) {
@@ -77,9 +82,9 @@ export default class Upright extends Object3D {
     const { x, y, z } = this.getPosition()
 
     // Se il prodotto è un montante K2 cielo-terra, la sua altezza dev'essere pari a quella della stanza
+    var roomHeightScaleFactor = 1
     if(this.product.uprightsPosition === 'standalone' && this.product.type === 'k2') {
       var currentRoomHeight = this.product.viewer.config.room.dimensions.height
-      var roomHeightScaleFactor = 1
 
       if(this.product.viewer?.room?.config?.type === 'attic') {
         // Calcolo della base del triangolo dello spazio rimanente
@@ -89,27 +94,28 @@ export default class Upright extends Object3D {
 
         // Calcolo dell'altezza della stanza alla posizione del mouse
         currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) - GUTTER
-        
-        // Altezza della mansarda alla posizione del mouse
-        roomHeightScaleFactor = currentRoomHeight / this.config.height
       }
-      
-      const scale = {
-        x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
-        y: roomHeightScaleFactor,
-        z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1,
-      }
-  
-      this.object.scale.set(scale.x, scale.y, scale.z)
+      // Altezza della mansarda alla posizione del mouse
+      roomHeightScaleFactor = currentRoomHeight / this.config.height
     }
+
+    const scale = {
+      x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
+      y: roomHeightScaleFactor,
+      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1,
+    }
+    
+    this.object.scale.set(scale.x, scale.y, scale.z)
   }
 
   setPosition ({ x, y, z }) {
+    const elementWallDistances = distancesFromWall.find((product) => product.type === this.product.type && product.uprightsPosition === this.product.uprightsPosition)
+    const distanceFromWall = elementWallDistances ? elementWallDistances.distance : 0.1
     // Calcolo dell'altezza in base alla distanza tra i fori dei montanti per allineare questi ultimi
     const currentGap = this.config.slot_space || defaultGap
     const gridY = Math.floor(y / currentGap) * currentGap
     const groundY = this.getSize().height / 2
-    const zPos = this.config.attachedToWall ? 0.1 : z
+    const zPos = this.product.inRoomPosition === 'wall' ? distanceFromWall : z
     super.setPosition({ x, y: this.config.grounded ? groundY : gridY, z: zPos })
     this._checkPosition({ x, y, z })
   }
@@ -230,16 +236,33 @@ export default class Upright extends Object3D {
 
         // Distanze tra i montanti
         const distance = x ? new THREE.Mesh(
-          await createText(`${x} cm`, { size: 4, amount: 0.1 }),
-          new THREE.MeshLambertMaterial({ color: 0x000000, transparent: false, opacity: 1 })
+          await createText(`${x}`, { size: 4, depth: 0.1, amount: 0.1 }),
+          new THREE.MeshLambertMaterial({ color: 0x707070, transparent: false, opacity: 1 })
+        ) : 0
+
+        const distanceUnit = x ? new THREE.Mesh(
+          await createText('cm', { size: 2.5, depth: 0.1, amount: 0.1 }),
+          new THREE.MeshLambertMaterial({ color: 0x707070, transparent: false, opacity: 1 })
         ) : 0
 
         if(distance) {
+          var distanceBox = new THREE.Box3().setFromObject(distance);
+          var distanceWidth = distanceBox.max.x - distanceBox.min.x
+
           distance.geometry.center()
           distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
           distance.position.y = 50
           distance.position.x = latestUpright.object.position.x + x
           wireframes.add(distance)
+
+          // Unità di misura
+          if(distanceUnit) {
+            distanceUnit.geometry.center()
+            distanceUnit.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
+            distanceUnit.position.y = 49
+            distanceUnit.position.x = latestUpright.object.position.x + x + distanceWidth / 2 + 3.5
+            wireframes.add(distanceUnit)
+          }
         }
       })
   }

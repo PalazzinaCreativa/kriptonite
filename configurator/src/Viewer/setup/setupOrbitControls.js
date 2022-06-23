@@ -5,7 +5,7 @@ export const setupOrbitControls = (camera, renderer, dimensions) => {
   const controls = new OrbitControls( camera, renderer.domElement)
   // Limite zoom
   controls.minDistance = 50
-  controls.maxDistance = FLOOR_DEPTH
+  controls.maxDistance = FLOOR_DEPTH * 1.5
 
   // Limite di rotazione verticale
   controls.minPolarAngle = 0

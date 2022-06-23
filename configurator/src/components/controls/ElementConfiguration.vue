@@ -23,8 +23,8 @@
       </div>
     </div>
     <div configuration-actions class="flex fixed bottom-0 left-0 w-full">
-      <Btn v-if="destroyLabel" class="bg-light-gray w-full" :label="destroyLabel" @click="handleCancel" />
-      <Btn v-if="addLabel" class="bg-yellow w-full" :label="addLabel" @click="addElement" />
+      <Btn v-if="destroyLabel && currentElement.isEdit" class="bg-light-gray w-full" :label="destroyLabel" @click="handleCancel" />
+      <!-- <Btn v-if="addLabel" class="bg-yellow w-full" :label="addLabel" @click="addElement" /> -->
     </div>
   </div>
 </template>
