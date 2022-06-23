@@ -8,24 +8,7 @@ const c = new Client({
 export default defineStore({
   id: "encumbrances",
   state: () => ({
-    list: [
-      {
-        name: 'Altro',
-        type: 'obstacle',
-        id: 'generic',
-        grounded: true,
-        path: '/assets/objects/obstacles/generic/generic.gltf',
-        image: {
-          url: '/assets/objects/obstacles/generic/generic.png',
-          width: 150,
-          height: 150,
-          alt: 'generic obstacle'
-        },
-        width: 90,
-        height: 70,
-        depth: 50
-      }
-    ]
+    list: []
   }),
 
   getters: {

@@ -5,11 +5,17 @@
       <Header class="absolute" :config="config" />
       <div canvas-wrapper class="h-full w-full" ref="canvasWrapper" />
       <Transition name="slide-up">
-        <Btn v-if="selectedElement" @click="closeElementSettings" class="absolute bg-light-gray overflow-hidden bottom-16 left-1/2 -translate-x-1/2 transform rounded-full">
-          <template #prepend>
-            <Close class="cursor-pointer"/>
-          </template> Termina inserimento
-        </Btn>
+        <div v-if="selectedElement" @click="destroyElement" class="absolute bottom-16 left-1/2 -translate-x-1/2">
+          <Btn v-if="selectedElement.isEdit" class="bg-light-gray overflow-hidden transform rounded-full">
+            <span v-text="mainButtonLabel" />
+          </Btn>
+          <Btn v-else @click="closeElementSettings" class="bg-light-gray overflow-hidden transform rounded-full">
+            <template #prepend>
+              <Close class="cursor-pointer"/>
+            </template>
+            <span v-text="mainButtonLabel" />
+          </Btn>
+        </div>
       </Transition>
       <Tips />
       <Teleport to="body">
@@ -126,6 +132,10 @@ const canEdit = computed(() => {
   return !props.config.shared || (props.config.shared && import.meta.env.DEV)
 })
 
+const mainButtonLabel = computed(() => {
+  return selectedElement.value.isEdit ? 'Elimina elemento' : 'Termina inserimento'
+})
+
 const closeRoomSettings = () => {
   optionsModule.resetSelectedOption()
 }
@@ -133,6 +143,11 @@ const closeRoomSettings = () => {
 const closeElementSettings = () => {
   selectedElement.value = null
   configurator.removeSelection()
+}
+
+const destroyElement = () => {
+  selectedElement.value.destroy()
+  closeElementSettings()
 }
 
 const isAlerting = ref(false)
