@@ -4,21 +4,39 @@ module.exports = {
     extend: {
       animation: {
         flickering: 'flickering 0.25s infinite',
+        'rotation-on-axis': 'rotation-on-axis 3s infinite ease-in-out',
         button: 'button 0.2s cubic-bezier(.75,.1,.22,.99)'
       },
       keyframes: {
         button: {
-          '0%' : { transform: 'translateY(0)', opacity: '1' },
-          '49%' : { transform: 'translateY(-30px)', opacity: '1' },
-          '50%' : { transform: 'translateY(-30px)', opacity: '0' },
-          '51%' : { transform: 'translateY(30px)', opacity: '0' },
-          '52%' : { transform: 'translateY(30px)', opacity: '1' },
-          '100%' : { transform: 'translateY(0)', opacity: '1' }
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '49%': { transform: 'translateY(-30px)', opacity: '1' },
+          '50%': { transform: 'translateY(-30px)', opacity: '0' },
+          '51%': { transform: 'translateY(30px)', opacity: '0' },
+          '52%': { transform: 'translateY(30px)', opacity: '1' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
         },
         flickering: {
-          '0%' : { opacity: '1' },
-          '50%' : { opacity: '0.66' },
-          '75%' : { opacity: '0.75' }
+          '0%': { opacity: '1' },
+          '50%': { opacity: '0.66' },
+          '75%': { opacity: '0.75' }
+        },
+        'rotation-on-axis': {
+          '0%': {
+            transform: 'perspective(120px) rotateX(0deg) rotateY(0deg)'
+          },
+          '25%': {
+            transform: 'perspective(120px) rotateX(-180deg) rotateY(0deg)'
+          },
+          '50%': {
+            transform: 'perspective(120px) rotateX(-360deg) rotateY(0deg)'
+          },
+          '75%': {
+            transform: 'perspective(120px) rotateX(-360deg) rotateY(-180deg)'
+          },
+          '100%': {
+            transform: 'perspective(120px) rotateX(-360deg) rotateY(-360deg)'
+          }
         }
       },
       fontSize: {
