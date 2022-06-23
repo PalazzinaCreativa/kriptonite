@@ -1,8 +1,9 @@
 import * as THREE from 'three'
+import { STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
 import { createLine } from './utils/createLine'
 import { createMeasure } from './utils/createMeasure'
 export default class Product {
-  constructor (viewer, { inRoomPosition, uprightsPosition }) {
+  constructor (viewer, { type, inRoomPosition, uprightsPosition }) {
     this.uprights = []
     this.shelves = []
     this.cases = []
@@ -12,6 +13,7 @@ export default class Product {
     this.object = new THREE.Object3D()
     this.object.name = 'Product'
     this.viewer.scene.add(this.object)
+    this.type = type
     this.inRoomPosition = inRoomPosition
     this.uprightsPosition = uprightsPosition
     this.id = 'product'
@@ -61,32 +63,39 @@ export default class Product {
     if (this._visibleMeasures) {
       this._visibleMeasures = false
       this.measures.visible = false
-      this.viewer.room.main.visible = true
+      this.viewer.room.main.traverse(child => {
+        if (child.material) {
+          child.material.opacity = 1
+          child.material.alphaTest = 1
+          child.material.transparent = false
+        }
+      })
+      this.viewer.updateConfig()
+      console.log(this.viewer.room.main)
       return
     }
-    this.viewer.room.main.visible = false // TODO: Provare parete e pavimento in trasparenza
+    this.viewer.room.main.traverse(child => {
+      if (child.material) {
+        child.material.opacity = 0.1
+        child.material.alphaTest = 0.1
+        child.material.transparent = true
+        child.material.depthWrite = false
+      }
+    })
+    this.viewer.updateConfig()
     this._createMeasures()
   }
 
   async _createMeasures () {
     this._visibleMeasures = true
-    const DIMENSIONS_GUTTER = 5 // Distacco delle misure dal prodotto
+    // Distacco delle quote dagli elementi
+    const DIMENSIONS_GUTTER = 7.5
     if (this.measures) {
       this.object.remove(this.measures)
     }
     this.measures = new THREE.Object3D()
     this.measures.name = 'Measures'
     this.object.add(this.measures)
-
-    const size = this.getSize()
-
-    const width = await createMeasure('horizontal', size.width) // Larghezza totale
-    const height = await createMeasure('vertical', size.height) // Altezza totale
-
-    width.position.x = DIMENSIONS_GUTTER
-    width.position.y = -DIMENSIONS_GUTTER * 3
-    height.position.y = DIMENSIONS_GUTTER
-    height.position.x = -DIMENSIONS_GUTTER
 
     // Cerco il montante più a sinistra
     const leftmostUpright = this.uprights
@@ -97,12 +106,24 @@ export default class Product {
     const lowestUpright = this.uprights
       .reduce((acc, curr) => (acc.getPosition().y + acc.getSize().height / 2 < curr.getPosition().y + curr.getSize().height / 2) ? acc : curr)
 
-    // Calcolo la posizione del gruppo principale
+    // Quote totali
+    const size = this.getSize()
+    const width = await createMeasure('horizontal', size.width)
+    const height = await createMeasure('vertical', size.height)
+
+    width.position.x = -(leftmostUpright.getSize().width / 2)
+    width.position.y = -DIMENSIONS_GUTTER * 3
+    height.position.y = DIMENSIONS_GUTTER
+    height.position.x = -DIMENSIONS_GUTTER * 2.5
+
+    // Posizione delle quote totali
+    const measuresZPosition = this.inRoomPosition === 'standalone' ? STANDALONE_Z : (this.uprightsPosition === 'standalone' && this.type === 'k2' ? 25 : 0.1)
     const measuresPosition = {
-      x: leftmostUpright.getPosition().x + leftmostUpright.getSize().width - DIMENSIONS_GUTTER,
+      x: leftmostUpright.getPosition().x,
       y: lowestUpright.getPosition().y - lowestUpright.getSize().height / 2 - DIMENSIONS_GUTTER,
-      z: 50
+      z: measuresZPosition
     }
+    
     this.measures.position.copy(measuresPosition)
 
     this.measures.add(width)
@@ -113,41 +134,42 @@ export default class Product {
     uprightsMeasures.name = 'UprightsMeasures'
     this.measures.add(uprightsMeasures)
 
-    const maxIndex = Math.max.apply(Math, this.uprights.map(_ => _.index)) // Indice più alto tra i montanti
+    const maxIndex = Math.max.apply(Math, this.uprights.map(upright => upright.index)) // Indice più alto tra i montanti
     let latestIndex
 
-    this.uprights
-      .forEach(async upright => {
-        if (upright.index === maxIndex || upright.index === latestIndex) return // Se è l'ultimo montante o ho già calcolato le misure per quell'indice
-        // Cerco il suo montante più vicino a destra
-        const nearestUpright = this.uprights.find(_ => _.index === upright.index + 1)
-        const distance = nearestUpright.getPosition().x - upright.getPosition().x // Distanza tra i due montanti
+    this.uprights.map(async (upright, index) => {
+      if (upright.index === maxIndex || upright.index === latestIndex) return // Se è l'ultimo montante o ho già calcolato le misure per quell'indice
+      // Montante alla destra del montante corrente
+      const nearestUpright = this.uprights.find(item => item.index === upright.index + 1)
+      // Distanza tra i due montanti
+      const distance = nearestUpright.getPosition().x - upright.getPosition().x
+      const measure = await createMeasure('horizontal', distance)
 
-        const measure = await createMeasure('horizontal', distance, 5)
+      // Calcolo della posizione della quota
+      measure.position.x = uprightsMeasures.children.reduce((acc, curr) => {
+        const box = new THREE.Box3().setFromObject(curr)
+        return acc + box.max.x - box.min.x
+      }, 0)
 
-        // Calcolo la posizione della misura
-        measure.position.x = uprightsMeasures
-          .children
-          .reduce((acc, curr) => {
-            const box = new THREE.Box3().setFromObject(curr)
-            return acc + box.max.x - box.min.x + 10
-          }, upright.getSize().width / 2)
-
-        measure.position.y = DIMENSIONS_GUTTER
-        uprightsMeasures.add(measure)
-      })
+      uprightsMeasures.add(measure)
+    })
 
     // Distanze tra gli scaffali
     const shelvesMeasures = new THREE.Group()
     shelvesMeasures.name = 'ShelvesMeasures'
     this.measures.add(shelvesMeasures)
 
+    // Unisco ripiani e contenitori
+    const shelvesAndCases = [...this.shelves, ...this.cases]
+
     // Raggruppo gli scaffali della stessa campata
-    const groupShelves = this.shelves
+    const groupShelves = shelvesAndCases
       .reduce((acc, curr) => {
         const accPosition = acc[parseInt(curr.getPosition().x)] || []
         return Object.assign(acc, { [parseInt(curr.getPosition().x)]: [...accPosition, curr]}, {})
       }, {})
+
+      console.log(groupShelves)
 
     Object.values(groupShelves)
       .forEach(group => {

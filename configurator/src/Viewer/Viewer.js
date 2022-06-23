@@ -85,7 +85,7 @@ export default class Viewer {
     // Carica le impostazioni della stanza, comprese le texture di pavimento e pareti
     await this.room.init()
 
-    this.product = new Product(this, { inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
+    this.product = new Product(this, { type: this.config.product.type, inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
     this.obstacles = []
 
     this.renderer = setupRenderer(this.domEl)
