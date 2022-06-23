@@ -304,6 +304,12 @@ export default class Viewer {
         this.objectToPlace = null
         checkpointPosition = null
         this.updateConfig()
+        
+        // Deseleziono l'ostacolo non appena viene posizionato sulla scena
+        if(newConfig.type === 'obstacle') {
+          this.doHook('removeSelectedElement')
+        }
+
         // Se l'elemento è abilitato per l'inserimento a ripetizione e si sta aggiungendo un nuovo elemento alla scena
         if (this._isAddingNewElement && newConfig.type !== 'obstacle') {
           this.addElement(newConfig)
