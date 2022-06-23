@@ -22,10 +22,7 @@
         <span v-if="currentElement.config.variantId" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
       </div>
     </div>
-    <div configuration-actions class="flex fixed bottom-0 left-0 w-full">
-      <Btn v-if="destroyLabel && currentElement.isEdit" class="bg-light-gray w-full" :label="destroyLabel" @click="handleCancel" />
-      <!-- <Btn v-if="addLabel" class="bg-yellow w-full" :label="addLabel" @click="addElement" /> -->
-    </div>
+    <div configuration-actions class="flex fixed bottom-0 left-0 w-full"></div>
   </div>
 </template>
 
