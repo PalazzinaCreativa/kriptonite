@@ -22,6 +22,11 @@ const currentProductUprightsDistance = {
   k2: [60, 90, 120]
 }
 
+const distancesFromWall = [
+  { type: 'k1', uprightsPosition: 'wall', distance: 0.1 },
+  { type: 'k2', uprightsPosition: 'standalone', distance: 25 }
+]
+
 export default class Upright extends Object3D {
 
   constructor (config, product) {
