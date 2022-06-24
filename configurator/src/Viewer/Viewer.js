@@ -34,6 +34,7 @@ export default class Viewer {
       shared
     }
 
+    // Proprietà che serve per differenziare i vari elementi a ripetizione inseriti nella scena
     this.copy = 0
 
     // Elemento selezionato
@@ -86,6 +87,7 @@ export default class Viewer {
     await this.room.init()
 
     this.product = new Product(this, { type: this.config.product.type, inRoomPosition: this.config.product.inRoomPosition, uprightsPosition: this.config.product.uprightsPosition })
+    
     this.obstacles = []
 
     this.renderer = setupRenderer(this.domEl)
@@ -202,7 +204,7 @@ export default class Viewer {
         const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
         if (!roomIntersection) return
         
-        // Se è un montante K2 cielo-terra
+        // Se è un montante K2 cielo-terra ricalcolo la sua altezza al movimento del mouse nella scena
         if(this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.inRoomPosition === 'standalone') {
           this.objectToPlace.setSize()
         }
@@ -426,7 +428,7 @@ export default class Viewer {
     this.objectToPlace = element
     if(!this.objectToPlace.object) return
 
-    // Se è un elemento ripetibile la posizione di default è dietro il muro (-50) altrimenti se è a parete lo posiziono contro il muro
+    // Posizione iniziale dell'elemento in fase di inserimento
     let initialZ = this.config.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 1
     this.objectToPlace.object.position.set(this.config.room.dimensions.width / 2, this.config.room.dimensions.height / 2, initialZ)
 
@@ -440,7 +442,7 @@ export default class Viewer {
     const wallColor = this.room.config.wallColor
     const floorType = this.room.config.floorType
 
-    const obstacles = this.obstacles
+    const obstacles = this.room.obstacles
       .map(obstacle => ({
         type: 'obstacle',
         id: obstacle.id,
@@ -484,30 +486,45 @@ export default class Viewer {
 
     this.config.room.wallColor = wallColor
     this.config.room.floorType = floorType
-
+      
     this.config.room.obstacles = obstacles
     this.config.product.uprights = uprights
     this.config.product.shelves = shelves
     this.config.product.cases = cases
 
-    // Imposto lo storico
-    // Se non sono all'inizio dello storico e faccio modifiche, rimuovo tutta lo storico tranne che per la situazione attuale e quella nuova
+    // Impostazione della storia della configurazione
+    // Se si stanno compiendo modifiche e si è all'inizio della storia (prima modifica),
+    // verranno rimossi tutti gli step ad eccezione di quello corrente e quello che si sta per creare.
+    // console.log(this.config)
     if (this._historyPosition !== 0) {
       this._history = [JSON.parse(JSON.stringify(this.config)), this._history[this._historyPosition]]
       this._historyPosition = 0
+
       this.doHook('checkUndoRedo', {
         canUndo: this._history.length && this._historyPosition < this._history.length - 1,
         canRedo: this._historyPosition > 0
       })
       return
     }
-    // Lo storico mantiene al massimo 50 configurazioni
-    if (this._history.length > 50) this._history.pop()
+
+    // La storia mantiene al massimo 50 step di configurazioni in memoria
+    // Se si supera il limite massimo di step possibili, verrà eliminato il più vecchio
+    if (this._history.length > 50) {
+      this._history.pop()
+    }
+
+    // Aggiunta della corrente configurazione alla storia
+    //console.log('inserimento nella storia di:', this.config)
     this._history.unshift(JSON.parse(JSON.stringify(this.config)))
 
-    // Passo allo store Pinia le info su undo e redo
+    // console.log('duplicated step:', JSON.stringify(this._history[this._historyPosition]) === JSON.stringify(this._history[this._historyPosition + 1]))
+    if(JSON.stringify(this._history[this._historyPosition]) === JSON.stringify(this._history[this._historyPosition + 1])) {
+      this._history.shift()
+    }
+
+    // Salvataggio della storia nello store
     this.doHook('checkUndoRedo', {
-      canUndo: this._history.length && this._historyPosition < this._history.length - 1,
+      canUndo: this._history.length && (this._historyPosition < this._history.length - 1),
       canRedo: this._historyPosition > 0
     })
   }
@@ -527,12 +544,19 @@ export default class Viewer {
   }
 
   undo () {
+    // console.log('UNDO')
+    // console.log('current history step:', this._history[this._historyPosition])
+    // console.log('going to history step:', this._history[this._historyPosition + 1])
+    // Eliminazione della scena
     this.product.reset()
     this.room.reset()
 
-    this._feed(this._history[this._historyPosition + 1]) // 0 è lo stato corrente, 1 è quello precedente
+    // Render della configurazione precedente nella scena
+    // 0 è lo stato corrente, 1 è quello precedente
+    this._feed(this._history[this._historyPosition + 1])
     this._historyPosition++
-    // Passo allo store Pinia le info su undo e redo
+
+    // Salvataggio della storia nello store
     this.doHook('checkUndoRedo', {
       canUndo: this._history.length && this._historyPosition < this._history.length - 1,
       canRedo: this._historyPosition > 0
@@ -540,12 +564,19 @@ export default class Viewer {
   }
 
   redo () {
+    // console.log('REDO')
+    // console.log('current history step:', this._history[this._historyPosition])
+    // console.log('going to history step:', this._history[this._historyPosition - 1])
+    // Eliminazione della scena
     this.product.reset()
     this.room.reset()
 
+    // Render della configurazione precedente nella scena
+    // 0 è lo stato corrente, -1 è quello successivo
     this._feed(this._history[this._historyPosition - 1])
     this._historyPosition--
-    // Passo allo store Pinia le info su undo e redo
+
+    // Salvataggio della storia nello store
     this.doHook('checkUndoRedo', {
       canUndo: this._history.length && this._historyPosition < this._history.length - 1,
       canRedo: this._historyPosition > 0

@@ -5,7 +5,6 @@ import { addTexture } from "./utils/addTexture";
 //import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
-    //console.log('config', config)
     this.config = config
     this.id = config.id
     this.variantId = config.variantId
@@ -19,6 +18,7 @@ export default class Object3D {
     if (!this.config.dimensions) return
     this.setSize(this.config.dimensions, false)
     this.setPosition(this.getPosition())
+    // Universal ID per calcolare le distanze tra i ripiani e i contenitori
     this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}` // TODO
   }
 
@@ -74,14 +74,6 @@ export default class Object3D {
 
     this.object.scale.set(scale.x, scale.y, scale.z)
     if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto
-  }
-
-  // Test per vedere se si può modificare
-  updateElement(element) {
-    this.config = element
-    this.variantId = element.variantId
-    this.id = element.id
-    // Riesco a modificarlo, ma non ad aggiornare la scena
   }
 
   alert(state) {
