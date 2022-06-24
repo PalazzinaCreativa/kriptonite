@@ -11,14 +11,14 @@ export const setupRoom = async ({ type, dimensions, color }) => {
     side: THREE.BackSide // Per mostrare il materiale nella parte interna della geometria
   })
 
-  /* await addTexture(wallMaterial,
+  await addTexture(wallMaterial,
     {
       name: 'plaster',
       isStatic: true,
       repeat: 16,
       maps: ['map', 'aoMap', 'bumpMap', 'alphaMap', 'normalMap', 'metalnessMap']
     }
-  ) */
+  )
 
   wallMaterial.receiveShadow = true
   wallMaterial.toneMapped = false
