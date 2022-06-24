@@ -18,7 +18,7 @@ colors = colors.length ? colors.sort((a, b) => a.id - b.id) : colors
 const defaultGap = 6.4
 
 const currentProductUprightsDistance = {
-  k1: [0, 40, 60, 75, 90, 120, 151, 180],
+  k1: [0, 40, 60, 75, 90], //[0, 40, 60, 75, 90, 120, 151, 180]
   k2: [60, 90, 120]
 }
 
