@@ -64,5 +64,11 @@ const carouselOptions = {
 
 onMounted(() => {
   tipsModule.setActiveTip('uprights')
+
+  // Prova: Se ho un solo montante, apro direttamente le sue varianti per l'aggiunta
+  if(uprights.value.length === 1) {
+    let upright = uprights.value[0]
+    configurator.addElement({ ...upright.variants[0], id: upright.id, variantId: upright.variants[0].id })
+  }
 })
 </script>
