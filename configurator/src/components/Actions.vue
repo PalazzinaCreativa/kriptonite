@@ -1,7 +1,7 @@
 <template>
   <div class="fixed left-3 top-1/2 transform -translate-y-1/2">
     <div class="flex flex-col">
-      <div class="w-10 h-10 border border-t-0 border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleMeasures()" :class="{ 'bg-black text-white': configurator.isShowingMeasures }">
+      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleMeasures()" :class="{ 'bg-black text-white': configurator.isShowingMeasures }">
         <Dimensions />
       </div>
       <div class="w-10 h-10 border border-t-0 border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="configurator.toggleHuman()" :class="{ 'bg-black text-white': configurator.isShowingHuman }">
@@ -19,7 +19,7 @@
       <div v-if="canShare" class="w-10 h-10 border border-t-0 border-gray flex justify-center items-center bg-white cursor-pointer text-black" @click="$emit('toggle-download')">
         <Download />
       </div>
-      <div class="w-10 h-10 border border-gray flex justify-center items-center bg-white cursor-pointer text-black" :class="{ 'pointer-events-none opacity-30': !canUndo }" @click="configurator.undo()">
+      <div class="w-10 h-10 border border-t-0 border-gray flex justify-center items-center bg-white cursor-pointer text-black" :class="{ 'pointer-events-none opacity-30': !canUndo }" @click="configurator.undo()">
         <Undo />
       </div>
       <div class="w-10 h-10 border border-t-0 border-gray flex justify-center items-center bg-white cursor-pointer text-black" :class="{ 'pointer-events-none opacity-30': !canRedo }" @click="configurator.redo()">
