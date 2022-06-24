@@ -273,7 +273,9 @@ export default class Upright extends Object3D {
       // Se ci sono montanti alla sua destra, viene sollevato un evento di alert per avvisare l'utente dell'eliminazione multipla
       this.multipleDeletionAlert()
     } else {
-      // Elimino l'elemento
+      // Eliminazione degli elementi associati al montante
+      this.destroyAttachedElements()
+      // Eliminazione del montante
       super.destroy()
     }
   }
@@ -291,6 +293,12 @@ export default class Upright extends Object3D {
       })
     }
 
+    this.destroyAttachedElements()
+    //this.product._isDestroying = false
+    return
+  }
+
+  destroyAttachedElements() {
     // Eliminazione dei ripiani e dei contenitori associati
     // Partenza dal montante alla sinistra di quello in fase di eliminazione per verificare che ci siano ripiani o contenitori attaccati a quest'ultimo
     const nearestUpright = this.product.uprights.find(p => p.index === this.index - 1) || null
@@ -305,7 +313,5 @@ export default class Upright extends Object3D {
     if(elementsToDelete.length) {
       elementsToDelete.map(async (element) =>  await element.destroy())
     }
-    //this.product._isDestroying = false
-    return
   }
 }
