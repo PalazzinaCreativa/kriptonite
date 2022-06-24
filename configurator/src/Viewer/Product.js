@@ -71,7 +71,7 @@ export default class Product {
         }
       })
       this.viewer.updateConfig()
-      console.log(this.viewer.room.main)
+      // console.log(this.viewer.room.main)
       return
     }
     this.viewer.room.main.traverse(child => {
@@ -169,7 +169,7 @@ export default class Product {
         return Object.assign(acc, { [parseInt(curr.getPosition().x)]: [...accPosition, curr]}, {})
       }, {})
 
-      console.log(groupShelves)
+      //console.log(groupShelves)
 
     Object.values(groupShelves)
       .forEach(group => {

@@ -20,7 +20,8 @@ export default class Room {
         isStatic: true,
         ext: 'jpg',
         maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
-      }
+      },
+      obstacles: []
     }
     this.obstacles = []
     this.viewer = viewer
@@ -64,7 +65,7 @@ export default class Room {
   }
 
   reset () {
-    this.obstacles.forEach(o => this.main.remove(o))
+    this.obstacles.forEach(o => this.main.remove(o.object))
     this.obstacles = []
   }
 }
