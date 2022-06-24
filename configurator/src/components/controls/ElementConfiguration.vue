@@ -68,8 +68,6 @@ const data = {
   case: cases
 }
 
-//const elementIsMounted = ref(false)
-
 const currentElement = computed(() => props.element)
 //const currentElement.config = computed(() => currentElement.value.config)
 
@@ -96,21 +94,6 @@ const setMaterial = (material) => {
   currentElement.value.setMaterial({ ...currentElement.value.config?.material, ...material })
   configurator.updateConfig()
 }
-/* onMounted(() => {
-  elementIsMounted.value = true
-}) */
-
-const updateElement = (element) => {
-  /* currentElement.value.updateElement(element)
-  configurator.updateConfig() */
-}
-
-/* if(currentElement.value.config.texture && textures.length) {
-  let startingTexture = textures.find((texture) => {
-    return currentElement.value.config.texture === texture.id
-  })
-  setMaterial(startingTexture)
-} */
 
 const addToAll = () => {
   currentElement.value.setSiblingsMaterial(selectedMaterial.value)
