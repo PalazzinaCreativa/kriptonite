@@ -1,8 +1,10 @@
 import { detectCollision } from './detectCollision'
 import { STANDALONE_Z, GUTTER } from '@/dataset/defaultConfiguratorValues'
 
-export const placeObject = ({ point, element, room, collidables }) => {
+export const placeObject = ({ point, element, collidables, room }) => {
   const { width, height, depth } = element.getSize()
+  //console.log('placeObject dimensions:', width, height, depth)
+
   const { object } = element
 
   const position = ['x', 'y'] // Calcolo il punto in cui posso posizionare l'elemento sugli assi x e y tenendo conto del padding della stanza

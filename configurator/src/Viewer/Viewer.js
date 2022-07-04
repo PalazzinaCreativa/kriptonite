@@ -216,6 +216,10 @@ export default class Viewer {
           room: this.config.room
         }) // Torna false se trova collisioni con altri oggetti
 
+        // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
+        var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
+        this.doHook('searchForElementVariant', { type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+
         if (objectPlaced) {
           this.outlinePass.error.selectedObjects = [this.objectToPlace.object]
           this._positioningBlocked = true // Variabile che controlla se posso posizionare o meno gli elementi
@@ -375,6 +379,10 @@ export default class Viewer {
       this.objectToPlace = null
     }
     if (repositionCamera) this.zoomOnTarget()
+  }
+
+  searchForElementVariant(width) {
+
   }
 
   _getAllObjects (but = []) {
