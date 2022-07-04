@@ -205,7 +205,7 @@ export default class Viewer {
         if (!roomIntersection) return
         
         // Se è un montante K2 cielo-terra ricalcolo la sua altezza al movimento del mouse nella scena
-        if(this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.inRoomPosition === 'standalone') {
+        if(this.objectToPlace?.config?.type === 'upright' && this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.inRoomPosition === 'standalone') {
           this.objectToPlace.setSize()
         }
 

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
+import { distancesFromWall } from '@/dataset/defaultConfiguratorValues'
 import { stringToThreeColor } from './utils/stringToThreeColor'
 import { addTexture } from "./utils/addTexture";
 //import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
@@ -44,6 +45,9 @@ export default class Object3D {
   }
 
   setPosition ({ x, y, z }) {
+    const elementWallDistances = distancesFromWall.find((product) => product.element === this.config.type && product.type === this.product.type && product.uprightsPosition === this.product.uprightsPosition)
+    const distanceFromWall = elementWallDistances ? elementWallDistances.distance : z || this.getPosition().z
+    
     // Calcolo la posizione negli assi in base ai parametri ricevuti
     const normalizeX = !x
       ? this.getPosition().x
@@ -55,10 +59,9 @@ export default class Object3D {
         ? this.getSize().height / 2
         : y
 
-    const normalizeZ = !z
-      ? this.getPosition().z
-      : z
+    const normalizeZ = distanceFromWall
 
+    // console.log('object 3d Z:', normalizeZ)
     // 0.75 è la distanza tra il pavimento effettivo e la texture dello stesso, serve per evitare che gli elementi non si intersechino con il pavimento della stanza
     this.object.position.set(normalizeX, normalizeY + 0.75, normalizeZ)
   }
@@ -71,6 +74,8 @@ export default class Object3D {
       y: dimensions?.height ? dimensions.height / (height / this.object.scale.y) : 1,
       z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1
     }
+
+    // console.log('object 3d scale Z:', scale.z)
 
     this.object.scale.set(scale.x, scale.y, scale.z)
     if (this.config.grounded) this.setPosition(this.getPosition()) // Lo appoggia al terreno se richiesto

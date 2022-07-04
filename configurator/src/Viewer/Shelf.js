@@ -21,6 +21,7 @@ export default class Shelf extends Object3D {
   setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
     const gridY = Math.floor(y / currentGap) * currentGap
+    // console.log('Z:', z)
     super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()
