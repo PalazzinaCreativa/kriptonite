@@ -12,7 +12,6 @@ export default class Case extends Object3D {
     this._cantBePositioned = false
   }
 
-
   async init () {
     await super.init()
     super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
@@ -21,6 +20,7 @@ export default class Case extends Object3D {
   setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
     const gridY = Math.floor(y / currentGap) * currentGap
+    // console.log('Z:', z)
     super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()

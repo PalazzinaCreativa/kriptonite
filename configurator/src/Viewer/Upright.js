@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND, distancesFromWall } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 import { createText } from "./utils/createText"
@@ -21,11 +21,6 @@ const currentProductUprightsDistance = {
   k1: [0, 40, 60, 75, 90], //[0, 40, 60, 75, 90, 120, 151, 180]
   k2: [60, 90, 120]
 }
-
-const distancesFromWall = [
-  { type: 'k1', uprightsPosition: 'wall', distance: 0.1 },
-  { type: 'k2', uprightsPosition: 'standalone', distance: 25 }
-]
 
 export default class Upright extends Object3D {
 
@@ -109,14 +104,11 @@ export default class Upright extends Object3D {
   }
 
   setPosition ({ x, y, z }) {
-    const elementWallDistances = distancesFromWall.find((product) => product.type === this.product.type && product.uprightsPosition === this.product.uprightsPosition)
-    const distanceFromWall = elementWallDistances ? elementWallDistances.distance : 0.1
     // Calcolo dell'altezza in base alla distanza tra i fori dei montanti per allineare questi ultimi
     const currentGap = this.config.slot_space || defaultGap
     const gridY = Math.floor(y / currentGap) * currentGap
     const groundY = this.getSize().height / 2
-    const zPos = this.product.inRoomPosition === 'wall' ? distanceFromWall : z
-    super.setPosition({ x, y: this.config.grounded ? groundY : gridY, z: zPos })
+    super.setPosition({ x, y: this.config.grounded ? groundY : gridY, z })
     this._checkPosition({ x, y, z })
   }
 
