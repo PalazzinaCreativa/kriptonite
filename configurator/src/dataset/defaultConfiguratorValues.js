@@ -10,6 +10,6 @@ export const RESTING_ON_THE_GROUND = ['sofa', 'table', 'door', 'upright_s_tele',
 
 // Le distanze dalle pareti in base al tipo di prodotto selezionato
 export const distancesFromWall = [
-    { type: 'k1', uprightsPosition: 'wall', element: 'upright', distance: 0.1 },
-    { type: 'k2', uprightsPosition: 'standalone', element: 'any', distance: 25 }
+    { type: 'k1', inRoomPosition: 'wall', uprightsPosition: 'wall', elements: ['upright'], distance: 0.1 },
+    { type: 'k2', inRoomPosition: 'wall', uprightsPosition: 'standalone', elements: ['upright', 'shelf', 'case'], distance: 25 }
 ]

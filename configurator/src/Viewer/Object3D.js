@@ -45,7 +45,7 @@ export default class Object3D {
   }
 
   setPosition ({ x, y, z }) {
-    const elementWallDistances = distancesFromWall.find((product) => product.element === this.config.type && product.type === this.product.type && product.uprightsPosition === this.product.uprightsPosition)
+    const elementWallDistances = distancesFromWall.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition)
     const distanceFromWall = elementWallDistances ? elementWallDistances.distance : z || this.getPosition().z
     
     // Calcolo la posizione negli assi in base ai parametri ricevuti
