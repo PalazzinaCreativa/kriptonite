@@ -1,13 +1,13 @@
 export const initialSetupData = [
   {
-    title: 'Benvenuto nel <b>configuratore</b> Kriptonite!',
-    paragraph: 'Con il configuratore dei sistemi KRIPTONITE potrai <b>progettare la tua composizione ideale</b>.<br/><br/>Ricordiamo che non è un software tecnico, per qualsiasi informazione specifica su tagli a misura, consigli progettuali, e RAL speciali, contattare i nostri esperti a: <a href="mailto:tecnico@kriptonite.com">tecnico@kriptonite.com</a> oppure il <a href="https://www.kriptonite.com/it/store-locator">Rivenditore</a> più vicino a te.<br/><br/><b>Buona progettazione!</b>',
+    title: 'Benvenuto nel <b>configuratore</b>',
+    paragraph: 'Con il configuratore dei nostri sistemi potrai <b>progettare la tua composizione ideale</b>.<br/><br/>Ricordiamo che non è un software tecnico, per qualsiasi informazione specifica su tagli a misura, consigli progettuali, e RAL speciali, contattare i nostri esperti a: <a href="mailto:tecnico@kriptonite.com">tecnico@kriptonite.com</a> oppure il <a href="https://www.kriptonite.com/it/store-locator">Rivenditore</a> più vicino a te.<br/><br/><b>Buona progettazione!</b>',
     key: '',
     super: '',
     options: [
       {
         component: 'button',
-        label: 'Iniziamo!',
+        label: 'Iniziamo',
         key: ''
       }
     ]
