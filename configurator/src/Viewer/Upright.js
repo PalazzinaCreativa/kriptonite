@@ -130,6 +130,10 @@ export default class Upright extends Object3D {
 
   _checkPosition ({ x, y }) {
     let cantBePositioned = false
+
+    // Controllo che il montante non vada oltre l'altezza della stanza
+    cantBePositioned = this.getSize().height > this.product.viewer.config.room.dimensions.height
+
     const wireframes = this.product.object.children.find(c => c.name === 'uprights_wireframe')?.children
     if (wireframes) {
       cantBePositioned = !wireframes.some((w, i) => {
@@ -158,36 +162,6 @@ export default class Upright extends Object3D {
 
     this._cantBePositioned = cantBePositioned
     this._setState()
-
-    setTimeout(() => {
-      const extensibleGroup = new THREE.Group();
-      //extensibleGroup.add()
-
-      let topExtensibleNodes = [
-        "2c3f3b2f-3524-428a-bdef-7c7bdec0809e",
-        "f1fee69c-217e-4d12-9d70-20e143095452",
-        "96e5c1e9-c28d-47e8-85e6-6f0321851e7a",
-        "b9eaf16e-577d-41ba-b517-370ea6152d67",
-        "8078a7ef-f074-4839-b5cd-904c1306517f"
-      ]
-      let bottomExtensibleNodes = [
-        "528a80f9-89cf-4936-85e4-13cc380872e6",
-        "d88781bb-3fbc-458d-9ab1-aadbbba0ed0b",
-        "da26f6aa-6fb5-4e05-9b8d-0d41a5462616",
-        "983a1035-22ed-44de-a3b4-f0d995d7c3cd",
-        "8dbee752-dc2c-4ef1-8437-8701bc065cae"
-      ]
-
-      // Se è un montante terra-cielo, adatto l'altezza del montante all'altezza della stanza
-      if(this.config.variantId === 'upright_s_tele') {
-        this.product?.object?.children[0].children[0].children.length ? this.product.object.children[0].children[0].children.map((node) => {
-            //console.log(node, node.uuid)
-            /* if(topExtensibleNodes.includes(node.uuid)) {
-              node.position.y = -50
-            } */
-        }) : []
-      }
-    }, 1500)
   }
 
   _setState() {
