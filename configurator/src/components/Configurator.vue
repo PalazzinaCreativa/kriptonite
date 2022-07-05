@@ -122,6 +122,17 @@ texturesModule.getTextures()
 // Chiamata per ricavare i "Consigli" già letti
 tipsModule.getCookies()
 
+const shelves = computed(() => shelvesModule.index )
+
+const cases = computed(() => casesModule.index )
+
+const attachablesElements = computed(() => {
+  return {
+    shelf: shelves.value,
+    case: cases.value
+  }
+})
+
 const selectedProduct = computed(() => productsModule.selectedProduct)
 
 const selectedOption = computed(() => optionsModule.selected)
@@ -226,6 +237,31 @@ onMounted(() => {
 
   viewer.setHook('removeSelectedElement', () => {
     selectedElement.value = null
+  })
+
+  viewer.setHook('searchForElementVariant', ({ type, width }) => {
+    //console.log(width, attachablesElements.value[type])
+    if(attachablesElements.value[type]?.length) {
+      let fittingElement = selectedElement.value
+      let elementToBeInserted = attachablesElements.value[type].find((element) => element.id === selectedElement.value.id )
+      if(elementToBeInserted) {
+        fittingElement.config = elementToBeInserted.variants.find((variant) => variant.width === parseInt(width))
+        if(fittingElement.config) {
+          fittingElement.config.type = type
+          fittingElement.variantId = fittingElement.config.id
+          fittingElement.config.variantId = fittingElement.variantId
+          fittingElement.id = elementToBeInserted.id
+          fittingElement.config.id = elementToBeInserted.id
+          /* if(selectedElement.value.config !== fittingElement.config) {
+            configurator.addElement({ ...fittingElement.config, id: selectedElement.value.id, variantId: fittingElement.id })
+          } */
+          // Bisogna tener conto della profondità impostata! continua così!
+          console.log(elementToBeInserted.variants, selectedElement.value, fittingElement)
+          fittingElement = { ...selectedElement.value, ...fittingElement }
+          // selectedElement.value = fittingElement
+        }
+      }
+    }
   })
 
   viewer.setHook('checkUndoRedo', ({ canUndo, canRedo }) => {

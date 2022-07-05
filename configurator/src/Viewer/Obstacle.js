@@ -15,6 +15,7 @@ export default class Obstacle extends Object3D {
       if (child.material) {
         child.material = new THREE.MeshStandardMaterial({ color: 0xcacaca, roughness: 1 })
         child.material.map = null
+        child.material.side = THREE.DoubleSide
       }
     })
   }

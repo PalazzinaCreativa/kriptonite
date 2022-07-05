@@ -73,7 +73,7 @@ const currentElement = computed(() => props.element)
 
 // Ricavo e stampo il nome del componente e non della variante
 const mainElement = computed(() => {
-  return data[currentElement.value.config.type].length ? data[currentElement.value.config.type].find((item) => {
+  return currentElement.value.config?.type && data[currentElement.value.config.type].length ? data[currentElement.value.config.type].find((item) => {
     return currentElement.value.config.type !== 'obstacle' && item.variants?.length ?
       item.variants.some((variant) => variant.id === currentElement.value.config.variantId && variant.sku === currentElement.value.config.sku) :
       currentElement.value.config.id === item.id

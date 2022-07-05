@@ -61,13 +61,15 @@ export default class Object3D {
 
     const normalizeZ = distanceFromWall
 
-    // console.log('object 3d Z:', normalizeZ)
+    // console.log('object 3d dimensions:', normalizeX, normalizeY, normalizeZ)
     // 0.75 è la distanza tra il pavimento effettivo e la texture dello stesso, serve per evitare che gli elementi non si intersechino con il pavimento della stanza
     this.object.position.set(normalizeX, normalizeY + 0.75, normalizeZ)
   }
 
   setSize (dimensions) {
     const { width, height, depth } = this.getSize()
+
+    //console.log('object 3d dimensions:', width, height, depth)
 
     const scale = {
       x: dimensions?.width ? dimensions.width / (width / this.object.scale.x) : 1,
