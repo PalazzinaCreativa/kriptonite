@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 import { createLine } from './createLine'
 
-export const createMeasure = (layout, size, gutter = 0, fontSize = 5) => {
+export const createMeasure = (layout, size, gutter = 0, fontSize = 5, measureEdgeLength = 2.5) => {
   return new Promise((resolve) => {
     const measure = new THREE.Group()
     measure.name = 'Measure'
@@ -19,8 +19,6 @@ export const createMeasure = (layout, size, gutter = 0, fontSize = 5) => {
     })
     line.name = 'Line'
     measure.add(line)
-
-    const measureEdgeLength = 2.5
 
     // Estremi della quota
     const startingEdge = createLine({
