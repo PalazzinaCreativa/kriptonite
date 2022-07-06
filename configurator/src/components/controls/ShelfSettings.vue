@@ -1,10 +1,10 @@
 <template>
   <div element-settings class="flex flex-col justify-center gap-10 mx-auto">
-    <div variants>
+    <div variants depth>
       <div class="uppercase text-center mb-6 w-full">Profondità (cm)</div>
       <div v-if="isVisible" class="flex flex-wrap justify-center gap-6">
         <div v-for="(variant, index) in variants" :key="`variant-${index}`" @click="addElement(variant)">
-          <div class="border border-light-gray cursor-pointer px-4 py-6 min-w-[90px] text-center hover:border-yellow transform transition-all duration-400" :class="isSelected(variant.id) ? 'bg-yellow' : 'bg-white'" v-text="variant.depth" />
+          <div class="border border-light-gray cursor-pointer px-4 py-6 min-w-[90px] text-center hover:border-yellow transform transition-all duration-400" :class="isSelected('depth', variant.depth) ? 'bg-yellow' : 'bg-white'" v-text="variant.depth" />
         </div>
       </div>
       <div v-else class="border border-light-gray bg-yellow cursor-pointer px-4 py-6 min-w-[90px] text-center hover:border-yellow transform transition-all duration-400">
@@ -64,5 +64,5 @@
     setRelativeProduct()
   }
 
-  const isSelected = (variantId) => props.element.variantId === variantId
+  const isSelected = (property, value) => props.element.config[property] === value
 </script>
