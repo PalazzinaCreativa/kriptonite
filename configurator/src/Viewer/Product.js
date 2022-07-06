@@ -99,7 +99,7 @@ export default class Product {
 
     // Cerco il montante più a sinistra
     const leftmostUpright = this.uprights
-      .filter(u => u.index === 0)
+      .filter(u => u.realIndex === 0)
       .reduce((acc, curr) => (acc.getPosition().y > curr.getPosition().y) ? acc : curr, this.uprights[0])
 
     // Cerco il montante più basso
@@ -130,39 +130,56 @@ export default class Product {
     this.measures.add(height)
 
     // Distanze tra i montanti
-    const uprightsMeasures = new THREE.Group()
-    uprightsMeasures.name = 'UprightsMeasures'
-    this.measures.add(uprightsMeasures)
+    const uprightsMeasuresX = new THREE.Group()
+    const uprightsMeasuresY = new THREE.Group()
+    uprightsMeasuresX.name = 'UprightsMeasuresX'
+    uprightsMeasuresY.name = 'UprightsMeasuresY'
+    this.measures.add(uprightsMeasuresX)
+    this.measures.add(uprightsMeasuresY)
 
-    const maxIndex = Math.max.apply(Math, this.uprights.map(upright => upright.index)) // Indice più alto tra i montanti
+    // Il montante più a destra
+    const maxIndex = Math.max.apply(Math, this.uprights.map(upright => upright.realIndex))
     let latestIndex
 
     this.uprights.map(async (upright, index) => {
-      if (upright.index === maxIndex || upright.index === latestIndex) return // Se è l'ultimo montante o ho già calcolato le misure per quell'indice
+      const measuresGapY = -DIMENSIONS_GUTTER * 2.5 * (upright.index + 1) - DIMENSIONS_GUTTER * 2.5
+      const uprightHeight = upright.getSize().height
+      const measureVertical = await createMeasure('vertical', uprightHeight)
+
+      // Posizione della quota verticale
+      measureVertical.position.x = measuresGapY
+      measureVertical.position.y = upright.getPosition().y - upright.getSize().height / 2 - DIMENSIONS_GUTTER -2
+      uprightsMeasuresY.add(measureVertical)
+
+      // Se è l'ultimo montante oppure sono già state calcolate le misure per quell'indice
+      if (upright.realIndex === maxIndex || upright.realIndex === latestIndex) return
       // Montante alla destra del montante corrente
-      const nearestUpright = this.uprights.find(item => item.index === upright.index + 1)
+      const nearestUpright = this.uprights.find(item => item.realIndex === upright.realIndex + 1)
       // Distanza tra i due montanti
       const distance = nearestUpright.getPosition().x - upright.getPosition().x
-      const measure = await createMeasure('horizontal', distance)
-
-      // Calcolo della posizione della quota
-      measure.position.x = uprightsMeasures.children.reduce((acc, curr) => {
-        const box = new THREE.Box3().setFromObject(curr)
-        return acc + box.max.x - box.min.x
-      }, 0)
-
-      uprightsMeasures.add(measure)
+      // Se la distanza è 0 vuol dire che il montante in questione è incolonnato ed ha quindi lo stesso indice
+      if(distance) {
+        const measure = await createMeasure('horizontal', distance)
+        
+        // Posizione della quota orizzontale
+        measure.position.x = uprightsMeasuresX.children.reduce((acc, curr) => {
+          const box = new THREE.Box3().setFromObject(curr)
+          return acc + box.max.x - box.min.x
+        }, 0)
+  
+        uprightsMeasuresX.add(measure)
+      }
     })
 
     // Distanze tra gli scaffali
-    const shelvesMeasures = new THREE.Group()
+    /* const shelvesMeasures = new THREE.Group()
     shelvesMeasures.name = 'ShelvesMeasures'
     this.measures.add(shelvesMeasures)
 
     // Unisco ripiani e contenitori
     const shelvesAndCases = [...this.shelves, ...this.cases]
 
-    // Raggruppo gli scaffali della stessa campata
+    // Raggruppamento ripiani e contenitori attaccati alla stessa coppia di montanti
     const groupShelves = shelvesAndCases
       .reduce((acc, curr) => {
         const accPosition = acc[parseInt(curr.getPosition().x)] || []
@@ -200,6 +217,6 @@ export default class Product {
 
             shelvesMeasures.add(measure)
           })
-      })
+      }) */
   }
 }

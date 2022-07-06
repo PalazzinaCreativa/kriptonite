@@ -15,8 +15,8 @@
             <component :is="elementSettingsInstance" :key="JSON.stringify(currentElement.config)" :element="currentElement" @input="updateDimensions"></component>
           </div>
         </div>
-          <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="JSON.stringify(currentElement.config)" :element="currentElement" @setTexture="setMaterial"/>
-          <Colors v-if="currentElement.config.variantId && colors.length" :key="JSON.stringify(currentElement.config)" :element="currentElement" @setColor="setMaterial" />
+          <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="`${JSON.stringify(currentElement.config.material)}`" :element="currentElement" @setTexture="setMaterial"/>
+          <Colors v-if="currentElement.config.variantId && colors.length" :key="`${JSON.stringify(currentElement.config.material)}`" :element="currentElement" @setColor="setMaterial" />
       </div>
       <div class="flex items-center justify-center">
         <span v-if="currentElement.config.variantId" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
@@ -73,8 +73,11 @@ const currentElement = computed(() => props.element)
 
 // Ricavo e stampo il nome del componente e non della variante
 const mainElement = computed(() => {
-  return currentElement.value.config?.type && data[currentElement.value.config.type].length ? data[currentElement.value.config.type].find((item) => {
-    return currentElement.value.config.type !== 'obstacle' && item.variants?.length ?
+  return currentElement.value.config?.type && data[currentElement.value.config.type].length ? 
+  data[currentElement.value.config.type].find((item) => {
+    // Riprendo da qui
+    console.log('currentElement:', currentElement.value.config)
+    return (currentElement.value.config.type !== 'obstacle' && item.variants?.length) ?
       item.variants.some((variant) => variant.id === currentElement.value.config.variantId && variant.sku === currentElement.value.config.sku) :
       currentElement.value.config.id === item.id
   }) : null

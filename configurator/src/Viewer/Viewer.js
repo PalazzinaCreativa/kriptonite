@@ -149,23 +149,23 @@ export default class Viewer {
 
     if (config.room && config.room.obstacles) objects.push(config.room.obstacles.map(o => Object.assign(o, { type: 'obstacle' }, {})))
     if (config.product && config.product.uprights) objects.push(config.product.uprights.map(u => Object.assign(u, { type: 'upright' }, {})))
-    if (config.product && config.product.shelves) objects.push(config.product.shelves.map(s => Object.assign(s, { type: 'shelf' }, {})))
-    if (config.product && config.product.cases) objects.push(config.product.cases.map(c => Object.assign(c, { type: 'case' }, {})))
+    if (config.product && config.product.shelves) objects.push(config.product.shelves.map(s => Object.assign(s, { type: 'shelf', nature: s.nature }, {})))
+    if (config.product && config.product.cases) objects.push(config.product.cases.map(c => Object.assign(c, { type: 'case', nature: c.nature }, {})))
     
     //console.log('feed', objects.flat())
 
     for (const o of objects.flat()) { // For per mantenere il ciclo asincrono
       const data = this.doHook('getData', o)
-      //console.log('data', data)
+      // console.log('data', data, 'o', o)
       let object
       if (o.type === 'obstacle') object = new Obstacle(data, this.room)
       if (o.type === 'upright') object = new Upright({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
       if (o.type === 'shelf') object = new Shelf({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
       if (o.type === 'case') object = new Case({ ...data, index: o.index, realIndex: o.realIndex }, this.product)
 
-      //console.log('oggetto caricato', object)
+      // console.log('oggetto caricato', object)
       await object.init()
-      //console.log('scaling', object)
+      // console.log('scaling', object)
       object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
       object.object.position.set(o.position.x, o.position.y, o.position.z)
 
@@ -209,22 +209,41 @@ export default class Viewer {
           this.objectToPlace.setSize()
         }
 
-        const objectPlaced = placeObject({
+        var objectPlaced = placeObject({
           point: roomIntersection.point,
           element: this.objectToPlace,
           collidables: this._getAllObjects((this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
           room: this.config.room
         }) // Torna false se trova collisioni con altri oggetti
 
-        // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
-        var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
-        this.doHook('searchForElementVariant', { type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+        // Se si sta posizionando un ripiano o un contenitore
+        if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
+          // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
+          var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
+          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+          //console.log('can position element:', !objectPlaced)
+        }
 
         if (objectPlaced) {
           this.outlinePass.error.selectedObjects = [this.objectToPlace.object]
           this._positioningBlocked = true // Variabile che controlla se posso posizionare o meno gli elementi
+          document.body.style.cursor = 'not-allowed'
+          this.objectToPlace.object.traverse(child => {
+            if (child.material) {
+              //child.material.transparent = true
+              child.material.opacity = 0.2
+            }
+          })
           return
         }
+
+        document.body.style.cursor = 'auto'
+        this.objectToPlace.object.traverse(child => {
+          if (child.material) {
+            //child.material.transparent = true
+            child.material.opacity = 1
+          }
+        })
         this._positioningBlocked = false // Variabile che controlla se posso posizionare o meno gli elementi
         this.outlinePass.error.selectedObjects = []
         return
@@ -363,7 +382,7 @@ export default class Viewer {
       this.outlinePass.hover.selectedObjects = []
       this.outlinePass.select.selectedObjects = [element.object]
       this.selectedElement = element
-      this.zoomOnTarget({ ...element.getPosition(), z: 300 })
+      this.zoomOnTarget({ ...element.getPosition(), z: 500 })
       this.doHook('selectElement', element)
       document.body.style.cursor = 'auto'
     }
@@ -381,9 +400,9 @@ export default class Viewer {
     if (repositionCamera) this.zoomOnTarget()
   }
 
-  searchForElementVariant(width) {
-
-  }
+  /* searchForElementVariant(width) {
+    console.log('sono nel viewer')
+  } */
 
   _getAllObjects (but = []) {
     // Torna un array con tutti gli oggetti 3d nella stanza tranne quelli presenti nell'array but
@@ -450,6 +469,8 @@ export default class Viewer {
     const wallColor = this.room.config.wallColor
     const floorType = this.room.config.floorType
 
+    // console.log('updateConfig:', this.product)
+
     const obstacles = this.room.obstacles
       .map(obstacle => ({
         type: 'obstacle',
@@ -473,6 +494,7 @@ export default class Viewer {
         type: 'shelf',
         id: shelf.id,
         material: shelf.config.material,
+        nature: shelf.config.nature,
         variantId: shelf.variantId,
         position: { x: shelf.object.position.x, y: shelf.object.position.y, z: shelf.object.position.z },
         scale: { x: shelf.object.scale.x, y: shelf.object.scale.y, z: shelf.object.scale.z },
@@ -485,6 +507,7 @@ export default class Viewer {
         type: 'case',
         id: item.id,
         material: item.config.material,
+        nature: item.config.nature,
         variantId: item.variantId,
         position: { x: item.object.position.x, y: item.object.position.y, z: item.object.position.z },
         scale: { x: item.object.scale.x, y: item.object.scale.y, z: item.object.scale.z },

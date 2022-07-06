@@ -11,7 +11,8 @@ export default defineStore({
     list: [],
     standardList: [],
     woodenList: [],
-    variantsList: []
+    variantsList: [],
+    selectedElementVariantsList: []
   }),
 
   getters: {
@@ -29,6 +30,10 @@ export default defineStore({
 
     variants: (state) => {
       return state.variantsList
+    },
+
+    currentElementVariantsList: (state) => {
+      return state.selectedElementVariantsList
     }
   },
   
@@ -101,6 +106,8 @@ export default defineStore({
         return item.id === id
       }) : {}
       let variants = item?.variants ?? []
+
+      this.selectedElementVariantsList = variants
       
       variants = Object.keys(filters).length && variants ? variants.filter((item) => {
         return Object.entries(filters).find(([ filter, value ]) => {

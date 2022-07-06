@@ -75,6 +75,7 @@ const props = defineProps(['config'])
 
 const canvasWrapper = ref(null)
 const selectedElement = ref(null)
+const fittingElement = ref({})
 const loading = ref(false)
 const showList = ref(false)
 const showDownload = ref(false)
@@ -122,11 +123,11 @@ texturesModule.getTextures()
 // Chiamata per ricavare i "Consigli" già letti
 tipsModule.getCookies()
 
-const shelves = computed(() => shelvesModule.index )
+const shelves = computed(() => shelvesModule.currentElementVariantsList )
 
-const cases = computed(() => casesModule.index )
+const cases = computed(() => casesModule.currentElementVariantsList )
 
-const attachablesElements = computed(() => {
+const attachableVariants = computed(() => {
   return {
     shelf: shelves.value,
     case: cases.value
@@ -206,7 +207,7 @@ onMounted(() => {
   )
 
   // Feed del configuratore
-  viewer.setHook('getData', ({ type, id, variantId }) => {
+  viewer.setHook('getData', ({ type, id, variantId, nature }) => {
     const data = {
       obstacle: computed(() => encumbrancesModule.index),
       upright: computed(() => uprightsModule.index),
@@ -224,13 +225,15 @@ onMounted(() => {
         return product.variants.some(variant => variant.id === variantId)
       }) : elements[0]
       // Se non ho nessuna variante ritorno l'elemento stesso
+      // console.log('variantId:', variantId, 'element:', el, 'nature:', nature)
       if (!variantId) return el
       // Altrimenti carico la variante con quell'ID
-      return { ...el.variants.find(v => v.id === variantId), id, variantId }
+      return { ...el.variants.find(v => v.id === variantId && v.nature === nature), id, variantId }
     }
   })
 
   viewer.setHook('selectElement', (element) => {
+    //console.log("selezione dell'elemento:", element)
     selectedElement.value = element
     optionsModule.resetSelectedOption()
   })
@@ -239,29 +242,22 @@ onMounted(() => {
     selectedElement.value = null
   })
 
-  viewer.setHook('searchForElementVariant', ({ type, width }) => {
-    //console.log(width, attachablesElements.value[type])
-    if(attachablesElements.value[type]?.length) {
-      let fittingElement = selectedElement.value
-      let elementToBeInserted = attachablesElements.value[type].find((element) => element.id === selectedElement.value.id )
-      if(elementToBeInserted) {
-        fittingElement.config = elementToBeInserted.variants.find((variant) => variant.width === parseInt(width))
-        if(fittingElement.config) {
-          fittingElement.config.type = type
-          fittingElement.variantId = fittingElement.config.id
-          fittingElement.config.variantId = fittingElement.variantId
-          fittingElement.id = elementToBeInserted.id
-          fittingElement.config.id = elementToBeInserted.id
-          /* if(selectedElement.value.config !== fittingElement.config) {
-            configurator.addElement({ ...fittingElement.config, id: selectedElement.value.id, variantId: fittingElement.id })
-          } */
-          // Bisogna tener conto della profondità impostata! continua così!
-          console.log(elementToBeInserted.variants, selectedElement.value, fittingElement)
-          fittingElement = { ...selectedElement.value, ...fittingElement }
-          // selectedElement.value = fittingElement
-        }
+  viewer.setHook('searchForElementVariant', ({ id, type, width }) => {
+    // L'elemento può essere posizionato
+    let elementCantBePositioned = true
+    // Se sono già stati caricati elementi di questa tipologia
+    if(attachableVariants.value[type]?.length) {
+      // Ricerca della variante dell'elemento che ha larghezza pari alla distanza tra i montanti in qustione e profondità decisa dall'utente
+      if(attachableVariants.value[type].some((variant) => variant.width === parseInt(width) && variant.depth === selectedElement.value.config.depth)) {
+        fittingElement.value = ref(selectedElement.value)
+        fittingElement.value.config = attachableVariants.value[type].find((variant) => variant.width === parseInt(width) && variant.depth === selectedElement.value.config.depth)
+        fittingElement.value.config.material = selectedElement.value.config.material
+        elementCantBePositioned = false
+      } else {
+        elementCantBePositioned = true
       }
     }
+    return elementCantBePositioned
   })
 
   viewer.setHook('checkUndoRedo', ({ canUndo, canRedo }) => {
