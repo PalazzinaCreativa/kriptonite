@@ -62,6 +62,7 @@ export const setupLights = ({ width, height }) => {
   rectAreaLight.lookAt(width / 2, height, FLOOR_DEPTH / 2)
   return {
     classic: [ambientLight, /*spotLight*/, spotLight2, spotLight3, /*helper2*/, /*helper3*/, pointLight, rectAreaLight ],
-    attic: [ambientLight, /*spotLight*/, spotLight2, spotLight3, spotLight4, /*helper*/, /*helper2*/, /*helper3*/, pointLight, rectAreaLight ]
+    attic: [ambientLight, /*spotLight*/, spotLight2, spotLight3, spotLight4, /*helper*/, /*helper2*/, /*helper3*/, pointLight, rectAreaLight ],
+    niche: [ambientLight, /*spotLight*/, spotLight2, spotLight3, /*helper2*/, /*helper3*/, pointLight, rectAreaLight ]
   }
 }
