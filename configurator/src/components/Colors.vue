@@ -1,6 +1,6 @@
 <template>
   <div colors v-if="colors.length" class="mt-12">
-    <div class="uppercase text-center w-full">Finitura</div>
+    <div class="uppercase text-center w-full" v-text="title" />
     <div class="flex flex-wrap justify-center gap-4 my-8 w-full">
       <div v-for="color in colors" :key="`color-${color.id}`" class="flex flex-col items-center cursor-pointer max-w-[100px]" @click="setMaterial(color)">
         <div class="border-2 w-14 h-14 rounded-full" :class="materialColor?.id === color.id ? 'border-2 border-yellow' : 'border-dark-gray'" :style="`background-color: ${color.code}`"></div>
@@ -18,9 +18,10 @@ const colorsModule = useColorsStore()
 const colors = computed(() => colorsModule.index)
 const selectedColor = computed(() => colorsModule.selected)
 
-const props = defineProps(['element'])
+const props = defineProps(['element', 'title'])
 const emits = defineEmits(['setColor'])
 
+const title = computed(() => props.title || 'Finitura')
 const materialColor = computed(() => props.element?.config?.material)
 
 const setMaterial = (material) => {
