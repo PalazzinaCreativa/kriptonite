@@ -88,8 +88,12 @@ export default class Upright extends Object3D {
         : this.getPosition().x - (GUTTER * 1)
 
         // Calcolo dell'altezza della stanza alla posizione del mouse
-        currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) - GUTTER
+        currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight)
       }
+      // Passaggio dell'altezza ricalcolata al componente
+      this.config.adaptiveHeight = currentRoomHeight
+      // Utilizzo di un evento custom per ricalcolare la variabile nel componente
+      window.dispatchEvent(new Event('changeAdaptiveHeight'))
       // Altezza della mansarda alla posizione del mouse
       roomHeightScaleFactor = currentRoomHeight / this.config.height
     }
