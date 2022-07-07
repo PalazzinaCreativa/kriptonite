@@ -90,12 +90,17 @@ export default class Product {
     this._visibleMeasures = true
     // Distacco delle quote dagli elementi
     const DIMENSIONS_GUTTER = 7.5
+    // Funzione di toggle
     if (this.measures) {
       this.object.remove(this.measures)
     }
+    // Istanza delle quote
     this.measures = new THREE.Object3D()
     this.measures.name = 'Measures'
     this.object.add(this.measures)
+
+    // Cerco il montante più a destra
+    const latestUpright = this.uprights.reduce((prev, current) => (prev.realIndex > current.realIndex) ? prev : current)
 
     // Cerco il montante più a sinistra
     const leftmostUpright = this.uprights
@@ -114,7 +119,7 @@ export default class Product {
     width.position.x = -(leftmostUpright.getSize().width / 2)
     width.position.y = -DIMENSIONS_GUTTER * 3
     height.position.y = DIMENSIONS_GUTTER
-    height.position.x = -DIMENSIONS_GUTTER * 2.5
+    height.position.x = latestUpright.getPosition().x + DIMENSIONS_GUTTER // Sinistra: -DIMENSIONS_GUTTER * 2.5
 
     // Posizione delle quote totali
     const measuresZPosition = this.inRoomPosition === 'standalone' ? STANDALONE_Z : (this.uprightsPosition === 'standalone' && this.type === 'k2' ? 25 : 0.1)
@@ -142,13 +147,17 @@ export default class Product {
     let latestIndex
 
     this.uprights.map(async (upright, index) => {
-      const measuresGapY = -DIMENSIONS_GUTTER * 2.5 * (upright.index + 1) - DIMENSIONS_GUTTER * 2.5
+      // measuresGapY
+      // Se si vogliono mettere le quote vicino al relativo montante: upright.getPosition().x - DIMENSIONS_GUTTER * 5
+      // Se si vogliono le quote tutte a sinistra: -DIMENSIONS_GUTTER * 2.5 * (upright.index + 1)
+      // Se si deve posizionare a sinistra aggiungere: - DIMENSIONS_GUTTER * 2.5
+      const measuresGapY = -DIMENSIONS_GUTTER * 2.5 * (upright.index + 1)
       const uprightHeight = upright.getSize().height
       const measureVertical = await createMeasure('vertical', uprightHeight)
 
       // Posizione della quota verticale
       measureVertical.position.x = measuresGapY
-      measureVertical.position.y = upright.getPosition().y - upright.getSize().height / 2 - DIMENSIONS_GUTTER -2
+      measureVertical.position.y = upright.getPosition().y - upright.getSize().height / 2 // - DIMENSIONS_GUTTER -2
       uprightsMeasuresY.add(measureVertical)
 
       // Se è l'ultimo montante oppure sono già state calcolate le misure per quell'indice

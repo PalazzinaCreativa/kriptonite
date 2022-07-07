@@ -204,8 +204,8 @@ export default class Viewer {
         const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
         if (!roomIntersection) return
         
-        // Se è un montante K2 cielo-terra ricalcolo la sua altezza al movimento del mouse nella scena
-        if(this.objectToPlace?.config?.type === 'upright' && this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.inRoomPosition === 'standalone') {
+        // Se è un montante K2 cielo-terra posizionato in una mansarda ricalcolo la sua altezza al movimento del mouse nella scena
+        if(this.objectToPlace?.config?.type === 'upright' && this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.uprightsPosition === 'standalone') {
           this.objectToPlace.setSize()
         }
 

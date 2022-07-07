@@ -84,12 +84,16 @@ export default class Upright extends Object3D {
       if(this.product.viewer?.room?.config?.type === 'attic') {
         // Calcolo della base del triangolo dello spazio rimanente
         const triangleBase = this.product.viewer.config.room.dimensions.leftHeight > this.product.viewer.config.room.dimensions.rightHeight
-        ? this.product.viewer.config.room.dimensions.width - this.getPosition().x
-        : this.getPosition().x
+        ? this.product.viewer.config.room.dimensions.width - this.getPosition().x - (GUTTER * 1)
+        : this.getPosition().x - (GUTTER * 1)
 
         // Calcolo dell'altezza della stanza alla posizione del mouse
-        currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) - GUTTER
+        currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight)
       }
+      // Passaggio dell'altezza ricalcolata al componente
+      this.config.adaptiveHeight = currentRoomHeight
+      // Utilizzo di un evento custom per ricalcolare la variabile nel componente
+      window.dispatchEvent(new Event('changeAdaptiveHeight'))
       // Altezza della mansarda alla posizione del mouse
       roomHeightScaleFactor = currentRoomHeight / this.config.height
     }
@@ -137,8 +141,9 @@ export default class Upright extends Object3D {
     const wireframes = this.product.object.children.find(c => c.name === 'uprights_wireframe')?.children
     if (wireframes) {
       cantBePositioned = !wireframes.some((w, i) => {
-        // Controllo che sia vicino a un wireframe
-        const isIn = x > w.position.x - 12 && x < w.position.x + 12
+        // SNAP: Controllo che sia vicino a un wireframe
+        const snap = 20
+        const isIn = x > w.position.x - snap && x < w.position.x + snap
         // In caso positivo lo metto nella stessa posizione x ed esco dal ciclo
         if (isIn) this.object.position.x = w.position.x
         return isIn
