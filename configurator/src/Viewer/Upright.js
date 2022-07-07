@@ -141,8 +141,9 @@ export default class Upright extends Object3D {
     const wireframes = this.product.object.children.find(c => c.name === 'uprights_wireframe')?.children
     if (wireframes) {
       cantBePositioned = !wireframes.some((w, i) => {
-        // Controllo che sia vicino a un wireframe
-        const isIn = x > w.position.x - 12 && x < w.position.x + 12
+        // SNAP: Controllo che sia vicino a un wireframe
+        const snap = 20
+        const isIn = x > w.position.x - snap && x < w.position.x + snap
         // In caso positivo lo metto nella stessa posizione x ed esco dal ciclo
         if (isIn) this.object.position.x = w.position.x
         return isIn
