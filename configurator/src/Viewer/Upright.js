@@ -84,8 +84,8 @@ export default class Upright extends Object3D {
       if(this.product.viewer?.room?.config?.type === 'attic') {
         // Calcolo della base del triangolo dello spazio rimanente
         const triangleBase = this.product.viewer.config.room.dimensions.leftHeight > this.product.viewer.config.room.dimensions.rightHeight
-        ? this.product.viewer.config.room.dimensions.width - this.getPosition().x
-        : this.getPosition().x
+        ? this.product.viewer.config.room.dimensions.width - this.getPosition().x - (GUTTER * 1)
+        : this.getPosition().x - (GUTTER * 1)
 
         // Calcolo dell'altezza della stanza alla posizione del mouse
         currentRoomHeight = triangleBase * Math.tan(this.product.viewer.config.room.atticAngle) + Math.min(this.product.viewer.config.room.dimensions.leftHeight, this.product.viewer.config.room.dimensions.rightHeight) - GUTTER
