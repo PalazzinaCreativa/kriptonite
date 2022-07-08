@@ -7,19 +7,6 @@ export const setupFloor = async ({ width, roomType, type}) => {
     roughness: 0.95
   })
 
-  const types = {
-    parquet: {
-      id: 2,
-      name: 'bamboo',
-      repeat: [7, 9],
-      isStatic: true,
-      ext: 'jpg',
-      maps: ['map', 'aoMap', 'normalMap', 'bumpMap', 'roughnessMap', 'metalnessMap']
-    }
-  }
-
-  await addTexture(floorMaterial, types[type])
-
   const normalizeWidth = roomType === 'niche' // Se è una nicchia bisogna calcolare la dimensione del pavimento
     ? width + NICHE_PADDING * 2
     : width

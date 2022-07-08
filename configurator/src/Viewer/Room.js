@@ -39,11 +39,13 @@ export default class Room {
         })
     }
     const floor = await setupFloor({ width: this.config.dimensions.width, roomType: this.config.type, type: this.config.floor })
-    const baseboard = await setupBaseboard(this.config.dimensions)
+    const baseboard = await setupBaseboard(this.config, this.config.dimensions)
 
     this.main.add(room)
     this.main.add(floor)
     this.main.add(baseboard)
+    
+    this.changeFloor(this.config.floorType)
 
     this.viewer.scene.add(this.main)
   }
@@ -56,7 +58,11 @@ export default class Room {
 
   async changeFloor (texture) {
     this.config.floorType = texture
-    await addTexture(this.main.children.find(c => c.name === 'floor').material, texture)
+    this.main.traverse(async (child) => {
+      if(child.name === 'floor' || child.name === 'baseboard') {
+        await addTexture(child.material, texture)
+      }
+    })
   }
 
   addObstacle (obstacle) {

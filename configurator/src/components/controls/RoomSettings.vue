@@ -9,28 +9,19 @@
       <div class="mt-8 px-6">
         <SetWallColor @changeColor="color => $emit('changeColor', color)" />
       </div>
-      <!-- <div class="flex items-center justify-center">
-        <span v-if="element.config.material" class="bg-black cursor-pointer hover:bg-opacity-80 text-white px-6 py-2 rounded-full mt-4 mx-auto inline-block" @click="addToAll">Applica finitura a tutti</span>
-      </div> -->
     </div>
-    <!-- <div configuration-actions class="flex w-full">
-      <Btn class="bg-light-gray" label="Elimina elemento" @click="destroy" />
-      <Btn class="bg-yellow" label="Aggiorna elemento" @click="addElement" />
-    </div> -->
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useConfiguratorStore } from '@/stores/configurator'
-import { capitalize } from '@/utils/capitalize'
 import useTexturesStore from '@/stores/textures';
 
 import SetWallColor from '@/components/controls/SetWallColor.vue'
 import Textures from '@/components/Textures.vue'
 
 import Close from '@/components/icons/Close.vue'
-import Btn from '@/components/forms/Button.vue'
 
 const texturesModule = useTexturesStore()
 texturesModule.getRoomTextures()
@@ -41,10 +32,7 @@ const title = ref('Opzioni stanza')
 
 const configurator = useConfiguratorStore()
 
-//const elementSettingsInstance = computed(markRaw(() => defineAsyncComponent(() => import(`./${capitalize(props.element.config.type)}Settings.vue`))))
-
 const setMaterial = (material) => {
-  //props.element.setMaterial(material)
   configurator.changeFloor(material)
   configurator.updateConfig()
 }
@@ -52,16 +40,6 @@ const setMaterial = (material) => {
 const close = () => {
   emits('close')
 }
-
-/* const addElement = () => {
-  props.element.setSize(props.element.config)
-  emits('close')
-} */
-
-/* const destroy = () => {
-  props.element.destroy()
-  close()
-} */
 </script>
 <style>
 .hu-color-picker canvas {
