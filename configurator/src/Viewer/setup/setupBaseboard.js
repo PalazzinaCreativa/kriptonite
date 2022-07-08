@@ -42,7 +42,7 @@ export const setupBaseboard = async ({ type, dimensions }, { width }) => {
       nicheFace.position.set(
         f === 1 ? 0 : f === 2 ? -NICHE_PADDING / 2 : f === 3 ? width : f === 4 ? roomWidth - (NICHE_PADDING / 2) : 0,
         0.75,
-        f % 2 !== 0 ? FLOOR_DEPTH / 2 + NICHE_PADDING / 2 : FLOOR_DEPTH / 2 + nicheDepth
+        f % 2 !== 0 ? FLOOR_DEPTH / 2 + nicheDepth / 2 : FLOOR_DEPTH / 2 + nicheDepth
       )
 
       if (f % 2 !== 0) nicheFace.rotation.y = Math.PI / 2

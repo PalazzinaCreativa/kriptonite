@@ -819,7 +819,7 @@ const defaultConfigK2 = {
       ]
     },
     product: {
-      id: 1,
+      id: 2,
       type: "k1",
       inRoomPosition: "wall",
       uprightsPosition: "standalone",
