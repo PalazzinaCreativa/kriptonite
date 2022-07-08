@@ -781,7 +781,7 @@ const defaultConfigK2 = {
   step: 4,
     room: {
       composition: "brick",
-      type: "attic",
+      type: "niche",
       dimensions: {
         height: 2.8,
         width: 3,
@@ -819,9 +819,9 @@ const defaultConfigK2 = {
       ]
     },
     product: {
-      id: 2,
-      type: "k2",
-      inRoomPosition: "standalone",
+      id: 1,
+      type: "k1",
+      inRoomPosition: "wall",
       uprightsPosition: "standalone",
       /* shelves: [
           {

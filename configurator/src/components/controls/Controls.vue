@@ -13,7 +13,7 @@
         <!-- <Btn v-if="destroyLabel" class="bg-light-gray w-full" :label="destroyLabel" @click="destroyEverything" /> -->
         <Btn v-if="getProjectShareLabel" class="bg-yellow w-full" :label="getProjectShareLabel" @click="shareProject" />
       </div>
-      <div sidebar-trigger class="absolute bottom-[64px] border border-gray bg-white cursor-pointer flex h-8 items-center justify-center rounded-full transform -translate-x-1/2 duration-400 transition-all w-8 hover:border-yellow z-5" :class="isOpen ? '' : 'bg-black border-white text-white -rotate-180 -translate-x-[200%]'" @click="toggleSidebar">
+      <div sidebar-trigger class="absolute bottom-[64px] border border-gray bg-white cursor-pointer flex h-8 items-center justify-center rounded-full transform -translate-x-1/2 duration-400 transition-all w-8 hover:border-yellow z-6" :class="isOpen ? '' : 'bg-black border-white text-white -rotate-180 -translate-x-[200%]'" @click="toggleSidebar">
         <Arrow class="text-dark-gray" />
       </div>
     </div>
