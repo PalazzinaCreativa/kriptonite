@@ -4,7 +4,7 @@
       <div v-text="title" />
       <Close class="cursor-pointer" @click="close" />
     </div>
-    <div configuration-content class="grow w-full">
+    <div configuration-content class="grow px-6 w-full">
       <Textures class="mt-8" title="Pavimento" :element="element" entity="room" @setTexture="setMaterial"/>
       <div class="mt-8 px-6">
         <SetWallColor @changeColor="color => $emit('changeColor', color)" />
