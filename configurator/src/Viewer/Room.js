@@ -14,7 +14,7 @@ export default class Room {
       wallColor: '#ffffff',
       floor: 'parquet',
       floorType: {
-        id: 2,
+        id: 1,
         name: 'bamboo',
         repeat: [7, 9],
         isStatic: true,

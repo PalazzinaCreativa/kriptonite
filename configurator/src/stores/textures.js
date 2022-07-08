@@ -94,10 +94,57 @@ export default defineStore({
         ]
       }, */
       {
-        id: 2,
+        id: 1,
         name: 'bamboo',
         thumb: '/assets/textures/bamboo/bamboo_map.jpg',
         repeat: [7, 9],
+        ext: 'jpg',
+        isStatic: true,
+        maps: [
+          'map',
+          'aoMap',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ]
+      },
+      {
+        id: 2,
+        name: 'parquet-light',
+        thumb: '/assets/textures/parquet-light/parquet-light_map.jpg',
+        repeat: [2, 2],
+        ext: 'jpg',
+        isStatic: true,
+        maps: [
+          'map',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ]
+      },
+      {
+        id: 3,
+        name: 'parquet-medium',
+        thumb: '/assets/textures/parquet-medium/parquet-medium_map.jpg',
+        repeat: [2, 2],
+        ext: 'jpg',
+        isStatic: true,
+        maps: [
+          'map',
+          'aoMap',
+          'normalMap',
+          'bumpMap',
+          'roughnessMap',
+          'metalnessMap'
+        ]
+      },
+      {
+        id: 4,
+        name: 'parquet-dark',
+        thumb: '/assets/textures/parquet-dark/parquet-dark_map.jpg',
+        repeat: [6, 6],
         ext: 'jpg',
         isStatic: true,
         maps: [
@@ -125,7 +172,7 @@ export default defineStore({
         ]
       }, */
       {
-        id: 4,
+        id: 5,
         name: 'tiles',
         thumb: '/assets/textures/tiles/tiles_map.jpg',
         repeat: [2, 3.5],
