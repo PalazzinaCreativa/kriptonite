@@ -42,10 +42,10 @@
   const variants = computed(() => uprightsModule.variants)
   const props = defineProps(['element'])
   const emits = defineEmits(['update'])
-  const adaptiveHeight = ref(props.element?.config?.adaptiveHeight.toFixed(2) || room?.value?.config?.dimensions?.height || props.element?.config?.height || 0)
+  const adaptiveHeight = ref(props.element?.config?.adaptiveHeight?.toFixed(2) || room?.value?.config?.dimensions?.height || props.element?.config?.height || 0)
 
   window.addEventListener('changeAdaptiveHeight', (event) => {
-    adaptiveHeight.value = props.element?.config?.adaptiveHeight.toFixed(2) || room?.value?.config?.dimensions?.height || props.element?.config?.height || 0
+    adaptiveHeight.value = props.element?.config?.adaptiveHeight?.toFixed(2) || room?.value?.config?.dimensions?.height || props.element?.config?.height || 0
   })
 
   const isSelected = (variantId) => props.element.variantId === variantId

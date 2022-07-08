@@ -12,7 +12,7 @@
         </div>
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
-            <component :is="elementSettingsInstance" :key="JSON.stringify(currentElement.config)" :element="currentElement" @input="updateDimensions"></component>
+            <component :is="elementSettingsInstance" :key="`${JSON.stringify(currentElement.config)}`" :element="currentElement" @input="updateDimensions"></component>
           </div>
         </div>
           <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="`${JSON.stringify(currentElement.config.material)}`" :title="texturesTitle" :element="currentElement" @setTexture="setMaterial"/>

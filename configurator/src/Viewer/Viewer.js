@@ -203,6 +203,9 @@ export default class Viewer {
         const intersects = raycaster.intersectObjects([this.room.main]) // Controllo i punti di intersezione con la stanza
         const roomIntersection = intersects.find(m => m.object.name === 'room') // Controllo che il mouse sia dentro la stanza
         if (!roomIntersection) return
+
+        //console.log('oggetto da posizionare:', true, 'roomIntersection:', roomIntersection)
+        //console.log(this.objectToPlace._cantBePositioned)
         
         // Se è un montante K2 cielo-terra posizionato in una mansarda ricalcolo la sua altezza al movimento del mouse nella scena
         if(this.objectToPlace?.config?.type === 'upright' && this.room.config.type === 'attic' && this.objectToPlace.product?.type === 'k2' && this.objectToPlace.product?.uprightsPosition === 'standalone') {
@@ -214,7 +217,9 @@ export default class Viewer {
           element: this.objectToPlace,
           collidables: this._getAllObjects((this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
           room: this.config.room
-        }) // Torna false se trova collisioni con altri oggetti
+        }) || this.objectToPlace._cantBePositioned // Torna false se trova collisioni con altri oggetti
+
+        //console.log('collisioni con altri oggetti:', objectPlaced)
 
         // Se si sta posizionando un ripiano o un contenitore
         if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
@@ -248,6 +253,8 @@ export default class Viewer {
         this.outlinePass.error.selectedObjects = []
         return
       }
+
+      //console.log('is adding a new element', this._isAddingNewElement)
 
       if (this._isAddingNewElement) return
       // Se non ho alcun oggetto da posizionare
@@ -399,10 +406,6 @@ export default class Viewer {
     }
     if (repositionCamera) this.zoomOnTarget()
   }
-
-  /* searchForElementVariant(width) {
-    console.log('sono nel viewer')
-  } */
 
   _getAllObjects (but = []) {
     // Torna un array con tutti gli oggetti 3d nella stanza tranne quelli presenti nell'array but
