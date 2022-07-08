@@ -71,7 +71,6 @@ export default class Upright extends Object3D {
     })
   }
 
-  // test per non stretchare l'oggetto su asse x e z
   setSize (dimensions) {
     const { width, height, depth } = this.getSize()
     const { x, y, z } = this.getPosition()
