@@ -15,8 +15,8 @@ import 'vue-color-kit/dist/vue-color-kit.css'
 
 const configurator = useConfiguratorStore()
 
-const wallColor = ref('#FFFFFF')
-const colorSuggestions = ref(['#FFFFFF', '#787878', '#A6BAA6', '#8F9DB8', '#B5A596', '#B05E6D', '#F0CCD5'])
+const wallColor = ref('#efefef')
+const colorSuggestions = ref(['#efefef', '#d9d9d9', '#415956', '#005580', '#cdbbae', '#c5654a', '#c38841'])
 let wallColorTimeout
 
 const handleChangeColor = ({ hex }) => {
