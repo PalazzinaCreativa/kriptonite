@@ -34,7 +34,10 @@
         <ProductList v-if="showList" @close="showList = false" />
       </Transition>
       <Transition name="slide-in">
-        <DownloadModel v-if="showDownload" :config="config" @close="showDownload = false" />
+        <DownloadModel v-if="showDownload" :config="config" @close="showDownload = false" @request-quote="openRequestQuoteForm"/>
+      </Transition>
+      <Transition name="slide-in">
+        <QuoteRequest v-if="requestingQuote" @close="closeRequestQuoteForm"/>
       </Transition>
     </Controls>
   </div>
@@ -52,6 +55,7 @@ import Header from '@/components/Header.vue'
 import Actions from '@/components/Actions.vue'
 import ProductList from '@/components/ProductList.vue'
 import DownloadModel from '@/components/DownloadModel.vue'
+import QuoteRequest from '@/components/QuoteRequest.vue'
 import Btn from '@/components/forms/Button.vue'
 import Close from '@/components/icons/Close.vue'
 import Alert from '@/components/Alert.vue'
@@ -79,6 +83,7 @@ const fittingElement = ref({})
 const loading = ref(false)
 const showList = ref(false)
 const showDownload = ref(false)
+const requestingQuote = ref(false)
 const tip = ref({})
 
 controlsList.map((item) => {
@@ -181,7 +186,16 @@ const confirm = () => {
   isAlerting.value = false
 }
 
-const shareProject = async () => {
+const shareProject = () => {
+  showDownload.value = true
+}
+
+const openRequestQuoteForm = () => {
+  requestingQuote.value = true
+}
+
+const closeRequestQuoteForm = () => {
+  requestingQuote.value = false
   showDownload.value = true
 }
 

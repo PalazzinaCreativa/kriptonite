@@ -29,10 +29,9 @@ import Btn from '@/components/forms/Button.vue'
 import Close from '@/components/icons/Close.vue'
 
 const props = defineProps(['config'])
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close', 'request-quote'])
 
 const configurator = useConfiguratorStore()
-// console.log(import.meta.env)
 const baseURL = ref(import.meta.env.VITE_BASE_URL)
 const currentConfiguration = computed(() => configurator.currentConfiguration)
 const configurationId = computed(() => currentConfiguration.value?.code || '')
@@ -40,7 +39,7 @@ const shareLink = ref('')
 const projectLink = ref(null)
 const linkWasCopied = ref(false)
 
-const requestQuoteLabel = '' //'Richiedi preventivo'
+const requestQuoteLabel = 'Richiedi preventivo'
 
 onMounted(async () => {
   // Se non ho già inizializzato una configurazione la inizializzo
@@ -56,7 +55,7 @@ onMounted(async () => {
 })
 
 const requestQuote = () => {
-  //console.log('Richiedi preventivo')
+  emits('request-quote')
 }
 
 const copyLink = () => {
