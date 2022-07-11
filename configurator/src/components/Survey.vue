@@ -86,6 +86,7 @@ onMounted(() => {
     productChoiceQuestion.options.map((option) => {
       let product = products.find(product => product.sku === option.key)
       option.image = product?.image?.url || option.image
+      option.description = product?.description || option.description
     })
   }
 })
