@@ -38,6 +38,7 @@ export default class Product {
   // Rimuovo le guide
   removeWireframes () {
     this.object.remove(this.object.children.find(c => c.name === 'uprights_wireframe'))
+    this.object.remove(this.object.children.find(c => c.name === 'wireframe_distance'))
   }
 
   getSize () {

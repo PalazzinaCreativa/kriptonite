@@ -184,8 +184,11 @@ export default class Upright extends Object3D {
     const latestUpright = this.product.uprights.reduce((prev, current) => (prev.index > current.index) ? prev : current)
 
     const wireframes = new THREE.Group()
+    const distances = new THREE.Group()
     wireframes.name = 'uprights_wireframe'
+    distances.name = 'wireframe_distance'
     this.product.object.add(wireframes)
+    this.product.object.add(distances)
 
     // Creazione delle guide per ogni possibile distanza
     currentProductUprightsDistance[this.product.type]
@@ -207,12 +210,12 @@ export default class Upright extends Object3D {
         // Distanze tra i montanti
         const distance = x ? new THREE.Mesh(
           await createText(`${x}`, { size: 4, depth: 0.1, amount: 0.1 }),
-          new THREE.MeshLambertMaterial({ color: 0x707070, transparent: false, opacity: 1 })
+          new THREE.MeshLambertMaterial({ color: 0x000000, transparent: false, opacity: 1 })
         ) : 0
 
         const distanceUnit = x ? new THREE.Mesh(
           await createText('cm', { size: 2.5, depth: 0.1, amount: 0.1 }),
-          new THREE.MeshLambertMaterial({ color: 0x707070, transparent: false, opacity: 1 })
+          new THREE.MeshLambertMaterial({ color: 0x000000, transparent: false, opacity: 1 })
         ) : 0
 
         if(distance) {
@@ -223,7 +226,7 @@ export default class Upright extends Object3D {
           distance.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
           distance.position.y = 50
           distance.position.x = latestUpright.object.position.x + x
-          wireframes.add(distance)
+          distances.add(distance)
 
           // Unità di misura
           if(distanceUnit) {
@@ -231,7 +234,7 @@ export default class Upright extends Object3D {
             distanceUnit.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z + 7 : 7
             distanceUnit.position.y = 49
             distanceUnit.position.x = latestUpright.object.position.x + x + distanceWidth / 2 + 3.5
-            wireframes.add(distanceUnit)
+            distances.add(distanceUnit)
           }
         }
       })
