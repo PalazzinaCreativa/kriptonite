@@ -276,7 +276,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Sospesa',
         description: '',
-        image: 'assets/images/floating.jpeg',
+        image: 'assets/images/k1-floating.jpg',
         key: 'wall',
         showIf: {
           entity: 'product.type',
@@ -287,7 +287,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'A terra',
         description: '',
-        image: 'assets/images/ground.jpeg',
+        image: 'assets/images/k1-ground.jpg',
         key: 'standalone',
         showIf: {
           entity: 'product.type',
@@ -298,7 +298,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Terra-cielo',
         description: '',
-        image: 'assets/images/groundtotop.jpeg',
+        image: 'assets/images/k2-groundtotop.jpg',
         key: 'standalone',
         showIf: {
           entity: 'product.type',
@@ -309,7 +309,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Parete-terra',
         description: '',
-        image: 'assets/images/walltoground.jpeg',
+        image: 'assets/images/k2-walltoground.jpg',
         key: 'wall',
         showIf: {
           entity: 'product.type',
@@ -329,7 +329,7 @@ export const initialSetupData = [
         component: 'card',
         label: 'Terra-cielo',
         description: '',
-        image: 'assets/images/groundtotop.jpeg',
+        image: 'assets/images/k2-groundtotop.jpg',
         key: 'standalone',
         showIf: {
           entity: 'product.type',
