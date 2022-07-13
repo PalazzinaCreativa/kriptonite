@@ -373,7 +373,7 @@ export default class Viewer {
     })
 
     window.addEventListener('resize',() => {
-      this.zoomOnTarget({ z: 400 }, 0.4)
+      this.zoomOnTarget({ z: 500 }, 0.4)
       this.camera.aspect = this.domEl.offsetWidth / this.domEl.offsetHeight
       this.camera.updateProjectionMatrix()
       this.renderer.setSize(this.domEl.offsetWidth, this.domEl.offsetHeight)

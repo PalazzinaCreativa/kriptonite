@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
+import { elementDistances } from '@/dataset/defaultConfiguratorValues'
+
 
 const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da popolare in base al montante
 export default class Shelf extends Object3D {
@@ -10,18 +12,33 @@ export default class Shelf extends Object3D {
     this.config.type = 'shelf'
     this.product = product
     this._cantBePositioned = false
-  }
 
+    super.getElementConfig()
+  }
 
   async init () {
     await super.init()
     super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
   }
 
+  setSize (dimensions) {
+    const { width, height, depth } = this.getSize()
+
+    const scale = {
+      x: dimensions?.width ? (dimensions.width - this.attachPoint) / (width / this.object.scale.x) : 1,
+      y: dimensions?.height ? dimensions.height / (height / this.object.scale.y) : 1,
+      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1
+    }
+
+    this.object.scale.set(scale.x, scale.y, scale.z)
+
+    // Posizionamento dell'elemento al terreno
+    if (this.config.grounded) this.setPosition(this.getPosition())
+  }
+
   setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
     const gridY = Math.floor(y / currentGap) * currentGap
-    // console.log('Z:', z)
     super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()
@@ -35,7 +52,7 @@ export default class Shelf extends Object3D {
       this._setState()
     }
 
-    // Se non ho almeno 2 montanti in diverso asse x non posso mettere scaffali
+    // Se esiste almento il secondo montante della configurazione
     if (!uprights.find(upright => upright.index === 1)) {
       cantPosition()
       return
@@ -58,7 +75,7 @@ export default class Shelf extends Object3D {
       return
     }
 
-    // Trovo i due montanti più vicini a sinistra e destra sui quali posso posizionare lo scaffale nell'asse y
+    // Ricavo dei montanti sinistro e destro più vicini sui quali posso posizionare lo scaffale nell'asse Y
     const left = leftUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
     const right = rightUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
 
@@ -67,20 +84,14 @@ export default class Shelf extends Object3D {
       return
     }
 
-
     if (this.index !== left.index) {
-      // Se cambia campata modifico la larghezza (-0.02 per non farli sovrapporre)
-      // TODO: inserire modello corretto anzichè scalarlo
-
-      // TODO: Check se scaffale di quella dimensione esiste
-      this.setSize({ width: right.getPosition().x - left.getPosition().x - 0.02 })
+      this.setSize({ width: right.getPosition().x - left.getPosition().x - this.offset * 2 })
     }
 
     this.index = left.index
     this._cantBePositioned = false
     this._setState()
-    // +0.01 perchè gli diminuisco la larghezza di 0.02
-    super.setPosition({ x: (left.getPosition().x + this.getSize().width / 2) + 0.01 })
+    super.setPosition({ x: (left.getPosition().x + this.attachPoint / 2 + this.getSize().width / 2) + this.offset })
   }
 
   _setState() {

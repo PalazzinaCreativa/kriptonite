@@ -69,6 +69,7 @@ export default class Product {
           child.material.opacity = 1
           child.material.alphaTest = 1
           child.material.transparent = false
+          child.material.depthWrite = true
         }
       })
       this.viewer.updateConfig()
