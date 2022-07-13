@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, elementDistances } from '@/dataset/defaultConfiguratorValues'
 import { createLine } from './utils/createLine'
 import { createMeasure } from './utils/createMeasure'
 export default class Product {
