@@ -101,6 +101,9 @@ export default class Product {
     this.measures.name = 'Measures'
     this.object.add(this.measures)
 
+    // Se non ci sono almeno 2 montanti le quote non verranno calcolate
+    if(this.uprights.length < 2) return
+
     // Cerco il montante più a destra
     const latestUpright = this.uprights.reduce((prev, current) => (prev.realIndex > current.realIndex) ? prev : current)
 
