@@ -46,7 +46,7 @@
       let textureRelativeProduct = variants.value.length ? variants.value.find((variant) => {
         return variant.depth === props.element.config.depth
       }) : null
-  
+
       if(textureRelativeProduct) {
         configurator.addElement({ ...textureRelativeProduct, id: props.element.id, material: { ...props.element.config.material, ...{ texture: selectedTexture.value } }, variantId: textureRelativeProduct.id })
       }

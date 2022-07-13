@@ -28,7 +28,6 @@
 import { onBeforeMount, defineEmits, useSlots } from 'vue'
 
 const slots = useSlots()
-console.log(slots)
 const emits = defineEmits(['loaded'])
 
 onBeforeMount(() => {
