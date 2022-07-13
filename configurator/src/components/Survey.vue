@@ -8,7 +8,7 @@
         <template #progress>
           <div v-if="step > 0">
             <div class="flex items-center relative w-full">
-              <Back v-if="step > 1" class="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray" @click="goBack(question)"/>
+              <!-- <Back v-if="step > 1" class="absolute left-0 top-1/2 -translate-y-1/2 cursor-pointer text-gray" @click="goBack(question)"/> -->
               <div class="text-black text-[40px] font-regular text-center w-full" v-text="zeroPad(step, 2)" />
             </div>
             <LoadingBar :value="step" :total="questions.length" class="mt-8 mb-16"/>
@@ -27,6 +27,9 @@
           <div v-for="(option, index) in question.options" :key="index">
             <component :is="components[option.component]" :index="index" :option="option" :config="config" :is-animating="target.option.key === option.key && target.isAnimating" :value="config.room.dimensions[option.model]" @input="setDimension($event, option)" @click="handleClick(option, question)"/>
           </div>
+        </template>
+        <template #nav>
+          <Back v-if="step > 1" class="absolute left-16 top-1/2 -translate-y-1/2 cursor-pointer text-white" @click="goBack(question)"/>
         </template>
         <template #footer>
           <div v-if="question.footer && question.footer.options.length" class="flex items-center gap-8 w-full">
