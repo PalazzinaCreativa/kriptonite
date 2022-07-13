@@ -69,16 +69,17 @@ const data = {
 }
 
 const textureFinishings = ref([
-  { type: 'shelf', nature: ['legno'], label: 'finitura essenza piano' },
-  { type: 'case', nature: ['legno'], label: 'finitura essenza contenitore' },
+  { type: 'shelf', nature: ['legno'], label: 'Essenza piano' },
+  { type: 'case', nature: ['legno'], label: 'Essenza contenitore' },
 ])
 
 const colorFinishings = ref([
-  { type: 'shelf', nature: ['metallo'], label: 'finitura piano' },
-  { type: 'case', nature: ['metallo'], label: 'finitura contenitore' },
-  { type: 'shelf', nature: ['legno'], label: 'finitura supporti / virola' },
-  { type: 'case', nature: ['legno'], label: 'finitura supporti / virola / maniglie' }
+  { type: 'shelf', nature: ['metallo'], label: 'Finitura piano' },
+  { type: 'case', nature: ['metallo'], label: 'Finitura contenitore' },
+  { type: 'shelf', nature: ['legno'], label: 'Finitura supporti' },
+  { type: 'case', nature: ['legno'], label: 'Finitura virola e supporti' }
 ])
+
 
 const currentElement = computed(() => props.element)
 // Ricavo e stampo il nome del componente e non della variante
