@@ -17,6 +17,10 @@ export default class Product {
     this.inRoomPosition = inRoomPosition
     this.uprightsPosition = uprightsPosition
     this.id = 'product'
+
+    this.elementConfig = this.type ? elementDistances.find((product) => product.type === this.type && product.inRoomPosition === this.inRoomPosition && product.uprightsPosition === this.uprightsPosition) : null
+    this.attachPoint = this.elementConfig ? this.elementConfig.attachPoint : 0
+    this.distanceFromWall = this.elementConfig ? this.elementConfig.distance : 0.1
   }
 
   addUpright (upright) {
@@ -127,7 +131,7 @@ export default class Product {
     height.position.x = latestUpright.getPosition().x + DIMENSIONS_GUTTER // Sinistra: -DIMENSIONS_GUTTER * 2.5
 
     // Posizione delle quote totali
-    const measuresZPosition = this.inRoomPosition === 'standalone' ? STANDALONE_Z : (this.uprightsPosition === 'standalone' && this.type === 'k2' ? 25 : 0.1)
+    const measuresZPosition = this.distanceFromWall
     const measuresPosition = {
       x: leftmostUpright.getPosition().x,
       y: lowestUpright.getPosition().y - lowestUpright.getSize().height / 2 - DIMENSIONS_GUTTER,
@@ -162,7 +166,7 @@ export default class Product {
 
       // Posizione della quota verticale
       measureVertical.position.x = measuresGapY
-      measureVertical.position.y = upright.getPosition().y - upright.getSize().height / 2 // - DIMENSIONS_GUTTER -2
+      measureVertical.position.y = this.uprightsPosition === 'standalone' ? DIMENSIONS_GUTTER : upright.getPosition().y - upright.getSize().height / 2 - DIMENSIONS_GUTTER - 2 // "2" è lo spessore della linea
       uprightsMeasuresY.add(measureVertical)
 
       // Se è l'ultimo montante oppure sono già state calcolate le misure per quell'indice
@@ -170,7 +174,7 @@ export default class Product {
       // Montante alla destra del montante corrente
       const nearestUpright = this.uprights.find(item => item.realIndex === upright.realIndex + 1)
       // Distanza tra i due montanti
-      const distance = nearestUpright.getPosition().x - upright.getPosition().x
+      const distance = nearestUpright.getPosition().x - upright.getPosition().x - this.attachPoint
       // Se la distanza è 0 vuol dire che il montante in questione è incolonnato ed ha quindi lo stesso indice
       if(distance) {
         const measure = await createMeasure('horizontal', distance)
@@ -178,8 +182,9 @@ export default class Product {
         // Posizione della quota orizzontale
         measure.position.x = uprightsMeasuresX.children.reduce((acc, curr) => {
           const box = new THREE.Box3().setFromObject(curr)
-          return acc + box.max.x - box.min.x
-        }, 0)
+
+          return acc + this.attachPoint + box.max.x - box.min.x
+        }, this.attachPoint / 2)
   
         uprightsMeasuresX.add(measure)
       }
