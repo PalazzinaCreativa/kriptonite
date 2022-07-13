@@ -225,7 +225,7 @@ export default class Viewer {
         if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
           // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
           var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
-          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+          //objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
           //console.log('can position element:', !objectPlaced)
         }
 
