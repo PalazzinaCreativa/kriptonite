@@ -12,7 +12,7 @@
         </div>
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
-            <component :is="elementSettingsInstance" :key="`${JSON.stringify(currentElement.config)}`" :element="currentElement" @input="updateDimensions"></component>
+            <component :is="elementSettingsInstance" :key="elementKey" :element="currentElement" @input="updateDimensions"></component>
           </div>
         </div>
           <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="`${JSON.stringify(currentElement.config.material)}`" :title="texturesTitle" :element="currentElement" @setTexture="setMaterial"/>
@@ -92,6 +92,8 @@ const mainElement = computed(() => {
       currentElement.value.config.id === item.id
   }) : null
 })
+
+const elementKey = currentElement.value.config.type === 'obstacle' ? 'obstacle' : JSON.stringify(currentElement.value.config)
 
 const selectedMaterial = computed(() => {
   return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: currentElement.value.config.nature }
