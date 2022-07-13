@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND, elementDistances } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 import { createText } from "./utils/createText"
@@ -19,7 +19,7 @@ const defaultGap = 6.4
 
 const currentProductUprightsDistance = {
   k1: [0, 40, 60, 75, 90], //[0, 40, 60, 75, 90, 120, 151, 180]
-  k2: [63, 93, 123]
+  k2: [60, 90, 120]
 }
 
 export default class Upright extends Object3D {
@@ -32,6 +32,9 @@ export default class Upright extends Object3D {
     this.bases = [
       { id: 5, childName: 'object_6', center: { x: this.product.viewer.config.room.dimensions.width / 6.22 , y: 0, z: 12.5 }, rotationAxis: { x: 0, y: 1, z: 0 }}
     ]
+
+    this.elementConfig = this.config.type ? elementDistances.find((product) => product.type === this.config.type && product.inRoomPosition === this.config.inRoomPosition && product.uprightsPosition === this.config.uprightsPosition) : null
+    this.attachPoint = this.elementConfig ? this.elementConfig.attachPoint : 0
 
     // "index" è il numero delle colonne dei montanti sull'asse X, se ci sono 2 montanti uno sotto l'altro avranno lo stesso "index", ma diversi "realIndex"
     if (typeof config.index !== 'undefined') this.index = config.index
@@ -204,7 +207,7 @@ export default class Upright extends Object3D {
 
         wireframe.position.z = this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1
         wireframe.position.y = roomHeight / 2
-        wireframe.position.x = latestUpright.object.position.x + x
+        wireframe.position.x = latestUpright.object.position.x + this.attachPoint + x
         wireframes.add(wireframe)
 
         // Distanze tra i montanti

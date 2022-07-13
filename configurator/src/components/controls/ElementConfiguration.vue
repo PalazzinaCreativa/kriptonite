@@ -93,7 +93,7 @@ const mainElement = computed(() => {
   }) : null
 })
 
-const elementKey = currentElement.value.config.type === 'obstacle' ? 'obstacle' : JSON.stringify(currentElement.value.config)
+const elementKey = computed(() => currentElement.value.config.type === 'obstacle' ? 'obstacle' : JSON.stringify(currentElement.value.config))
 
 const selectedMaterial = computed(() => {
   return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: currentElement.value.config.nature }
