@@ -53,7 +53,7 @@ const surname = ref('')
 const emailAddress = ref('')
 const town = ref('')
 const message = ref('')
-const wall = ref({})
+const wall = ref([])
 const privacy = ref(false)
 
 

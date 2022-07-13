@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { loadObject } from "./utils/loadObject"
-import { distancesFromWall } from '@/dataset/defaultConfiguratorValues'
+import { elementDistances } from '@/dataset/defaultConfiguratorValues'
 import { stringToThreeColor } from './utils/stringToThreeColor'
 import { addTexture } from "./utils/addTexture";
 //import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
@@ -21,6 +21,13 @@ export default class Object3D {
     this.setPosition(this.getPosition())
     // Universal ID per calcolare le distanze tra i ripiani e i contenitori
     this._uid = `${this.config.type}_${String(this.getSiblings().length).padStart(3, '0')}` // TODO
+  }
+
+  getElementConfig() {
+    this.elementConfig = this.product ? elementDistances.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition) : null
+    this.attachPoint = this.elementConfig ? this.elementConfig.attachPoint : 0
+    // "offset" è la distanza di compensazione per evitare la sovrapposizione dei modelli 3D
+    this.offset = this.elementConfig ? this.elementConfig.offset : 0.01
   }
 
   getSize () {
@@ -45,8 +52,10 @@ export default class Object3D {
   }
 
   setPosition ({ x, y, z }) {
-    const elementWallDistances = distancesFromWall.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition)
+    const elementWallDistances = elementDistances.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition)
+    // console.log('posizionamento:', elementWallDistances, z)
     const distanceFromWall = elementWallDistances ? elementWallDistances.distance : z || this.getPosition().z
+    // console.log('distanceFromWall:', distanceFromWall)
     
     // Calcolo la posizione negli assi in base ai parametri ricevuti
     const normalizeX = !x

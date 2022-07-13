@@ -78,7 +78,7 @@ export default class Viewer {
     this.scene = setupScene()
 
     // Posiziona la camera
-    this.camera = setupCamera(dimensions, this.domEl)
+    this.camera = setupCamera(dimensions, this.domEl, this.config.room)
 
     // Crea la stanza
     this.room = new Room(this, { type, dimensions })
@@ -225,7 +225,7 @@ export default class Viewer {
         if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
           // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
           var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
-          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+          //objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
           //console.log('can position element:', !objectPlaced)
         }
 
@@ -373,7 +373,7 @@ export default class Viewer {
     })
 
     window.addEventListener('resize',() => {
-      this.zoomOnTarget({ z: 400 }, 0.4)
+      this.zoomOnTarget({ z: 500 }, 0.4)
       this.camera.aspect = this.domEl.offsetWidth / this.domEl.offsetHeight
       this.camera.updateProjectionMatrix()
       this.renderer.setSize(this.domEl.offsetWidth, this.domEl.offsetHeight)

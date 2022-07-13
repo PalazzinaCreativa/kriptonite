@@ -12,7 +12,7 @@
         </div>
         <div v-if="elementSettingsInstance">
           <div class="flex flex-wrap my-4 w-full">
-            <component :is="elementSettingsInstance" :key="`${JSON.stringify(currentElement.config)}`" :element="currentElement" @input="updateDimensions"></component>
+            <component :is="elementSettingsInstance" :key="elementKey" :element="currentElement" @input="updateDimensions"></component>
           </div>
         </div>
           <Textures v-if="currentElement.config.variantId && textures.length && currentElement.config.texture" :key="`${JSON.stringify(currentElement.config.material)}`" :title="texturesTitle" :element="currentElement" @setTexture="setMaterial"/>
@@ -69,16 +69,17 @@ const data = {
 }
 
 const textureFinishings = ref([
-  { type: 'shelf', nature: ['legno'], label: 'finitura essenza piano' },
-  { type: 'case', nature: ['legno'], label: 'finitura essenza contenitore' },
+  { type: 'shelf', nature: ['legno'], label: 'Essenza piano' },
+  { type: 'case', nature: ['legno'], label: 'Essenza contenitore' },
 ])
 
 const colorFinishings = ref([
-  { type: 'shelf', nature: ['metallo'], label: 'finitura piano' },
-  { type: 'case', nature: ['metallo'], label: 'finitura contenitore' },
-  { type: 'shelf', nature: ['legno'], label: 'finitura supporti / virola' },
-  { type: 'case', nature: ['legno'], label: 'finitura supporti / virola / maniglie' }
+  { type: 'shelf', nature: ['metallo'], label: 'Finitura piano' },
+  { type: 'case', nature: ['metallo'], label: 'Finitura contenitore' },
+  { type: 'shelf', nature: ['legno'], label: 'Finitura supporti' },
+  { type: 'case', nature: ['legno'], label: 'Finitura virola e supporti' }
 ])
+
 
 const currentElement = computed(() => props.element)
 // Ricavo e stampo il nome del componente e non della variante
@@ -91,6 +92,8 @@ const mainElement = computed(() => {
       currentElement.value.config.id === item.id
   }) : null
 })
+
+const elementKey = currentElement.value.config.type === 'obstacle' ? 'obstacle' : JSON.stringify(currentElement.value.config)
 
 const selectedMaterial = computed(() => {
   return { ...colorsModule.selected, texture: texturesModule.selected, color: colorsModule.selected.code, nature: currentElement.value.config.nature }

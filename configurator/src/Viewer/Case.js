@@ -10,11 +10,28 @@ export default class Case extends Object3D {
     this.config.type = 'case'
     this.product = product
     this._cantBePositioned = false
+
+    super.getElementConfig()
   }
 
   async init () {
     await super.init()
     super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false) // Aggiungo il ricevuto tramite opzioni oppure gli aggiungo un colore nero di default
+  }
+
+  setSize (dimensions) {
+    const { width, height, depth } = this.getSize()
+
+    const scale = {
+      x: dimensions?.width ? (dimensions.width - this.attachPoint) / (width / this.object.scale.x) : 1,
+      y: dimensions?.height ? dimensions.height / (height / this.object.scale.y) : 1,
+      z: dimensions?.depth ? dimensions.depth / (depth / this.object.scale.z) : 1
+    }
+
+    this.object.scale.set(scale.x, scale.y, scale.z)
+
+    // Posizionamento dell'elemento al terreno
+    if (this.config.grounded) this.setPosition(this.getPosition())
   }
 
   setPosition ({ x, y, z }) {
@@ -68,18 +85,13 @@ export default class Case extends Object3D {
 
 
     if (this.index !== left.index) {
-      // Se cambia campata modifico la larghezza (-0.02 per non farli sovrapporre)
-      // TODO: inserire modello corretto anzichè scalarlo
-
-      // TODO: Check se scaffale di quella dimensione esiste
-      this.setSize({ width: right.getPosition().x - left.getPosition().x - 0.02 })
+      this.setSize({ width: right.getPosition().x - left.getPosition().x - this.offset * 2 })
     }
 
     this.index = left.index
     this._cantBePositioned = false
     this._setState()
-    // +0.01 perchè gli diminuisco la larghezza di 0.02
-    super.setPosition({ x: (left.getPosition().x + this.getSize().width / 2) + 0.01 })
+    super.setPosition({ x: (left.getPosition().x + this.attachPoint / 2 + this.getSize().width / 2) + this.offset })
   }
 
   _setState() {

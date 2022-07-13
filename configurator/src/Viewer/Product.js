@@ -69,6 +69,7 @@ export default class Product {
           child.material.opacity = 1
           child.material.alphaTest = 1
           child.material.transparent = false
+          child.material.depthWrite = true
         }
       })
       this.viewer.updateConfig()
@@ -99,6 +100,9 @@ export default class Product {
     this.measures = new THREE.Object3D()
     this.measures.name = 'Measures'
     this.object.add(this.measures)
+
+    // Se non ci sono almeno 2 montanti le quote non verranno calcolate
+    if(this.uprights.length < 2) return
 
     // Cerco il montante più a destra
     const latestUpright = this.uprights.reduce((prev, current) => (prev.realIndex > current.realIndex) ? prev : current)

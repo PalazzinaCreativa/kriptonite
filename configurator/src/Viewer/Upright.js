@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND, distancesFromWall } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 import { createText } from "./utils/createText"
@@ -19,7 +19,7 @@ const defaultGap = 6.4
 
 const currentProductUprightsDistance = {
   k1: [0, 40, 60, 75, 90], //[0, 40, 60, 75, 90, 120, 151, 180]
-  k2: [60, 90, 120]
+  k2: [63, 93, 123]
 }
 
 export default class Upright extends Object3D {
