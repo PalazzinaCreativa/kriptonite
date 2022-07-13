@@ -78,7 +78,7 @@ export default class Viewer {
     this.scene = setupScene()
 
     // Posiziona la camera
-    this.camera = setupCamera(dimensions, this.domEl)
+    this.camera = setupCamera(dimensions, this.domEl, this.config.room)
 
     // Crea la stanza
     this.room = new Room(this, { type, dimensions })
