@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { FLOOR_DEPTH } from '@/dataset/defaultConfiguratorValues'
 
 export const setupLights = ({ width, height }) => {
-  const ambientLight = new THREE.AmbientLight( 0xffffff, 0.6 )
+  const ambientLight = new THREE.AmbientLight( 0xffffff, 0.39 )
   const ambientLight2 = new THREE.AmbientLight( 0xffffff, 0.66 )
 
   const spotLight = new THREE.SpotLight( 0xffffff, 0.3, 0, Math.PI / 2 )
@@ -64,7 +64,7 @@ export const setupLights = ({ width, height }) => {
 
   return {
     classic: [ambientLight, /*spotLight*/, spotLight2, spotLight3, /*helper2*/, /*helper3*/, pointLight, rectAreaLight ],
-    attic: [ambientLight2, /*spotLight,*/ /*spotLight2, spotLight3,*/ rectAreaLight2, /*helper*/, /*helper2*/, /*helper3*/, pointLight2 , rectAreaLight ],
+    attic: [ambientLight, /*spotLight,*/ /*spotLight2, spotLight3,*/ rectAreaLight2, /*helper*/, /*helper2*/, /*helper3*/, pointLight2 , rectAreaLight ],
     niche: [ambientLight, /*spotLight*/, spotLight2, spotLight3, /*helper2*/, /*helper3*/, pointLight, rectAreaLight ]
   }
 }
