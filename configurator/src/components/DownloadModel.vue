@@ -8,8 +8,8 @@
       <div class="text-l text-center w-full" v-text="'Link di condivisione'" />
       <div class="my-8 text-center w-full" v-text="`Copia il link qui sotto per condividere o riprendere la configurazione da dove l'hai lasciata`" />
       <div class="flex items-center gap-4 w-full">
-        <TextField v-if="shareLink" ref="projectLink" v-model="shareLink" readonly class="text-cyan"/>
-        <Btn v-if="shareLink" class="bg-light-gray w-full" label="Copia" @click="copyLink" />
+        <TextField v-if="shareLink" ref="projectLink" v-model="shareLink" readonly class="text-cyan w-full"/>
+        <Btn v-if="shareLink" class="bg-light-gray" label="Copia" @click="copyLink" />
       </div>
       <Transition name="fade-up">
         <div v-if="linkWasCopied" class="bg-black rounded-md text-white text-s text-center py-2 px-4 my-4 w-full" v-text="`Link copiato negli appunti`"></div>

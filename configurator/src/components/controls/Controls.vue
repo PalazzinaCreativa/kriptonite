@@ -1,5 +1,5 @@
 <template>
-  <div class="border-gray relative duration-400 transform transition-all" :class="isOpen ? 'border-l w-full' : 'border-none translate-x-full'" :style="isOpen ? '' : 'width: 0px;'">
+  <div class="border-gray relative duration-400 transform transition-all" :class="isOpen ? 'w-full' : 'translate-x-full'" :style="isOpen ? '' : 'width: 0px;'">
     <div class="h-screen overflow-y-auto pb-12">
       <slot />
       <div class="bg-whiteshadow-md flex flex-col relative" v-if="configurator.isReady">
