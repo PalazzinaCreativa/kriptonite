@@ -62,14 +62,14 @@ export default defineStore({
       }) : []
       let fullVariantsList = item.variants ?? []
 
-      // Unique by height
-      // Se i montanti hanno delle varianti "Sinistra Centro Destra", verranno utilizzate le varianti di centro
       if(fullVariantsList.length) {
+        // Se i montanti hanno delle varianti "Sinistra Centro Destra", verranno utilizzate le varianti di centro
         if(fullVariantsList.some((variant) => variant.sku?.slice(-1) === 'C')) {
           this.variantsList = fullVariantsList.filter((variant, i) => {
             return variant.sku?.slice(-1) === 'C'
           })
         } else {
+          // Unique by height
           this.variantsList = fullVariantsList.filter((variant, i, self) => {
             return self.findIndex(item => item.height === variant.height) === i
           })

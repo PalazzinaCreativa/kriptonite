@@ -3,6 +3,7 @@ import { loadObject } from "./utils/loadObject"
 import { elementDistances } from '@/dataset/defaultConfiguratorValues'
 import { stringToThreeColor } from './utils/stringToThreeColor'
 import { addTexture } from "./utils/addTexture";
+import { STANDALONE_Z } from '../dataset/defaultConfiguratorValues';
 //import { RESTING_ON_THE_GROUND } from '@/dataset/defaultConfiguratorValues'
 export default class Object3D {
   constructor (config) {
@@ -26,6 +27,7 @@ export default class Object3D {
   getElementConfig() {
     this.elementConfig = this.product ? elementDistances.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition) : null
     this.attachPoint = this.elementConfig ? this.elementConfig.attachPoint : 0
+    this.distanceFromWall = (this.elementConfig && this.elementConfig.type === this.config.type) ? this.elementConfig.distance : (this.product.inRoomPosition === 'standalone' ? STANDALONE_Z : 0.1)
     // "offset" è la distanza di compensazione per evitare la sovrapposizione dei modelli 3D
     this.offset = this.elementConfig ? this.elementConfig.offset : 0.01
   }
@@ -52,9 +54,9 @@ export default class Object3D {
   }
 
   setPosition ({ x, y, z }) {
-    const elementWallDistances = elementDistances.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition)
+    //const elementWallDistances = elementDistances.find((product) => product.elements.includes(this.config.type) && product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition)
     // console.log('posizionamento:', elementWallDistances, z)
-    const distanceFromWall = elementWallDistances ? elementWallDistances.distance : z || this.getPosition().z
+    const distanceFromWall = this.elementConfig ? this.elementConfig.distance : z || this.getPosition().z
     // console.log('distanceFromWall:', distanceFromWall)
     
     // Calcolo la posizione negli assi in base ai parametri ricevuti

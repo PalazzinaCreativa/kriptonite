@@ -33,12 +33,6 @@ export default class Upright extends Object3D {
       { id: 5, childName: 'object_6', center: { x: this.product.viewer.config.room.dimensions.width / 6.22 , y: 0, z: 12.5 }, rotationAxis: { x: 0, y: 1, z: 0 }}
     ]
 
-    //console.log(this.product)
-
-    this.elementConfig = this.product.type ? elementDistances.find((product) => product.type === this.product.type && product.inRoomPosition === this.product.inRoomPosition && product.uprightsPosition === this.product.uprightsPosition) : null
-    this.attachPoint = this.elementConfig ? this.elementConfig.attachPoint : 0
-    this.distanceFromWall = this.elementConfig ? this.elementConfig.distance : 0.1
-
     // "index" è il numero delle colonne dei montanti sull'asse X, se ci sono 2 montanti uno sotto l'altro avranno lo stesso "index", ma diversi "realIndex"
     if (typeof config.index !== 'undefined') this.index = config.index
     // "realIndex" è l'indice di immissione, ovvero il numero del montante in ordine di inserimento
@@ -47,6 +41,7 @@ export default class Upright extends Object3D {
 
   async init () {
     await super.init()
+    super.getElementConfig()
     this.setSize()
     // Settaggio della prima finitura dell'elemento in fase di inserimento:
     // Verrà scelta la finitura impostata dall'utente oppure il primo risultato proveniente dal Database.

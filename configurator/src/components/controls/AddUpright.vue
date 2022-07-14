@@ -46,6 +46,10 @@ const activeTip = computed(() => tipsModule.activeTip)
 const productOptions = computed(() => configurator.options)
 const uprights = computed(() => {
   return uprightsModule.index.length ? uprightsModule.index.filter((upright => {
+    // Se ci sono varianti di centro, saranno utilizzate quelle
+    if(upright.variants.some((variant) => variant.sku?.slice(-1) === 'C')) {
+      upright.variants = upright.variants.filter((variant) => variant.sku?.slice(-1) === 'C')
+    }
     return productOptions.value.uprightsPosition === 'standalone' ? upright.type === 'floor' : upright.type === 'wall'
   })) : []
 })
