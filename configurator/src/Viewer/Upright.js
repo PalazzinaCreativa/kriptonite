@@ -46,7 +46,7 @@ export default class Upright extends Object3D {
     // Settaggio della prima finitura dell'elemento in fase di inserimento:
     // Verrà scelta la finitura impostata dall'utente oppure il primo risultato proveniente dal Database.
     let firstColor = colors.length ? colors[0] : { color: '#a1a1a1' }
-    super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1 }, false)
+    super.setMaterial(this.config.material || { color: '#a1a1a0', opacity: 1, roughness: 5 }, false)
     //this.setBases()
   }
 
