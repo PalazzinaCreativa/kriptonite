@@ -225,7 +225,7 @@ export default class Viewer {
         if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
           // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
           var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
-          //objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
           //console.log('can position element:', !objectPlaced)
         }
 
@@ -299,8 +299,15 @@ export default class Viewer {
       // Se si sta posizionando un elemento
       // console.log('isAdding:', this._isAddingNewElement, 'object:', this.objectToPlace)
       if (this.objectToPlace) {
+        if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
+          // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
+          var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
+          // console.log(currentDistanceBetweenUprights)
+          var objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+          // console.log('can position element:', !objectPlaced)
+        }
         // Se l'elemento è in una posizione non idonea
-        if (this._positioningBlocked || this.objectToPlace._cantBePositioned) {
+        if (objectPlaced || this._positioningBlocked || this.objectToPlace._cantBePositioned) {
           // Se si sta aggiungendo un nuovo elemento non faccio nulla
           if (this._isAddingNewElement) return
           // Se ho una posizione di backup torno in quel punto
