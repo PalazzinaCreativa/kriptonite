@@ -21,7 +21,7 @@ export const setupFloor = async ({ width, roomType, type}) => {
     ? normalizeWidth / 2 - NICHE_PADDING
     : normalizeWidth / 2
 
-  floorMesh.position.set(xPosition, 1, FLOOR_DEPTH / 2)
+  floorMesh.position.set(xPosition, 0.1, FLOOR_DEPTH / 2)
   floorMesh.name = 'floor'
 
   return floorMesh
