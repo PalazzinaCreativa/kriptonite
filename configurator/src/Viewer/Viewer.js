@@ -51,6 +51,9 @@ export default class Viewer {
       getData: null
     }
 
+    // Tentativo di debounce
+    this.previousUprightBetweenDistance = 0
+
     // Storia del progetto
     this._history = []
     this._historyPosition = 0
@@ -224,8 +227,12 @@ export default class Viewer {
         // Se si sta posizionando un ripiano o un contenitore
         if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
           // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
-          var currentDistanceBetweenUprights = this.objectToPlace.getSize().width
-          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2) })
+          var currentDistanceBetweenUprights = Math.round(this.objectToPlace.getSize().width)
+          //if(currentDistanceBetweenUprights !== this.previousUprightBetweenDistance) {
+            //console.log('update:', 'previous:', this.previousUprightBetweenDistance, 'current:', currentDistanceBetweenUprights)
+          //}
+          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2), isChanged: currentDistanceBetweenUprights !== this.previousUprightBetweenDistance })
+          this.previousUprightBetweenDistance = currentDistanceBetweenUprights !== this.previousUprightBetweenDistance ? currentDistanceBetweenUprights : this.previousUprightBetweenDistance
           //console.log('can position element:', !objectPlaced)
         }
 

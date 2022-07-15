@@ -32,7 +32,9 @@
   const variants = computed(() => casesModule.variants)
 
   const getVariants = () => {
-    casesModule.getVariants(props.element.id, props.element.config.texture)
+    console.log('getVariants')
+    let filters = props.element.config.material.texture ? { texture: props.element.config.material.texture.id } : {}
+    casesModule.getVariants(props.element.id, props.element.config.texture, filters)
   }
 
   const isVisible = computed(() => {

@@ -32,7 +32,8 @@
   const variants = computed(() => shelvesModule.variants)
 
   const getVariants = () => {
-    shelvesModule.getVariants(props.element.id, props.element.config.texture)
+    let filters = props.element.config.material.texture ? { texture: props.element.config.material.texture.id } : {}
+    shelvesModule.getVariants(props.element.id, props.element.config.texture, filters)
   }
 
   const isVisible = computed(() => {

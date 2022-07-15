@@ -87,11 +87,15 @@ export default defineStore({
 
       // Merge variants of models with the same name and unique by it.
       if(completeList.length) {
-        completeList.reduce((oldList, newList) => {
-          if(oldList.name && (oldList.name === newList.name)) {
-            oldList.variants = [ ...oldList.variants, ...newList.variants]
-          }
-          return oldList
+        completeList.map((element, index) => {
+          completeList.reduce((oldList, newList) => {
+            if(element.name && (element.name === newList.name)) {
+              element.variants = [ ...element.variants, ...newList.variants].filter((variant, i, self) => {
+                return self.findIndex(item => item.id === variant.id) === i
+              })
+            }
+            return completeList
+          })
         })
       }
 
@@ -102,18 +106,20 @@ export default defineStore({
 
     getVariants(id, hasTexture = false, filters = {}) {
       let list = hasTexture ? this.woodenList : this.standardList
+      console.log(id, list)
       let item = (list.length && id) ? list.find((shelf) => {
         return shelf.id === id
       }) : {}
       let variants = item?.variants ?? []
 
-      this.selectedElementVariantsList = variants
-
+      
       variants = Object.keys(filters).length && variants ? variants.filter((shelf) => {
         return Object.entries(filters).find(([ filter, value ]) => {
           return shelf[filter] === value
         })
       }) : variants
+      
+      this.selectedElementVariantsList = variants
 
       // Unique by depth
       this.variantsList = variants.length ? variants.filter((variant, i, self) => {
