@@ -1,6 +1,6 @@
 <template>
   <Transition>
-    <div loader v-if="props.visible" class="bg-light-gray fixed flex items-center justify-center top-0 left-0 h-screen w-screen p-8 z-50">
+    <div loader v-if="props.visible" class="bg-light-gray absolute flex items-center justify-center top-0 left-0 h-full w-full p-8 z-50">
       <div spinner class="relative animate-rotation-on-axis">
         <LogoCompact spinner-front/>
         <div spinner-back class="bg-white absolute top-0 left-0 w-full h-full"></div>
