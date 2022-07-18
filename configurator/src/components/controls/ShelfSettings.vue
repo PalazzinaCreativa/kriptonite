@@ -31,8 +31,11 @@
   
   const variants = computed(() => shelvesModule.variants)
 
+  const currentElementVariants = computed(() => shelvesModule.currentElementVariantsList)
+
   const getVariants = () => {
-    shelvesModule.getVariants(props.element.id, props.element.config.texture)
+    let filters = props.element.config.material.texture ? { texture: props.element.config.material.texture.id } : {}
+    shelvesModule.getVariants(props.element.id, props.element.config.texture, filters)
   }
 
   const isVisible = computed(() => {
@@ -43,12 +46,12 @@
     // Se l'elemento ha una texture assegnata nel CMS
     if(props.element.config.texture) {
       // Al cambio delle opzioni dell'elemento, imposto la texture già impostata in precedenza
-      let textureRelativeProduct = variants.value.length ? variants.value.find((variant) => {
-        return variant.depth === props.element.config.depth
+      let textureRelativeProduct = currentElementVariants.value.length ? currentElementVariants.value.find((variant) => {
+        return variant.width === props.element.config.width && variant.depth === props.element.config.depth
       }) : null
-  
+
       if(textureRelativeProduct) {
-        configurator.addElement({ ...textureRelativeProduct, id: props.element.id, material: { ...props.element.config.material, ...{ texture: selectedTexture.value } }, variantId: textureRelativeProduct.id })
+        configurator.addElement({ ...textureRelativeProduct, variantId: textureRelativeProduct.id, id: props.element.id, material: { ...props.element.config.material, ...{ texture: selectedTexture.value } } })
       }
     }
   }
