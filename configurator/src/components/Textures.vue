@@ -30,7 +30,7 @@ const setMaterial = (texture) => {
   if(props.entity !== 'room') {
     texturesModule.setSelectedTexture(texture)
   }
-  let material = props.entity === 'room' ? texture : { ...props.element.config.material, texture: texture, nature: props.element.config.nature || 'metallo' }
+  let material = props.entity === 'room' ? texture : { ...props.element.config.material, texture: texture /* nature: props.element.config.nature */ || 'metallo' }
   emits('setTexture', material)
 }
 

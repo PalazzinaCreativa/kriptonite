@@ -259,26 +259,29 @@ onMounted(() => {
   viewer.setHook('searchForElementVariant', ({ id, type, width, isChanged }) => {
     // L'elemento può essere posizionato
     let elementCantBePositioned = true
+
+    fittingElement.value = ref(selectedElement.value).value
+
+    if(fittingElement.value.config.nature === 'metallo') {
+      selectedElement.value.config.material.texture = null
+    }
     // Se sono già stati caricati elementi di questa tipologia
-    //console.log(attachableVariants.value[type])
     if(attachableVariants.value[type]?.length) {
       // Ricerca della variante dell'elemento che ha larghezza pari alla distanza tra i montanti in questione e profondità decisa dall'utente
       if(attachableVariants.value[type].some((variant) => selectedElement.value && variant.width === parseInt(width) && variant.depth === selectedElement.value.config?.depth && (selectedElement.value.config.texture ? variant.texture === selectedElement.value.config.texture : true))) {
         let elementId = selectedElement.value.id
-        fittingElement.value = ref(selectedElement.value).value
-        //fittingElement.value.id = elementId
         var foundElement = attachableVariants.value[type].find((variant) => variant.width === parseInt(width) && variant.depth === selectedElement.value.config.depth && (selectedElement.value.config.texture ? variant.texture === selectedElement.value.config.texture : true))
-          console.log('width between uprights:', width, 'foundElement:', foundElement)
         if(foundElement) {
-          elementCantBePositioned = false
+          //console.log('width between uprights:', width, 'foundElement:', foundElement, 'isChanged:', isChanged)
           // Evita l'aggiornamento del componente se non è cambiata la distanza tra i montanti
           if(isChanged) {
             fittingElement.value.variantId = foundElement.id
             fittingElement.value.config = { ...selectedElement.value.config, ...foundElement, id: elementId, variantId: foundElement.id }
-            //fittingElement.value.config.id = JSON.parse(JSON.stringify(selectedElement.value.config.id))
+            
             fittingElement.value.config.material = selectedElement.value.config.material
-            //selectedElement.value = ref(fittingElement.value).value
+            //console.log('è cambiata la distanza tra i montanti', fittingElement.value, selectedElement.value)
           }
+          elementCantBePositioned = false
         }
       } else {
         elementCantBePositioned = true

@@ -111,14 +111,11 @@ export default defineStore({
       }) : {}
       let variants = item?.variants ?? []
 
-      console.log(variants, filters)
-
-      
       variants = Object.keys(filters).length && variants ? variants.filter((item) => {
         return Object.entries(filters).find(([ filter, value ]) => {
           return item[filter] === value
         })
-      }) : variants
+      }).sort((a, b) => a.depth - b.depth) : variants
 
       this.selectedElementVariantsList = variants
       
