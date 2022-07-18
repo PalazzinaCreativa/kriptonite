@@ -54,9 +54,9 @@ const focusOnInput = (event) => {
 const emitValue = (value) => emits('update:modelValue', value)
 
 const uploadFile = (event) => {
-  files.value = e.target.files
-  emitValue(files.value)
-  console.log(Array.isArray(files.value))
+  files.value = event.target.files
+  emitValue(Array.from(files.value))
+  console.log(Array.isArray(Array.from(files.value)))
 }
 
 const dragFile = (event) => {

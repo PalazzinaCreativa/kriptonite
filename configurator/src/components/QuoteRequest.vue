@@ -48,6 +48,12 @@ import Close from '@/components/icons/Close.vue'
 const props = defineProps(['config'])
 const emits = defineEmits(['close'])
 
+const baseURL = ref(import.meta.env.VITE_BASE_URL)
+const validationMessages = ref([])
+const isValid = computed(() => {
+  return Boolean(wall?.value.length && name.value && surname.value && emailAddress.value && town.value && message.value && privacy.value)
+})
+
 const name = ref('')
 const surname = ref('')
 const emailAddress = ref('')
@@ -83,8 +89,49 @@ const sendRequestLabel = ref('Invia richiesta')
   shareLink.value = `${baseURL.value}/share/${configurationId.value}`
 }) */
 
-const sendRequest = () => {
-  console.log('Richiesta inviata!')
+const formData = computed(() => {
+  return {
+    name,
+    surname,
+    emailAddress,
+    town,
+    message,
+    wall,
+    privacy
+  }
+})
+
+const payload = computed(() => {
+  let formData = new FormData()
+  if(Object.keys(formData).length) {
+    Object.entries(formdata).map(([key, value]) => {
+      formData.append(key, value)
+    })
+  }
+  return formData
+})
+
+const sendRequest = async () => {
+  if(isValid) {
+    const response = await fetch(`${baseURL.value}/api/contacts`, {
+      method: 'POST',
+      //mode: 'cors', // no-cors, *cors, same-origin
+      //cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      //credentials: 'same-origin', // include, *same-origin, omit
+      //headers: {
+        //'Content-Type': 'application/json'
+        //'Content-Type': 'application/x-www-form-urlencoded',
+      //},
+      //redirect: 'follow', // manual, *follow, error
+      //referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: payload
+    });
+    console.log(response)
+    return response
+    console.log('Richiesta inviata!')
+  } else {
+    console.log('controlla i campi')
+  }
 }
 
 const close = () => {
