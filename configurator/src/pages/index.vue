@@ -781,7 +781,7 @@ const defaultConfigK2 = {
   step: 4,
     room: {
       composition: "brick",
-      type: "niche",
+      type: "classic",
       dimensions: {
         height: 2.8,
         width: 3,
@@ -819,10 +819,10 @@ const defaultConfigK2 = {
       ]
     },
     product: {
-      id: 2,
+      id: 1,
       type: "k1",
       inRoomPosition: "wall",
-      uprightsPosition: "standalone",
+      uprightsPosition: "wall",
       /* shelves: [
           {
               type: "shelf",
