@@ -30,7 +30,7 @@ module.exports = createCoreRouter('api::contacts.contact', {
         async (ctx, next) => {
           const body = ctx.request.body
           try {
-            await validateAll(body.data, rules, messages)
+            await validateAll(JSON.parse(body.data), rules, messages)
           } catch (errors) {
             return ctx.send({ errors }, 400)
           }
