@@ -114,7 +114,6 @@ const sendRequest = async () => {
     console.log('errori', response)
   })
   loading.value = false
-
 }
 
 const resetErrors = (field) => {
@@ -132,6 +131,7 @@ const resetForm = () => {
   email.value = ''
   town.value = ''
   message.value = ''
+  wall.value = []
   privacy.value = false
 }
 
