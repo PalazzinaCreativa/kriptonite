@@ -31,5 +31,5 @@ const focusOnInput = (event) => {
 
 const emitValue = (value) => emits('update:modelValue', value)
 
-const errorMessage = computed(() => 'Questo campo è obbligatorio, se è stato compilato per favore controlla il suo contenuto.') //props.error?.message
+const errorMessage = computed(() => props.error?.message)
 </script>
