@@ -9,7 +9,7 @@ const { validateAll } = require('indicative/validator')
 const rules = {
   name: 'required|alpha',
   surname: 'required|alpha',
-  emailAddress: 'required|email',
+  email: 'required|email',
   town: 'required|alpha',
   message: 'required',
   privacy: 'required'
