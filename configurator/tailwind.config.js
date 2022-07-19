@@ -69,6 +69,7 @@ module.exports = {
       gray: '#E0E0E0',
       cyan: '#4AB2FD',
       'dark-gray': '#AEAEAE',
+      'red': '#E14040',
       current: 'currentColor'
     },
     transitionTimingFunction: {

@@ -17,7 +17,6 @@
 
   const updateSize = (dimension) => {
     obstacle.value.config = { ...obstacle.value.config, ...dimension }
-    console.log({ ...obstacle.value.config, ...dimension })
     emits('input', obstacle.value.config)
   }
 

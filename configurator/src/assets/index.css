@@ -11,3 +11,11 @@ body {
 strong, b {
   @apply font-semi-bold;
 }
+
+a:link, a:visited {
+  @apply cursor-pointer font-bold duration-300 transition-all;
+}
+
+a:hover, a:active {
+  @apply font-bold text-yellow duration-300 transition-all;
+}

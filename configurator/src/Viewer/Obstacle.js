@@ -11,6 +11,8 @@ export default class Obstacle extends Object3D {
 
   async init () {
     await super.init()
+    //console.log(this.object)
+
     this.object.traverse(child => {
       if (child.material) {
         child.material = new THREE.MeshStandardMaterial({ color: 0xcacaca, roughness: 1 })
@@ -18,5 +20,16 @@ export default class Obstacle extends Object3D {
         child.material.side = THREE.DoubleSide
       }
     })
+
+    /* if(this.object.name == 2) {
+      //console.log('sto inserendo una porta')
+      this.setPosition({ x: this.getPosition().x, y: this.getPosition().y, z: -10 })
+      this.setMaterial({ texture : {
+        name: 'bamboo',
+        isStatic: true,
+        repeat: 16,
+        maps: ['map', 'aoMap', 'bumpMap', 'alphaMap', 'normalMap', 'metalnessMap']
+      }})
+    } */
   }
 }
