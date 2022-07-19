@@ -21,7 +21,7 @@
             <TextareaField v-model="message" name="message" label="Messaggio*" class="w-full" :error="getErrorMessage('message')" @input="resetErrors('message')" required/>
           </div>
           <div class="flex gap-x-8 w-full">
-            <UploadImageField v-model="wall" name="wall" label="Carica foto parete" class="w-full" :error="getErrorMessage('wall')">
+            <UploadImageField v-model="wall" name="wall" :key="sent" label="Carica foto parete" class="w-full" :error="getErrorMessage('wall')">
               <div v-html="uploadFileDescription"></div>
             </UploadImageField>
           </div>
