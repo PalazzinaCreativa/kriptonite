@@ -14,7 +14,7 @@
       <Transition name="fade-up">
         <div v-if="linkWasCopied" class="bg-black rounded-md text-white text-s text-center py-2 px-4 my-4 w-full" v-text="`Link copiato negli appunti`"></div>
       </Transition>
-      <TakeSnapshot :config="config" immediate download class="flex flex-wrap items-center justify-center mx-auto" @snapshot-taken="saveConfigThumb"/>
+      <TakeSnapshot :config="config" immediate class="flex flex-wrap items-center justify-center mx-auto" @snapshot-taken="saveConfigThumb"/>
       <div class="flex flex-wrap items-center justify-center w-full">
         <Btn class="bg-light-gray" label="salva pdf" @click="exportPDF" />
       </div>

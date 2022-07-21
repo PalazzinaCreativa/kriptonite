@@ -33,9 +33,13 @@
 
   const currentElementVariants = computed(() => casesModule.currentElementVariantsList)
 
-
   const getVariants = () => {
-    let filters = props.element.config.material.texture ? { texture: props.element.config.material.texture.id } : {}
+    let material = props.element.config.material
+    // Se la natura del materiale è metallo, e nei materiali è presente una texture, verrà rimossa la texture precedentemente selezionata
+    if(props.element.config.nature === 'metallo' && material.texture) {
+      delete material.texture
+    }
+    let filters = material.texture ? { texture: material.texture.id } : {}
     casesModule.getVariants(props.element.id, props.element.config.texture, filters)
   }
 

@@ -51,6 +51,8 @@ export default class Viewer {
       getData: null
     }
 
+    this.elementVariantExists = true
+
     // Tentativo di debounce
     this.previousUprightBetweenDistance = 0
 
@@ -168,8 +170,10 @@ export default class Viewer {
 
       // console.log('oggetto caricato', object)
       await object.init()
-      // console.log('scaling', object)
-      object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
+      //console.log('scaling', object)
+
+      // Non serve più scalare gli oggetti se il searchForElementVariant è attivato
+      //object.object.scale.set(o.scale.x, o.scale.y, o.scale.z)
       object.object.position.set(o.position.x, o.position.y, o.position.z)
 
       if (typeof object._setIndex === 'function') object._setIndex()
@@ -215,30 +219,31 @@ export default class Viewer {
           this.objectToPlace.setSize()
         }
 
-        var objectPlaced = placeObject({
-          point: roomIntersection.point,
-          element: this.objectToPlace,
-          collidables: this._getAllObjects((this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
-          room: this.config.room
-        }) || this.objectToPlace._cantBePositioned // Torna false se trova collisioni con altri oggetti
-
-        //console.log('collisioni con altri oggetti:', objectPlaced)
-
         // Se si sta posizionando un ripiano o un contenitore
-        if(this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') {
+        if(this.objectToPlace && (this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case')) {
           // Selezione della variante corretta in base alla distanza tra i montanti in questa posizione, invio della larghezza ad ElementConfigurator
           var currentDistanceBetweenUprights = Math.round(this.objectToPlace.getSize().width)
           //if(currentDistanceBetweenUprights !== this.previousUprightBetweenDistance) {
             //console.log('update:', 'previous:', this.previousUprightBetweenDistance, 'current:', currentDistanceBetweenUprights)
           //}
-          objectPlaced = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2), isChanged: currentDistanceBetweenUprights !== this.previousUprightBetweenDistance })
+          this.elementVariantExists = this.doHook('searchForElementVariant', { id: this.objectToPlace.config.id, type: this.objectToPlace.config.type, width: currentDistanceBetweenUprights.toPrecision(2), isChanged: currentDistanceBetweenUprights !== this.previousUprightBetweenDistance })
           this.previousUprightBetweenDistance = currentDistanceBetweenUprights !== this.previousUprightBetweenDistance ? currentDistanceBetweenUprights : this.previousUprightBetweenDistance
           //console.log('can position element:', !objectPlaced)
         }
 
-        if (objectPlaced) {
+        // Ritorna true se trova collisioni con altri oggetti
+        var objectPlaced = placeObject({
+          point: roomIntersection.point,
+          element: this.objectToPlace,
+          collidables: this._getAllObjects((this.objectToPlace?.config?.type === 'shelf' || this.objectToPlace?.config?.type === 'case') ? ['uprights'] : []).filter(c => c !== this.objectToPlace.object),
+          room: this.config.room
+        }) || this.objectToPlace._cantBePositioned
+
+        //console.log('collisioni con altri oggetti:', objectPlaced, 'variante trovata:', this.elementVariantExists, (objectPlaced && !this.elementVariantExists))
+
+        if (objectPlaced || !this.elementVariantExists) {
           this.outlinePass.error.selectedObjects = [this.objectToPlace.object]
-          this._positioningBlocked = true // Variabile che controlla se posso posizionare o meno gli elementi
+          this._positioningBlocked = true
           document.body.style.cursor = 'not-allowed'
           this.objectToPlace.object.traverse(child => {
             if (child.material) {
@@ -276,14 +281,15 @@ export default class Viewer {
       }
       // Hover sull'oggetto
       hoveredElement = (!this.config.shared || (this.config.shared && import.meta.env.DEV)) && this._getInstanceFromMesh(intersects[0].object)
-      //console.log(hoveredElement)
       if (!hoveredElement) return
       this.outlinePass.hover.selectedObjects = [hoveredElement.object]
       document.body.style.cursor = 'pointer'
-
+      
       // Se c'è un elemento selezionato e sono in hover su di lui inizio il drag (se non è un montante)
       if (hoveredElement && hoveredElement.config.type !== 'upright') {
+      // console.log(hoveredElement, 'isDragging:', isDragging)
       if (!isDragging) return
+      this._selectElement(hoveredElement)
       this.objectToPlace = hoveredElement
       // TODO: Feedback per l'utente per vedere l'oggetto selezionato
       if (!checkpointPosition && this.objectToPlace) checkpointPosition = { x: this.objectToPlace.getPosition().x, y: this.objectToPlace.getPosition().y, z: this.objectToPlace.getPosition().z } // Backup della posizione dell'elemento. Se lo posiziono in una posizione non idonea, torna in questo punto
@@ -312,9 +318,10 @@ export default class Viewer {
           if (this._isAddingNewElement) return
           // Se ho una posizione di backup torno in quel punto
           if (checkpointPosition) {
+            this.objectToPlace.object.scale.set(1, 1, 1)
             this.objectToPlace.object.position.set(checkpointPosition.x, checkpointPosition.y, checkpointPosition.z)
           }
-          //this.objectToPlace.setMaterial({ opacity: 1 })
+          this.objectToPlace.setMaterial({ opacity: 1 })
           this.objectToPlace = null
           this.selectedElement = null
           checkpointPosition = null
