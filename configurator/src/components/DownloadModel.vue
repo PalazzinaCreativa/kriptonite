@@ -7,13 +7,17 @@
     <div donwload-model-content class="grow my-16 w-full">
       <div class="text-l text-center w-full" v-text="'Link di condivisione'" />
       <div class="my-8 text-center w-full" v-text="`Copia il link qui sotto per condividere o riprendere la configurazione da dove l'hai lasciata`" />
-      <div class="flex items-center gap-4 w-full">
+      <div class="flex items-center gap-4 mb-16 w-full">
         <TextField v-if="shareLink" ref="projectLink" v-model="shareLink" readonly class="text-cyan w-full"/>
         <Btn v-if="shareLink" class="bg-light-gray" label="Copia" @click="copyLink" />
       </div>
       <Transition name="fade-up">
         <div v-if="linkWasCopied" class="bg-black rounded-md text-white text-s text-center py-2 px-4 my-4 w-full" v-text="`Link copiato negli appunti`"></div>
       </Transition>
+      <TakeSnapshot :config="config" immediate download class="flex flex-wrap items-center justify-center mx-auto" @snapshot-taken="saveConfigThumb"/>
+      <div class="flex flex-wrap items-center justify-center w-full">
+        <Btn class="bg-light-gray" label="salva pdf" @click="exportPDF" />
+      </div>
     </div>
     <div v-if="requestQuoteLabel" configuration-actions class="flex fixed bottom-0 left-0 w-full">
       <Btn class="bg-yellow w-full" :label="requestQuoteLabel" @click="requestQuote" />
@@ -27,6 +31,7 @@ import { useConfiguratorStore } from '@/stores/configurator'
 import TextField from '@/components/forms/TextField.vue'
 import Btn from '@/components/forms/Button.vue'
 import Close from '@/components/icons/Close.vue'
+import TakeSnapshot from '@/components/TakeSnapshot.vue'
 
 const props = defineProps(['config'])
 const emits = defineEmits(['close', 'request-quote'])
@@ -38,6 +43,7 @@ const configurationId = computed(() => currentConfiguration.value?.code || '')
 const shareLink = ref('')
 const projectLink = ref(null)
 const linkWasCopied = ref(false)
+const thumb = ref(null)
 
 const requestQuoteLabel = 'Richiedi preventivo'
 
@@ -68,6 +74,16 @@ const copyLink = () => {
     document.execCommand('copy');
   }
   setTimeout(() => { linkWasCopied.value = false }, 1000)
+}
+
+const saveConfigThumb = (image) => {
+  thumb.value = image
+  configurator.updateConfiguration(configurationId.value, { ...props.config, thumb: image })
+}
+
+const exportPDF = () => {
+  // Chiamata per la generazione .pdf con thumb.value
+  console.log('export .pdf')
 }
 
 const close = () => {
