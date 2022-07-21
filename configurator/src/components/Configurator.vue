@@ -25,7 +25,13 @@
     <Actions @toggle-list="showList = !showList" @toggle-download="showDownload = !showDownload" />
     <Controls v-if="canEdit" class="transition-all w-[320px] lg:w-[560px] z-2" :controls="controlsList" @share="shareProject" @destroy="tabulaRasa">
       <Transition name="slide-in">
-        <RoomSettings v-if="isEditingRoom" class="absolute z-6" :element="config.room" @close="closeRoomSettings" />
+        <Login v-if="isLoggingIn" class="absolute z-6" @register="openRegisterForm" @close="resetOptions"/>
+      </Transition>
+      <Transition name="slide-in">
+        <Register v-if="isregistering" class="absolute z-6" @close="resetOptions"/>
+      </Transition>
+      <Transition name="slide-in">
+        <RoomSettings v-if="isEditingRoom" class="absolute z-6" :element="config.room" @close="resetOptions" />
       </Transition>
       <Transition name="slide-in">
         <ElementConfiguration v-if="selectedElement" :element="selectedElement" @close="closeElementSettings" />
@@ -44,11 +50,13 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, markRaw, computed, defineAsyncComponent } from 'vue'
+import { onMounted, ref, markRaw, computed, defineAsyncComponent } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import Controls from '@/components/controls/Controls.vue'
 import Tips from '@/components/Tips.vue'
+import Login from '@/components/Login.vue'
+import Register from '@/components/Register.vue'
 import RoomSettings from '@/components/controls/RoomSettings.vue'
 import ElementConfiguration from '@/components/controls/ElementConfiguration.vue'
 import Header from '@/components/Header.vue'
@@ -85,6 +93,7 @@ const showList = ref(false)
 const showDownload = ref(false)
 const requestingQuote = ref(false)
 const tip = ref({})
+const isRegistering = ref(false)
 
 controlsList.map((item) => {
   item.componentInstance = item.component ? markRaw(defineAsyncComponent(() => import(`./controls/${item.component}.vue`))) : null
@@ -144,6 +153,7 @@ const selectedProduct = computed(() => productsModule.selectedProduct)
 const selectedOption = computed(() => optionsModule.selected)
 
 const isEditingRoom = computed(() => selectedOption.value.id === 2)
+const isLoggingIn = computed(() => selectedOption.value.id === 3)
 
 const canEdit = computed(() => {
   return !props.config.shared || (props.config.shared && import.meta.env.DEV)
@@ -153,8 +163,13 @@ const mainButtonLabel = computed(() => {
   return selectedElement.value.isEdit ? 'Elimina elemento' : 'Termina inserimento'
 })
 
-const closeRoomSettings = () => {
+const resetOptions = () => {
   optionsModule.resetSelectedOption()
+}
+
+const openRegisterForm = () => {
+  resetOptions()
+  isRegistering.value = true
 }
 
 const closeElementSettings = () => {

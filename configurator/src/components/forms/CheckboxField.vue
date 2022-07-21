@@ -2,7 +2,7 @@
   <label :for="props.name" class="relative group w-full">
     <div class="flex items-center gap-2">
       <input type="checkbox" v-model="inputValue" :name="props.name" :readonly="props.readonly" :disabled="props.disabled" :required="required" class="border border-dark-gray rounded-lg text-current px-4 py-3 focus:border-yellow focus:outline-none" :class="error ? 'ring-1 ring-red' : ''" @update:modelValue="emitValue($event)"/>
-      <span v-if="props.label" label v-html="props.label" :class="error ? 'text-red font-bold' : ''" @click="focusOnInput($event)"/>
+      <span v-if="props.label" label v-html="props.label" class="text-xs" :class="error ? 'text-red font-bold' : ''" @click="focusOnInput($event)"/>
     </div>
     <span v-if="error && errorMessage" class="inline-block text-xxs text-red mt-2 leading-4 w-full" v-text="errorMessage" />
   </label>

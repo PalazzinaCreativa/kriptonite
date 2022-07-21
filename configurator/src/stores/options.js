@@ -5,7 +5,8 @@ export default defineStore({
   state: () => ({
     list: [
       { id: 1, label: 'Opzioni' },
-      { id: 2, label: 'Opzioni stanza' }
+      { id: 2, label: 'Opzioni stanza' },
+      { id: 3, label: 'Accedi', icon: 'user' }
     ],
     selectedOption: { id: 1, label: 'Opzioni' }
   }),

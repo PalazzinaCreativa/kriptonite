@@ -2,7 +2,9 @@
   <div class="flex items-center justify-center w-full">
     <div v-for="(optionItem, index) in optionItems" :key="index" class="flex items-center">
       <div v-if="index > 0" class="bg-gray h-[1px] w-7"></div>
-      <OptionsItem v-text="optionItem.label" :isSelected="optionItem.id === selectedOption.id" @click="selectOption(optionItem)"/>
+      <OptionsItem :isSelected="optionItem.id === selectedOption.id" :icon="optionItem.icon" @click="selectOption(optionItem)">
+        <span v-text="optionItem.label"></span>
+      </OptionsItem>
     </div>
   </div>
 </template>
