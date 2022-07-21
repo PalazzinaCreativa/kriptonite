@@ -34,7 +34,12 @@
   const currentElementVariants = computed(() => shelvesModule.currentElementVariantsList)
 
   const getVariants = () => {
-    let filters = props.element.config.material.texture ? { texture: props.element.config.material.texture.id } : {}
+    let material = props.element.config.material
+    // Se la natura del materiale è metallo, e nei materiali è presente una texture, verrà rimossa la texture precedentemente selezionata
+    if(props.element.config.nature === 'metallo' && material.texture) {
+      delete material.texture
+    }
+    let filters = material.texture ? { texture: material.texture.id } : {}
     shelvesModule.getVariants(props.element.id, props.element.config.texture, filters)
   }
 
@@ -43,16 +48,13 @@
   })
 
   const setRelativeProduct = () => {
-    // Se l'elemento ha una texture assegnata nel CMS
-    if(props.element.config.texture) {
-      // Al cambio delle opzioni dell'elemento, imposto la texture già impostata in precedenza
-      let textureRelativeProduct = currentElementVariants.value.length ? currentElementVariants.value.find((variant) => {
-        return variant.width === props.element.config.width && variant.depth === props.element.config.depth
-      }) : null
+    // Se l'elemento ha una texture assegnata nel CMS al cambio delle opzioni dell'elemento, imposto la texture già impostata in precedenza
+    let textureRelativeProduct = currentElementVariants.value.length ? currentElementVariants.value.find((variant) => {
+      return variant.width === props.element.config.width && variant.depth === props.element.config.depth
+    }) : null
 
-      if(textureRelativeProduct) {
-        configurator.addElement({ ...textureRelativeProduct, variantId: textureRelativeProduct.id, id: props.element.id, material: { ...props.element.config.material, ...{ texture: selectedTexture.value } } })
-      }
+    if(textureRelativeProduct) {
+      configurator.addElement({ ...textureRelativeProduct, variantId: textureRelativeProduct.id, id: props.element.id, material: { ...props.element.config.material, ...{ texture: selectedTexture.value } } })
     }
   }
 
@@ -63,7 +65,7 @@
 
   getVariants()
 
-  if(!props.element.isEdit) {
+  if(!props.element.isEdit && props.element.config.texture) {
     setRelativeProduct()
   }
 

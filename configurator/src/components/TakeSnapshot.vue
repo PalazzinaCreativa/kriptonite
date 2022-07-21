@@ -91,7 +91,6 @@ const takeSnapshot = async () => {
 
 const downloadFile = (data, filename) => {
   var link = document.createElement('a')
-  console.log('scaricamento:', data, link)
   if (typeof link.download === 'string') {
     document.body.appendChild(link);
     link.download = filename;

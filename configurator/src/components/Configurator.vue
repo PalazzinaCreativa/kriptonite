@@ -231,7 +231,6 @@ onMounted(() => {
 
     // Caricamento della variante corretta dell'elemento inserito
     if(data[type].value.length) {
-      // Potrebbe non funzionare con i prodotti in legno (da verificare)
       // Ricavo gli elementi con quell'ID
       let elements = data[type].value.filter(p => p.id === id)
       // Se più di un elemento ha lo stesso ID, cerco quelli che hanno una variante con lo stesso ID
@@ -257,8 +256,8 @@ onMounted(() => {
   })
 
   viewer.setHook('searchForElementVariant', ({ id, type, width, isChanged }) => {
-    // L'elemento può essere posizionato
-    let elementCantBePositioned = true
+    // L'elemento può essere posizionato in quanto la variante per la larghezza in questione non esiste a Database.
+    let variantExists = false
 
     fittingElement.value = ref(selectedElement.value).value
 
@@ -281,13 +280,13 @@ onMounted(() => {
             fittingElement.value.config.material = selectedElement.value.config.material
             //console.log('è cambiata la distanza tra i montanti', fittingElement.value, selectedElement.value)
           }
-          elementCantBePositioned = false
+          variantExists = true
         }
       } else {
-        elementCantBePositioned = true
+        variantExists = false
       }
     }
-    return elementCantBePositioned
+    return variantExists
   })
 
   viewer.setHook('checkUndoRedo', ({ canUndo, canRedo }) => {
