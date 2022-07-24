@@ -41,6 +41,9 @@
       "type": "component",
       "repeatable": true,
       "component": "variants.wood-case-variants"
+    },
+    "order": {
+      "type": "integer"
     }
   }
 }
