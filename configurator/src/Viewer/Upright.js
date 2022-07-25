@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND, elementDistances } from '@/dataset/defaultConfiguratorValues'
+import { STANDALONE_Z, GUTTER, RESTING_ON_THE_GROUND, elementDistances, currentProductUprightsDistances } from '@/dataset/defaultConfiguratorValues'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
 import { createText } from "./utils/createText"

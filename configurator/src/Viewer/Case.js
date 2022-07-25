@@ -12,6 +12,8 @@ export default class Case extends Object3D {
     this._cantBePositioned = false
 
     super.getElementConfig()
+    // La distanza Y tra due punti di ancoraggio del montante
+    this.currentGap = this.product.uprights?.length ? this.product.uprights[0].config?.slot_space : 6.4
   }
 
   async init () {
@@ -36,7 +38,7 @@ export default class Case extends Object3D {
 
   setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
-    const gridY = Math.floor(y / currentGap) * currentGap
+    const gridY = Math.floor(y / this.currentGap) * this.currentGap
     // console.log('Z:', z)
     super.setPosition({ x, y: gridY, z })
 
@@ -75,8 +77,8 @@ export default class Case extends Object3D {
     }
 
     // Trovo i due montanti più vicini a sinistra e destra sui quali posso posizionare lo scaffale nell'asse y
-    const left = leftUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
-    const right = rightUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
+    const left = leftUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2) - this.currentGap)
+    const right = rightUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2) - this.currentGap)
 
     if (!left || !right) {
       cantPosition()

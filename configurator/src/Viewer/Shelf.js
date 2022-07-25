@@ -1,10 +1,9 @@
 import * as THREE from 'three'
 import Object3D from "./Object3D"
 import { stringToThreeColor } from "./utils/stringToThreeColor"
-import { elementDistances } from '@/dataset/defaultConfiguratorValues'
 
+import { elementDistances, currentProductUprightsDistances } from '@/dataset/defaultConfiguratorValues'
 
-const currentGap = 6.4 // Distanza tra i buchi dei montanti divisi per tipi - Da popolare in base al montante
 export default class Shelf extends Object3D {
   constructor (config, product) {
     super(config)
@@ -14,6 +13,8 @@ export default class Shelf extends Object3D {
     this._cantBePositioned = false
 
     super.getElementConfig()
+    // La distanza Y tra due punti di ancoraggio del montante
+    this.currentGap = this.product.uprights?.length ? this.product.uprights[0].config?.slot_space : 6.4
   }
 
   async init () {
@@ -38,7 +39,7 @@ export default class Shelf extends Object3D {
 
   setPosition ({ x, y, z }) {
     // Calcolare y in base alla distanza tra i buchi per posizionare tutti i montanti allineati
-    const gridY = Math.floor(y / currentGap) * currentGap
+    const gridY = Math.floor(y / this.currentGap) * this.currentGap
     super.setPosition({ x, y: gridY, z })
 
     this._checkPosition()
@@ -76,8 +77,8 @@ export default class Shelf extends Object3D {
     }
 
     // Ricavo dei montanti sinistro e destro più vicini sui quali posso posizionare lo scaffale nell'asse Y
-    const left = leftUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
-    const right = rightUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2))
+    const left = leftUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2) - this.currentGap)
+    const right = rightUprights.find(u => this.getPosition().y > (u.getPosition().y - u.getSize().height / 2) && this.getPosition().y < (u.getPosition().y + u.getSize().height / 2) - this.currentGap)
 
     if (!left || !right) {
       cantPosition()
